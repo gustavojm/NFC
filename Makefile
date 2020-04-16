@@ -14,9 +14,9 @@ ODIR            = obj
 VPATH           += $(SRCROOT)/Source
 VPATH	        += $(SRCROOT)/Source/portable/MemMang
 VPATH	        += $(SRCROOT)/Source/portable/GCC/POSIX
-VPATH           += $(SRCROOT)/Demo/Common
 VPATH			+= $(SRCROOT)/Project/FileIO
 VPATH			+= $(SRCROOT)/Project
+
 
 # FreeRTOS Objects
 C_FILES			+= croutine.c
@@ -30,29 +30,7 @@ C_FILES			+= timers.c
 C_FILES			+= heap_3.c
 C_FILES			+= port.c
 
-# Demo Objects
-C_FILES			+= Minimal/blocktim.c
-C_FILES			+= Minimal/countsem.c
-C_FILES			+= Minimal/GenQTest.c
-C_FILES			+= Minimal/QPeek.c
-C_FILES			+= Minimal/recmutex.c
-C_FILES			+= Full/BlockQ.c
-C_FILES			+= Full/death.c
-C_FILES			+= Full/dynamic.c
-C_FILES			+= Full/flop.c
-C_FILES			+= Full/integer.c
-C_FILES			+= Full/PollQ.c
-C_FILES			+= Full/semtest.c
-C_FILES			+= Full/print.c
-
-C_FILES			+= Minimal/AbortDelay.c
-C_FILES			+= Minimal/EventGroupsDemo.c
-C_FILES			+= Minimal/IntSemTest.c
-C_FILES			+= Minimal/QueueSet.c
-C_FILES			+= Minimal/QueueSetPolling.c
-C_FILES			+= Minimal/QueueOverwrite.c
-C_FILES			+= Minimal/TaskNotify.c
-C_FILES			+= Minimal/TimerDemo.c
+INCLUDES        += -I$(SRCROOT)/Project
 
 # Main Object
 C_FILES			+= main.c
@@ -62,6 +40,7 @@ INCLUDES        += -I$(SRCROOT)/Source/include
 INCLUDES        += -I$(SRCROOT)/Source/portable/GCC/POSIX/
 INCLUDES        += -I$(SRCROOT)/Demo/Common/include
 INCLUDES        += -I$(SRCROOT)/Project
+INCLUDES        += -I$(SRCROOT)/Project/inc
 
 # Generate OBJS names
 OBJS = $(patsubst %.c,%.o,$(C_FILES))
