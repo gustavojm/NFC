@@ -5,12 +5,12 @@
  *      Author: gustavo
  */
 
-#ifndef PROJECT_INC_TAREAS_H_
-#define PROJECT_INC_TAREAS_H_
+#ifndef TAREAS_H_
+#define TAREAS_H_
 
-void vInicializar( void );
+void inicializar( void );
 
-void vTarea1( void * par );
-void vTarea2( void * par );
+void tarea1( void * par );
+void tarea2( void * par );
 
-#endif /* PROJECT_INC_TAREAS_H_ */
+#endif /* TAREAS_H_ */

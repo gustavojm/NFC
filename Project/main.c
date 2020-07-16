@@ -9,21 +9,22 @@
 #include "task.h"
 #include "queue.h"
 #include "tareas.h"
+#include "ad2s1210.h"
 
 static QueueHandle_t xPrintQueue;
 
 /*-----------------------------------------------------------*/
 
-void vInicializar( void )
+void inicializar( void )
 {
-const unsigned portBASE_TYPE uxQueueSize = 20;
+const unsigned portBASE_TYPE qsize = 20;
 
 	/* Create the queue on which errors will be reported. */
-	xPrintQueue = xQueueCreate( uxQueueSize, ( unsigned portBASE_TYPE ) sizeof( char * ) );
+	xPrintQueue = xQueueCreate( qsize, ( unsigned portBASE_TYPE ) sizeof( char * ) );
 }
 /*-----------------------------------------------------------*/
 
-void vTarea1( void * par)
+void tarea1( void * par)
 {
 	(void) par;	//stop compiler complaining
 	for(;;){
@@ -33,7 +34,7 @@ void vTarea1( void * par)
 }
 /*-----------------------------------------------------------*/
 
-void vTarea2 ( void * par)
+void tarea2 ( void * par)
 {
 	(void) par;	//stop compiler complaining
 	for(;;){
@@ -49,19 +50,25 @@ void vTarea2 ( void * par)
 
 /*-----------------------------------------------------------*/
 
+
 int main ( void )
 {
-    TaskHandle_t xTarea1Task;
-    TaskHandle_t xTarea2Task;
+    TaskHandle_t tarea1Handle;
+    TaskHandle_t tarea2Handle;
+
+//    struct ad2s1210_state rdc_arm;
+//    int x = ad2s1210_init(&rdc_arm);
+//    printf("%x", x);
+//
 
 	/* Crear las tareas. */
-	xTaskCreate(vTarea1, "Tarea1", configMINIMAL_STACK_SIZE, NULL, TAREA1_PRIORITY, &xTarea1Task );
-	xTaskCreate(vTarea2, "Tarea2", configMINIMAL_STACK_SIZE, NULL, TAREA2_PRIORITY, &xTarea2Task );
+	xTaskCreate(tarea1, "Tarea1", configMINIMAL_STACK_SIZE, NULL, TAREA1_PRIORITY, &tarea1Handle );
+	xTaskCreate(tarea2, "Tarea2", configMINIMAL_STACK_SIZE, NULL, TAREA2_PRIORITY, &tarea2Handle );
 
 	/* Start the scheduler itself. */
 	vTaskStartScheduler();
 
-	vTaskDelete(xTarea1Task);
+	vTaskDelete(tarea1Handle);
 
 	return 0;
 }

@@ -27,13 +27,14 @@ C_FILES			+= tasks.c
 C_FILES			+= timers.c
 
 # portable Objects
-C_FILES			+= heap_3.c
+C_FILES			+= heap_4.c
 C_FILES			+= port.c
 
 INCLUDES        += -I$(SRCROOT)/Project
-
 # Main Object
+
 C_FILES			+= main.c
+C_FILES			+= ad2s1210.c
 
 # Include Paths
 INCLUDES        += -I$(SRCROOT)/Source/include
@@ -48,8 +49,8 @@ OBJS = $(patsubst %.c,%.o,$(C_FILES))
 ######## C Flags ########
 
 # Warnings
-CWARNS += -W
-CWARNS += -Wall
+#CWARNS += -W
+#CWARNS += -Wall
 CWARNS += -Werror
 CWARNS += -Wextra
 CWARNS += -Wformat
@@ -63,10 +64,10 @@ CWARNS += -Wuninitialized
 CWARNS += -Wunknown-pragmas
 CWARNS += -Wunused-function
 CWARNS += -Wunused-label
-CWARNS += -Wunused-parameter
-CWARNS += -Wunused-value
-CWARNS += -Wunused-variable
-CWARNS += -Wmissing-prototypes
+#CWARNS += -Wunused-parameter
+#CWARNS += -Wunused-value
+#CWARNS += -Wunused-variable
+#CWARNS += -Wmissing-prototypes
 
 #CWARNS += -Wno-unused-function
 
@@ -88,12 +89,13 @@ CFLAGS += $(INCLUDES) $(CWARNS) -O2
 
 # Rules
 .PHONY : all
-all: FreeRTOS-Sim
+all: FreeRTOS-Basic
 
 
 # Fix to place .o files in ODIR
 _OBJS = $(patsubst %,$(ODIR)/%,$(OBJS))
 
+# Target that allows compiling just one file by typing make obj/filename.o
 $(ODIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 # If verbose, print gcc execution, else hide
@@ -105,7 +107,34 @@ else
 	@$(CC) $(CFLAGS) -c -o $@ $<
 endif
 
-FreeRTOS-Sim: $(_OBJS)
+
+# Target that allows to obtain preproccessed ouput by typing make obj/filename.i
+$(ODIR)/%.i: %.c
+	@mkdir -p $(dir $@)
+# If verbose, print gcc execution, else hide
+ifeq ($(verbose),1)
+	@echo ">> PreProcessing $<"
+	$(CC) $(CFLAGS) -E -o $@ $<
+else
+	@echo ">> PreProcessing $(notdir $<)"
+	@$(CC) $(CFLAGS) -E -o $@ $<
+endif
+
+# Target that allows to obtain assembled ouput by typing make obj/filename.s
+$(ODIR)/%.s: %.c
+	@mkdir -p $(dir $@)
+# If verbose, print gcc execution, else hide
+ifeq ($(verbose),1)
+	@echo ">> PreProcessing $<"
+	$(CC) $(CFLAGS) -S -o $@ $<
+else
+	@echo ">> PreProcessing $(notdir $<)"
+	@$(CC) $(CFLAGS) -S -o $@ $<
+endif
+
+
+
+FreeRTOS-Basic: $(_OBJS)
 	@echo ">> Linking $@..."
 ifeq ($(verbose),1)
 	$(CC) $(CFLAGS) $^ $(LINKFLAGS) $(LIBS) -o $@
