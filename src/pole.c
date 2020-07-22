@@ -5,6 +5,8 @@
  *      Author: gustavo
  */
 
+#include "../../inc/pole.h"
+
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -14,10 +16,9 @@
 #include "queue.h"
 #include "semphr.h"
 #include "timers.h"
-#include "pid.h"
-#include "pole.h"
-#include "ad2s1210.h"
 #include "stdint.h"
+#include "../../inc/ad2s1210.h"
+#include "../../inc/pid.h"
 
 #define LEFT	0
 #define RIGHT	1

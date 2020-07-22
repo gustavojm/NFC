@@ -5,7 +5,7 @@
  *      Author: gustavo
  */
 
-#include "../NFC/inc/lift.h"
+#include "../../inc/lift.h"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -17,7 +17,7 @@
 #include "task.h"
 #include "stdbool.h"
 
-#include "../NFC/inc/pid.h"
+#include "../../inc/pid.h"
 
 #define UP		0
 #define DOWN	1
