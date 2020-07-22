@@ -17,12 +17,12 @@ extern "C" {
 
 struct pole_msg {
 	uint32_t setpoint;
-	bool	 stall_detection;
+	bool stall_detection;
 };
 
 struct pole_tmr_id {
-	bool	 direction;
-	bool	 stall_detection;
+	bool direction;
+	bool stall_detection;
 };
 
 void pole_init();

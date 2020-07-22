@@ -108,8 +108,6 @@ int ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address, uint8_t data);
 
 int ad2s1210_init(struct ad2s1210_state *st);
 
-int ad2s1210_setup_gpios(struct ad2s1210_state *st);
-
 int ad2s1210_read_position(struct ad2s1210_state *st);
 
 #ifdef __cplusplus

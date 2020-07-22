@@ -82,7 +82,8 @@ void lift_init()
 
 	if (lift_interrupt_counting_semaphore != NULL) {
 		// Create the 'handler' task, which is the task to which interrupt processing is deferred
-		xTaskCreate(lift_limit_switches_handler_task, "LSHandler", configMINIMAL_STACK_SIZE, NULL, 3, NULL);
+		xTaskCreate(lift_limit_switches_handler_task, "LSHandler",
+				configMINIMAL_STACK_SIZE, NULL, 3, NULL);
 
 		/* Install the handler for the software interrupt.  The syntax necessary
 		 to do this is dependent on the FreeRTOS port being used.  The syntax
@@ -91,7 +92,8 @@ void lift_init()
 		//vPortSetInterruptHandler(mainINTERRUPT_NUMBER, lift_limit_switches_interrupt_handler);
 	}
 
-	xTaskCreate(lift_task, "Lift", configMINIMAL_STACK_SIZE, NULL, LIFT_TASK_PRIORITY, NULL);
+	xTaskCreate(lift_task, "Lift", configMINIMAL_STACK_SIZE, NULL,
+			LIFT_TASK_PRIORITY, NULL);
 }
 /*-----------------------------------------------------------*/
 

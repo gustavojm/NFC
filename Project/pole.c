@@ -74,7 +74,6 @@ static void tmr_pole_callback(TimerHandle_t tmr_handle)
 		}
 		last_pos = pos;
 	}
-
 }
 
 static void pole_task(void *par)
@@ -142,27 +141,27 @@ static void pole_task(void *par)
 	}
 }
 
-	void pole_init()
-	{
-		pole_queue = xQueueCreate(5, sizeof(struct pole_msg));
+void pole_init()
+{
+	pole_queue = xQueueCreate(5, sizeof(struct pole_msg));
 
-		pole_pid.kp = 1;
-		pole_pid.ki = 1;
-		pole_pid.kd = 1;
-		pole_pid.limit = 100;
+	pole_pid.kp = 1;
+	pole_pid.ki = 1;
+	pole_pid.kd = 1;
+	pole_pid.limit = 100;
 
-		//Configurar GPIO0,1,3 como salidas digitales;
+	//Configurar GPIO0,1,3 como salidas digitales;
 
-		//rdc_pole.gpios.reset = GPIO0;
-		//rdc_pole.gpios.sample = GPIO1;
-		//rdc_pole.gpios.wr_fsync = GPIO3;
-		pole_rdc.lock = pole_lock;
-		pole_rdc.resolution = 12;
+	//rdc_pole.gpios.reset = GPIO0;
+	//rdc_pole.gpios.sample = GPIO1;
+	//rdc_pole.gpios.wr_fsync = GPIO3;
+	pole_rdc.lock = pole_lock;
+	pole_rdc.resolution = 12;
 
-		ad2s1210_init(&pole_rdc);
+	ad2s1210_init(&pole_rdc);
 
-		xTaskCreate(pole_task, "Pole", configMINIMAL_STACK_SIZE, NULL,
-				POLE_TASK_PRIORITY, NULL);
+	xTaskCreate(pole_task, "Pole", configMINIMAL_STACK_SIZE, NULL,
+	POLE_TASK_PRIORITY, NULL);
 
-	}
+}
 

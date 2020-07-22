@@ -1,10 +1,6 @@
-/* Standard includes. */
-#include <stdio.h>
-#include <stdlib.h>
-
+#include "stdio.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "queue.h"
 #include "pole.h"
 #include "lift.h"
 
@@ -23,12 +19,18 @@ int main(void)
 /*-----------------------------------------------------------*/
 void vAssertCalled(unsigned long ulLine, const char *const pcFileName)
 {
+	//volatile uint32_t ulSetToNonZeroInDebuggerToContinue = 0;
+
 	taskENTER_CRITICAL();
 	{
 		printf("[ASSERT] %s:%lu\n", pcFileName, ulLine);
-		fflush(stdout);
+        /* You can step out of this function to debug the assertion by using
+        the debugger to set ulSetToNonZeroInDebuggerToContinue to a non-zero
+        value. */
+		//while( ulSetToNonZeroInDebuggerToContinue == 0 )
+		//{
+		//}
 	}
 	taskEXIT_CRITICAL();
-	exit(-1);
 }
 /*-----------------------------------------------------------*/

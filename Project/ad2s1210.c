@@ -395,12 +395,6 @@ error_ret:
 	return ret;
 }
 
-int ad2s1210_setup_gpios(struct ad2s1210_state *st)
-{
-	// Implementar código específico del NXP
-	return 0;
-}
-
 int ad2s1210_read_position(struct ad2s1210_state *st)
 {
 	int ret = 0;
