@@ -1,9 +1,20 @@
+/*
+ * ad2s1210.h
+ *
+ *  Created on: 1 jul. 2020
+ *      Author: gustavo
+ */
+
 #ifndef AD2S1210_H_
 #define AD2S1210_H_
 
 #include <stdint.h>
 #include <FreeRTOS.h>
 #include <semphr.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define AD2S1210_DEF_CONTROL			0x7E
 
@@ -100,5 +111,9 @@ int ad2s1210_init(struct ad2s1210_state *st);
 int ad2s1210_setup_gpios(struct ad2s1210_state *st);
 
 int ad2s1210_read_position(struct ad2s1210_state *st);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* AD2S1210_H_ */

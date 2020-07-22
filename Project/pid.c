@@ -1,5 +1,5 @@
 /*
- * piddiscreto.c
+ * pid.c
  *
  *  Created on: 13 jul. 2020
  *      Author: gustavo
@@ -17,7 +17,7 @@ float abs_limit(const float out, const float limit)
 	return out;
 }
 
-void pid_controller_init(pid_t *pid, float kp, float sample_time, float ti,
+void pid_controller_init(struct pid *pid, float kp, float sample_time, float ti,
 		float td, float limit)
 {
 	pid->kp = kp;
@@ -35,7 +35,7 @@ void pid_controller_init(pid_t *pid, float kp, float sample_time, float ti,
 	pid->out = 0.0f;
 }
 
-float pid_controller_calculate(pid_t *pid, float setpoint, float actual)
+float pid_controller_calculate(struct pid *pid, float setpoint, float actual)
 {
 	pid->actual = actual;
 	pid->setpoint = setpoint;

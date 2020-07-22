@@ -35,6 +35,9 @@ INCLUDES        += -I$(SRCROOT)/Project
 
 C_FILES			+= main.c
 C_FILES			+= ad2s1210.c
+C_FILES			+= pole.c
+C_FILES			+= lift.c
+C_FILES			+= pid.c
 
 # Include Paths
 INCLUDES        += -I$(SRCROOT)/Source/include
@@ -73,6 +76,10 @@ CWARNS += -Wunused-label
 
 CFLAGS += -m32
 CFLAGS += -DDEBUG=1
+
+#Incluir math library functions
+LINKFLAGS += -lm
+
 #CFLAGS += -g -DUSE_STDIO=1 -D__GCC_POSIX__=1
 CFLAGS += -g -UUSE_STDIO -D__GCC_POSIX__=1
 ifneq ($(shell uname), Darwin)
