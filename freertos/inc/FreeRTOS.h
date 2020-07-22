@@ -56,10 +56,10 @@ extern "C" {
 #include "FreeRTOSConfig.h"
 
 /* Basic FreeRTOS definitions. */
-#include "projdefs.h"
+#include "../inc/projdefs.h"
 
 /* Definitions specific to the port being used. */
-#include "portable.h"
+#include "../inc/portable.h"
 
 /* Must be defaulted before configUSE_NEWLIB_REENTRANT is used below. */
 #ifndef configUSE_NEWLIB_REENTRANT

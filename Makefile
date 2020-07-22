@@ -11,12 +11,10 @@ SRCROOT         = $(CURDIR)
 ODIR            = obj
 
 # Source VPATHS
-VPATH           += $(SRCROOT)/Source
-VPATH	        += $(SRCROOT)/Source/portable/MemMang
-VPATH	        += $(SRCROOT)/Source/portable/GCC/POSIX
-VPATH			+= $(SRCROOT)/Project/FileIO
-VPATH			+= $(SRCROOT)/Project
-
+VPATH           += $(SRCROOT)/freertos/src
+VPATH	        += $(SRCROOT)/freertos/src/portable/MemMang
+VPATH	        += $(SRCROOT)/freertos/src/portable/GCC/POSIX
+VPATH			+= $(SRCROOT)/NFC/src
 
 # FreeRTOS Objects
 C_FILES			+= croutine.c
@@ -30,7 +28,7 @@ C_FILES			+= timers.c
 C_FILES			+= heap_4.c
 C_FILES			+= port.c
 
-INCLUDES        += -I$(SRCROOT)/Project
+INCLUDES        += -I$(SRCROOT)/NFC
 # Main Object
 
 C_FILES			+= main.c
@@ -40,11 +38,11 @@ C_FILES			+= lift.c
 C_FILES			+= pid.c
 
 # Include Paths
-INCLUDES        += -I$(SRCROOT)/Source/include
-INCLUDES        += -I$(SRCROOT)/Source/portable/GCC/POSIX/
+INCLUDES        += -I$(SRCROOT)/freertos/inc
+INCLUDES        += -I$(SRCROOT)/freertos/src/portable/GCC/POSIX/
 INCLUDES        += -I$(SRCROOT)/Demo/Common/include
-INCLUDES        += -I$(SRCROOT)/Project
-INCLUDES        += -I$(SRCROOT)/Project/inc
+INCLUDES        += -I$(SRCROOT)/NFC/src
+INCLUDES        += -I$(SRCROOT)/NFC/inc
 
 # Generate OBJS names
 OBJS = $(patsubst %.c,%.o,$(C_FILES))

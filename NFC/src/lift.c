@@ -5,6 +5,8 @@
  *      Author: gustavo
  */
 
+#include "../NFC/inc/lift.h"
+
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -13,9 +15,9 @@
 #include "queue.h"
 #include "semphr.h"
 #include "task.h"
-#include "pid.h"
 #include "stdbool.h"
-#include "lift.h"
+
+#include "../NFC/inc/pid.h"
 
 #define UP		0
 #define DOWN	1
@@ -37,7 +39,7 @@ static void lift_task(void *par)
 			free(rcv_lift_msg);
 
 		} else {
-			printf("lift: no data received \n");
+			printf("lift: no command received \n");
 		}
 	}
 
