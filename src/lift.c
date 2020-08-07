@@ -5,7 +5,7 @@
  *      Author: gustavo
  */
 
-#include "../../inc/lift.h"
+#include "lift.h"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -16,11 +16,8 @@
 #include "semphr.h"
 #include "task.h"
 #include "stdbool.h"
+#include "pid.h"
 
-#include "../../inc/pid.h"
-
-#define UP		0
-#define DOWN	1
 #define LIFT_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
 QueueHandle_t lift_queue = NULL;
@@ -28,22 +25,20 @@ SemaphoreHandle_t lift_interrupt_counting_semaphore;
 
 static void lift_task(void *par)
 {
-	struct lift_msg *rcv_lift_msg;
+	struct lift_msg *msg_rcv;
 
 	while (1) {
 
-		if (xQueueReceive(lift_queue, (struct lift_msg*) &rcv_lift_msg,
+		if (xQueueReceive(lift_queue, &msg_rcv,
 				(TickType_t) 10) == pdPASS) {
-			printf("lift: command received \n");
-
-			free(rcv_lift_msg);
+			printf("lift: command received %s \n ", (msg_rcv->direction) ? "DOWN" : "UP");
+			free(msg_rcv);
 
 		} else {
 			printf("lift: no command received \n");
 		}
+		vTaskDelay(pdMS_TO_TICKS(200));
 	}
-
-	vTaskDelay(pdMS_TO_TICKS(200));
 }
 
 static void lift_limit_switches_handler_task(void *pvParameters)
@@ -75,7 +70,7 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 
 void lift_init()
 {
-	lift_queue = xQueueCreate(5, sizeof(struct lift_msg));
+	lift_queue = xQueueCreate(5, sizeof(struct lift_msg *));
 
 	//Configurar GPIO RELES DE LIFT como salidas digitales;
 	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales;

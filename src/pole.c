@@ -5,8 +5,7 @@
  *      Author: gustavo
  */
 
-#include "../../inc/pole.h"
-
+#include "pole.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -17,12 +16,11 @@
 #include "semphr.h"
 #include "timers.h"
 #include "stdint.h"
-#include "../../inc/ad2s1210.h"
-#include "../../inc/pid.h"
+#include "ad2s1210.h"
+#include "pid.h"
 
-#define LEFT	0
-#define RIGHT	1
 #define POLE_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
+#define FREQ_MULTIPLIER  400
 
 QueueHandle_t pole_queue = NULL;
 SemaphoreHandle_t pole_lock;
@@ -37,14 +35,17 @@ static bool direction_calculate(int32_t error)
 	return error < 0 ? RIGHT : LEFT;
 }
 
-static int32_t period_calculate(int32_t setpoint, int32_t pos)
+static float period_calculate(int32_t setpoint, int32_t pos)
 {
-	float cout;
+	float cout, period;
 	cout = pid_controller_calculate(&pole_pid, setpoint, pos);
-	return (int32_t) nearbyint(1.0f / cout);
+	printf ("----COUT---- %f \n", cout);
+	period = (1.0f / cout) * FREQ_MULTIPLIER;
+	printf ("----PERIOD---- %f \n", period);
+	return period;
 }
 
-static void tmr_pole_callback(TimerHandle_t tmr_handle)
+static void pole_tmr_callback(TimerHandle_t tmr_handle)
 {
 	int32_t pos;
 	static int32_t last_pos = 0;
@@ -53,12 +54,8 @@ static void tmr_pole_callback(TimerHandle_t tmr_handle)
 	/* Optionally do something if the pxTimer parameter is NULL. */
 	configASSERT(tmr_handle);
 
-	/* Get the number of remaining pulses. */
 	struct pole_tmr_id *tmr_id_pole = (struct pole_tmr_id*) pvTimerGetTimerID(
 			tmr_handle);
-
-	// Set the GPIO to indicate direction of movement
-	// GPIO(GPIO_DIR_POLE, tmrIdPole->direction);
 
 	// Toggle GPIO to generate waveform
 	// GPIO_toggle(GPIO_PULSE_POLE);
@@ -79,29 +76,27 @@ static void tmr_pole_callback(TimerHandle_t tmr_handle)
 
 static void pole_task(void *par)
 {
-	//Crear mensaje para poner en la cola
-	//struct tmr_msg *tmr_msg = (struct tmr_msg *) malloc(sizeof(struct tmr_msg ));
 
-	struct pole_msg *rcv_pole_msg;
+	struct pole_msg *msg_rcv;
 	int32_t error, pos, threshold, setpoint = INT32_MAX;
-	bool llegamos;
-	bool stall_detection;
+	bool llegamos, direction;
 
 	threshold = 5;
 
 	while (1) {
 
 		if (pole_tmr == NULL) {		// Si no hay un timer moviendo el motor
-			if (xQueueReceive(pole_queue, (struct pole_msg*) &rcv_pole_msg,
+			if (xQueueReceive(pole_queue, &msg_rcv,
 					(TickType_t) 10) == pdPASS) {
 				printf("pole: command received \n");
 
-				setpoint = rcv_pole_msg->setpoint;
-				stall_detection = rcv_pole_msg->stall_detection;
+				setpoint = msg_rcv->setpoint;
+
+				pole_tmr_id.stall_detection = msg_rcv->stall_detection;
 
 				pole_tmr = xTimerCreate("TimerPole", pdMS_TO_TICKS(1), pdTRUE,
-						(void*) &pole_tmr_id, tmr_pole_callback);
-				free(rcv_pole_msg);
+						(void*) &pole_tmr_id, pole_tmr_callback);
+				free(msg_rcv);
 
 			} else {
 				printf("pole: no command received \n");
@@ -123,12 +118,17 @@ static void pole_task(void *par)
 					pole_tmr = NULL;
 					setpoint = INT32_MAX;
 				} else {
-					pole_tmr_id.direction = direction_calculate(error);
-					pole_tmr_id.stall_detection = stall_detection;
+					direction = direction_calculate(error);
+					// Set the GPIO to indicate direction of movement
+					// GPIO(GPIO_DIR_POLE, direction);
+					//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
 
 					vTimerSetTimerID(pole_tmr, (void*) &pole_tmr_id);
+
+					printf("AAAATICKSAAA %i \n", pdMS_TO_TICKS(period_calculate(setpoint, pos)));
+					printf("configTICK_RATE_HZ %i" ,configTICK_RATE_HZ);
 					xTimerChangePeriod(pole_tmr,
-							period_calculate(setpoint, pos), 0);
+							pdMS_TO_TICKS(period_calculate(setpoint, pos)), 0);
 
 					if (xTimerIsTimerActive(pole_tmr) == pdFALSE) {
 						if ( xTimerStart( pole_tmr, 0 ) != pdPASS) {
@@ -144,12 +144,9 @@ static void pole_task(void *par)
 
 void pole_init()
 {
-	pole_queue = xQueueCreate(5, sizeof(struct pole_msg));
+	pole_queue = xQueueCreate(5, sizeof(struct pole_msg *));
 
-	pole_pid.kp = 1;
-	pole_pid.ki = 1;
-	pole_pid.kd = 1;
-	pole_pid.limit = 100;
+	pid_controller_init(&pole_pid, 1, 200, 1, 1, 100, );
 
 	//Configurar GPIO0,1,3 como salidas digitales;
 

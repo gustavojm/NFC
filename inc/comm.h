@@ -1,12 +1,12 @@
 /*
- * lift.h
+ * comm.h
  *
  *  Created on: 13 jul. 2020
  *      Author: gustavo
  */
 
-#ifndef LIFT_H_
-#define LIFT_H_
+#ifndef COMM_H_
+#define COMM_H_
 
 #include <stdint.h>
 
@@ -14,17 +14,10 @@
 extern "C" {
 #endif
 
-#define UP		0
-#define DOWN	1
-
-struct lift_msg {
-	uint32_t direction;
-};
-
-void lift_init();
+void comm_init();
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* LIFT_H_ */
+#endif /* COMM_H_ */

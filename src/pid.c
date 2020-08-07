@@ -18,12 +18,13 @@ float abs_limit(const float out, const float limit)
 }
 
 void pid_controller_init(struct pid *pid, float kp, float sample_time, float ti,
-		float td, float limit)
+		float td, float limit, float rate)
 {
 	pid->kp = kp;
 	pid->ki = kp * sample_time / ti;
 	pid->kd = kp * td / sample_time;
 	pid->limit = limit;
+	pid->rate = rate;
 	pid->errors[0] = 0.0f;
 	pid->errors[1] = 0.0f;
 	pid->errors[2] = 0.0f;
@@ -35,10 +36,18 @@ void pid_controller_init(struct pid *pid, float kp, float sample_time, float ti,
 	pid->out = 0.0f;
 }
 
+static float rate_limit(struct pid *pid, float setpoint) {
+	// Implementar rate limiter;
+	return setpoint;
+}
+
 float pid_controller_calculate(struct pid *pid, float setpoint, float actual)
 {
+	if (pid->setpoint != setpoint){
+		pid->setpoint = rate_limit(pid, setpoint);
+	}
+
 	pid->actual = actual;
-	pid->setpoint = setpoint;
 	pid->errors[0] = pid->setpoint - pid->actual;
 	pid->prop_out = pid->kp * (pid->errors[0] - pid->errors[1]);
 	pid->int_out = pid->ki * pid->errors[0];

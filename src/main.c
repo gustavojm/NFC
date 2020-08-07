@@ -1,14 +1,19 @@
+#include "stdint.h"
+#include "board.h"
+
 #include "stdio.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "pole.h"
 #include "lift.h"
+#include "comm.h"
 
 int main(void)
 {
 
 	pole_init();
 	lift_init();
+	comm_init();
 
 	/* Start the scheduler itself. */
 	vTaskStartScheduler();

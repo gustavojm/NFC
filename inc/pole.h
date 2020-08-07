@@ -15,6 +15,9 @@
 extern "C" {
 #endif
 
+#define LEFT	0
+#define RIGHT	1
+
 struct pole_msg {
 	uint32_t setpoint;
 	bool stall_detection;
