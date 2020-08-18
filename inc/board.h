@@ -87,13 +87,18 @@ extern "C" {
     #define BOARD_ADC_RESOLUTION    ADC_10BITS
 #endif
 
-
 /**
  * @brief	Returns the MAC address assigned to this board
  * @param	mcaddr : Pointer to 6-byte character array to populate with MAC address
  * @return	Nothing
  */
 void Board_ENET_GetMacADDR(uint8_t *mcaddr);
+
+void Board_SSP_Init(LPC_SSP_T *pSSP);
+
+void Board_UART_Init(LPC_USART_T *pUART);
+
+static void Board_I2C_Init();
 
 
 #ifdef __cplusplus

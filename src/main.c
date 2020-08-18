@@ -1,6 +1,5 @@
-#include "stdint.h"
 #include "board.h"
-
+#include "stdint.h"
 #include "stdio.h"
 #include "FreeRTOS.h"
 #include "task.h"

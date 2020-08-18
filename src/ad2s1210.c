@@ -26,16 +26,6 @@ int32_t spi_write(uint8_t *data, __attribute__((unused))    int32_t byte_count);
 int32_t spi_sync_transfer(struct spi_transfer *xfer,
 		__attribute__((unused))    int32_t byte_count);
 
-int32_t spi_write(uint8_t *data, __attribute__((unused))    int32_t byte_count) {
-	printf("0x%x \n", (uint8_t) *data);
-	return 1;
-}
-
-int32_t spi_sync_transfer(struct spi_transfer *xfer,
-		__attribute__((unused))    int32_t byte_count) {
-	printf("0x%s \n", (char*) xfer);
-	return 1;
-}
 
 /* write 1 bytes (address or data) to the chip */
 int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data) {

@@ -14,7 +14,7 @@ void TIMER0_IRQHandler(void)
 	if (Chip_TIMER_MatchPending(LPC_TIMER0, 1)) {
 		Chip_TIMER_ClearMatch(LPC_TIMER0, 1);
 		On = (bool) !On;
-		Board_LED_Set(0, On);
+		//Board_LED_Set(0, On);
 	}
 }
 
@@ -32,7 +32,7 @@ int pole_tmr_init(void)
 	while (Chip_RGU_InReset(RGU_TIMER0_RST)) {}
 
 	/* Get timer 0 peripheral clock rate */
-	timerFreq = Chip_Clock_GetRate(Chip_TIMER_GetClockIndex(LPC_TIMER0));
+	timerFreq = Chip_Clock_GetRate(CLK_MX_TIMER0);
 
 	/* Timer setup for match and interrupt at TICKRATE_HZ */
 	Chip_TIMER_Reset(LPC_TIMER0);

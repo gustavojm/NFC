@@ -30,6 +30,16 @@ static volatile uint8_t  isXferCompleted = 0;
 //
 //xf_setup.rx_cnt = xf_setup.tx_cnt = 0;
 
+int32_t spi_write(uint8_t *data, __attribute__((unused))    int32_t byte_count) {
+	printf("0x%x \n", (uint8_t) *data);
+	return 1;
+}
+//
+//int32_t spi_sync_transfer(struct spi_transfer *xfer,
+//		__attribute__((unused))    int32_t byte_count) {
+//	printf("0x%s \n", (char*) xfer);
+//	return 1;
+//}
 
 
 spi_sync_transfer(struct spi_transfer *xfers, uint32_t num_xfers)
@@ -39,7 +49,7 @@ spi_sync_transfer(struct spi_transfer *xfers, uint32_t num_xfers)
 	for (i = 0; i < num_xfers; ++i) {
 		Chip_SSP_RWFrames_Blocking(LPC_SSP, &(xfers[i].xf_setup));
 
-		if (xfers[i]->cs_change) {
+		if (xfers[i].cs_change) {
 			if (i != num_xfers) {
 //				spi_set_cs(false);
 //				//algo de delay aqui?;
@@ -52,7 +62,7 @@ spi_sync_transfer(struct spi_transfer *xfers, uint32_t num_xfers)
 
 
 
-int main(void)
+int spi_init(void)
 {
 	/* SSP initialization */
 	Board_SSP_Init(LPC_SSP);

@@ -146,7 +146,7 @@ void pole_init()
 {
 	pole_queue = xQueueCreate(5, sizeof(struct pole_msg *));
 
-	pid_controller_init(&pole_pid, 1, 200, 1, 1, 100, );
+	pid_controller_init(&pole_pid, 1, 200, 1, 1, 100, 5);
 
 	//Configurar GPIO0,1,3 como salidas digitales;
 
