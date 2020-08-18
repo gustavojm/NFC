@@ -1,6 +1,7 @@
 #include "board.h"
 #include "stdint.h"
-#include "stdio.h"
+#include "stdbool.h"
+#include "stdint.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "pole.h"
@@ -9,7 +10,6 @@
 
 int main(void)
 {
-
 	pole_init();
 	lift_init();
 	comm_init();

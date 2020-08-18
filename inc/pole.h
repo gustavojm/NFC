@@ -18,9 +18,17 @@ extern "C" {
 #define LEFT	0
 #define RIGHT	1
 
+enum msg_types {
+	FREE_RUNNING,
+	CLOSED_LOOP,
+	STOP
+};
+
 struct pole_msg {
+	enum  msg_types type;
 	uint32_t setpoint;
-	bool stall_detection;
+	bool free_run_direction;
+	uint32_t free_run_speed;
 };
 
 struct pole_tmr_id {

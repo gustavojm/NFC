@@ -1,11 +1,5 @@
-/*
- * pole.c
- *
- *  Created on: 1 jul. 2020
- *      Author: gustavo
- */
-
 #include "pole.h"
+#include "tmr_pole.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -14,7 +8,6 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-#include "timers.h"
 #include "stdint.h"
 #include "ad2s1210.h"
 #include "pid.h"
@@ -24,127 +17,92 @@
 
 QueueHandle_t pole_queue = NULL;
 SemaphoreHandle_t pole_lock;
-TimerHandle_t pole_tmr = NULL;
+
+extern bool stall_detection;
 
 struct ad2s1210_state pole_rdc;
 struct pid pole_pid;
-static struct pole_tmr_id pole_tmr_id;
 
-static bool direction_calculate(int32_t error)
-{
+static bool direction_calculate(int32_t error) {
 	return error < 0 ? RIGHT : LEFT;
 }
 
-static float period_calculate(int32_t setpoint, int32_t pos)
-{
-	float cout, period;
+static float freq_calculate(int32_t setpoint, int32_t pos) {
+	float cout, freq;
 	cout = pid_controller_calculate(&pole_pid, setpoint, pos);
-	printf ("----COUT---- %f \n", cout);
-	period = (1.0f / cout) * FREQ_MULTIPLIER;
-	printf ("----PERIOD---- %f \n", period);
-	return period;
+	printf("----COUT---- %f \n", cout);
+	freq = (1.0f / cout) * FREQ_MULTIPLIER;
+	printf("----FREQ---- %f \n", freq);
+	return freq;
 }
 
-static void pole_tmr_callback(TimerHandle_t tmr_handle)
-{
-	int32_t pos;
-	static int32_t last_pos = 0;
-	int32_t stall_threshold = 10;
+static void pole_task(void *par) {
 
-	/* Optionally do something if the pxTimer parameter is NULL. */
-	configASSERT(tmr_handle);
-
-	struct pole_tmr_id *tmr_id_pole = (struct pole_tmr_id*) pvTimerGetTimerID(
-			tmr_handle);
-
-	// Toggle GPIO to generate waveform
-	// GPIO_toggle(GPIO_PULSE_POLE);
-
-	if (tmr_id_pole->stall_detection) {
-		pos = ad2s1210_read_position(&pole_rdc);
-		if (abs((abs(pos) - abs(last_pos))) < stall_threshold) {
-			//Pole stalled
-			xTimerStop(pole_tmr, 0);
-			xTimerDelete(pole_tmr, 0);
-			pole_tmr = NULL;
-
-			// GPIO(GPIO_MAIN_RELE, OFF);
-		}
-		last_pos = pos;
-	}
-}
-
-static void pole_task(void *par)
-{
-
-	struct pole_msg *msg_rcv;
+	struct pole_msg *msg_rcv, *cmd_ptr = NULL;
+	struct pole_msg cmd;
 	int32_t error, pos, threshold, setpoint = INT32_MAX;
 	bool llegamos, direction;
 
-	threshold = 5;
-
 	while (1) {
 
-		if (pole_tmr == NULL) {		// Si no hay un timer moviendo el motor
-			if (xQueueReceive(pole_queue, &msg_rcv,
-					(TickType_t) 10) == pdPASS) {
-				printf("pole: command received \n");
+		if (xQueueReceive(pole_queue, &msg_rcv, (TickType_t) 10) == pdPASS) {
+			printf("pole: command received \n");
 
-				setpoint = msg_rcv->setpoint;
+			cmd_ptr = &cmd;
+			*cmd_ptr = *msg_rcv;	//Create local copy of msg_rcv
+			free(msg_rcv);
 
-				pole_tmr_id.stall_detection = msg_rcv->stall_detection;
-
-				pole_tmr = xTimerCreate("TimerPole", pdMS_TO_TICKS(1), pdTRUE,
-						(void*) &pole_tmr_id, pole_tmr_callback);
-				free(msg_rcv);
-
-			} else {
-				printf("pole: no command received \n");
-			}
+		} else {
+			printf("pole: no command received \n");
 		}
 
-		if (setpoint != INT32_MAX) {
-			//obtener posición del RDC,
-			pos = ad2s1210_read_position(&pole_rdc);
+		if (cmd_ptr != NULL) {
+			switch (cmd_ptr->type) {
+				case FREE_RUNNING:
+					// GPIO(GPIO_DIR_POLE, cmd_ptr->free_run_direction);
+					pole_tmr_set_freq(cmd_ptr->free_run_speed * FREQ_MULTIPLIER);
+					pole_tmr_start();
 
-			//calcular error de posición
-			error = setpoint - pos;
-			llegamos = (abs(error) < threshold);
+					break;
 
-			if (pole_tmr != NULL) {
-				if (llegamos) {
-					xTimerStop(pole_tmr, 0);
-					xTimerDelete(pole_tmr, 0);
-					pole_tmr = NULL;
-					setpoint = INT32_MAX;
-				} else {
-					direction = direction_calculate(error);
-					// Set the GPIO to indicate direction of movement
-					// GPIO(GPIO_DIR_POLE, direction);
-					//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
+				case CLOSED_LOOP:	//PID
+					//obtener posición del RDC,
+					pos = ad2s1210_read_position(&pole_rdc);
 
-					vTimerSetTimerID(pole_tmr, (void*) &pole_tmr_id);
+					//calcular error de posición
+					error = cmd_ptr->setpoint - pos;
+					llegamos = (abs(error) < threshold);
 
-					printf("AAAATICKSAAA %i \n", pdMS_TO_TICKS(period_calculate(setpoint, pos)));
-					printf("configTICK_RATE_HZ %i" ,configTICK_RATE_HZ);
-					xTimerChangePeriod(pole_tmr,
-							pdMS_TO_TICKS(period_calculate(setpoint, pos)), 0);
+					if (llegamos) {
+						pole_tmr_stop();
+						cmd_ptr = NULL;
+					} else {
+						direction = direction_calculate(error);
+						// Set the GPIO to indicate direction of movement
+						// GPIO(GPIO_DIR_POLE, direction);
+						//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
 
-					if (xTimerIsTimerActive(pole_tmr) == pdFALSE) {
-						if ( xTimerStart( pole_tmr, 0 ) != pdPASS) {
-							printf("pole: unable to start timer \n");
+						pole_tmr_set_freq(freq_calculate(setpoint, pos));
+
+						if (!pole_tmr_started()) {
+							pole_tmr_start();
 						}
 					}
-				}
+					break;
+
+				default:			//STOP
+					pole_tmr_stop();
+					cmd_ptr = NULL;
+					break;
 			}
 		}
+
 		vTaskDelay(pdMS_TO_TICKS(200));
 	}
 }
 
-void pole_init()
-{
-	pole_queue = xQueueCreate(5, sizeof(struct pole_msg *));
+void pole_init() {
+	pole_queue = xQueueCreate(5, sizeof(struct pole_msg*));
 
 	pid_controller_init(&pole_pid, 1, 200, 1, 1, 100, 5);
 

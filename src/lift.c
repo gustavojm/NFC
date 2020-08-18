@@ -16,7 +16,6 @@
 #include "semphr.h"
 #include "task.h"
 #include "stdbool.h"
-#include "pid.h"
 
 #define LIFT_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
