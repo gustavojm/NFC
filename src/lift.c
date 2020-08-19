@@ -6,7 +6,6 @@
  */
 
 #include "lift.h"
-
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -16,6 +15,7 @@
 #include "semphr.h"
 #include "task.h"
 #include "stdbool.h"
+#include "relay.h"
 
 #define LIFT_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
@@ -28,9 +28,24 @@ static void lift_task(void *par)
 
 	while (1) {
 
-		if (xQueueReceive(lift_queue, &msg_rcv,
-				(TickType_t) 10) == pdPASS) {
-			printf("lift: command received %s \n ", (msg_rcv->direction) ? "DOWN" : "UP");
+		if (xQueueReceive(lift_queue, &msg_rcv, (TickType_t) 10) == pdPASS) {
+			printf("lift: command received ", (msg_rcv->type) ? "DOWN" : "UP");
+
+			switch (msg_rcv->type) {
+			case LIFT_MSG_TYPE_UP:
+				printf("UP \n");
+				lift_up();
+				break;
+			case LIFT_MSG_TYPE_DOWN:
+				printf("DOWN \n");
+				lift_down();
+				break;
+			default:
+				printf("STOP \n");
+				lift_stop();
+				break;
+			}
+
 			free(msg_rcv);
 
 		} else {
@@ -69,7 +84,7 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 
 void lift_init()
 {
-	lift_queue = xQueueCreate(5, sizeof(struct lift_msg *));
+	lift_queue = xQueueCreate(5, sizeof(struct lift_msg*));
 
 	//Configurar GPIO RELES DE LIFT como salidas digitales;
 	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales;
@@ -79,7 +94,7 @@ void lift_init()
 	if (lift_interrupt_counting_semaphore != NULL) {
 		// Create the 'handler' task, which is the task to which interrupt processing is deferred
 		xTaskCreate(lift_limit_switches_handler_task, "LSHandler",
-				configMINIMAL_STACK_SIZE, NULL, 3, NULL);
+		configMINIMAL_STACK_SIZE, NULL, 3, NULL);
 
 		/* Install the handler for the software interrupt.  The syntax necessary
 		 to do this is dependent on the FreeRTOS port being used.  The syntax
@@ -89,7 +104,27 @@ void lift_init()
 	}
 
 	xTaskCreate(lift_task, "Lift", configMINIMAL_STACK_SIZE, NULL,
-			LIFT_TASK_PRIORITY, NULL);
+	LIFT_TASK_PRIORITY, NULL);
 }
 /*-----------------------------------------------------------*/
 
+void lift_up()
+{
+//	if (!hw_limit_up()) {
+	relay_lift_dir(1);
+	relay_lift_pwr(1);
+//	}
+}
+
+void lift_down()
+{
+//	if (!hw_limit_down()) {
+	relay_lift_dir(0);
+	relay_lift_pwr(1);
+//	}
+}
+
+void lift_stop()
+{
+	relay_lift_pwr(0);
+}

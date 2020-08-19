@@ -1,5 +1,9 @@
-#ifndef INC_TMR_POLE_H_
-#define INC_TMR_POLE_H_
+#ifndef TMR_POLE_H_
+#define TMR_POLE_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void pole_tmr_init(void);
 
@@ -11,4 +15,8 @@ void pole_tmr_stop(void);
 
 uint32_t pole_tmr_started(void);
 
-#endif /* INC_TMR_POLE_H_ */
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* TMR_POLE_H_ */

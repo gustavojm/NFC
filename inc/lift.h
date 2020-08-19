@@ -1,10 +1,3 @@
-/*
- * lift.h
- *
- *  Created on: 13 jul. 2020
- *      Author: gustavo
- */
-
 #ifndef LIFT_H_
 #define LIFT_H_
 
@@ -14,14 +7,19 @@
 extern "C" {
 #endif
 
-#define UP		0
-#define DOWN	1
-
 struct lift_msg {
-	uint32_t direction;
+	enum {
+		LIFT_MSG_TYPE_UP, LIFT_MSG_TYPE_DOWN, LIFT_MSG_TYPE_STOP
+	} type;
 };
 
 void lift_init();
+
+void lift_up();
+
+void lift_down();
+
+void lift_stop();
 
 #ifdef __cplusplus
 }

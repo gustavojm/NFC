@@ -22,13 +22,13 @@
 
 const uint32_t ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
 
-int32_t spi_write(uint8_t *data, __attribute__((unused))    int32_t byte_count);
+int32_t spi_write(uint8_t *data, __attribute__((unused))     int32_t byte_count);
 int32_t spi_sync_transfer(struct spi_transfer *xfer,
-		__attribute__((unused))    int32_t byte_count);
-
+		__attribute__((unused))     int32_t byte_count);
 
 /* write 1 bytes (address or data) to the chip */
-int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data) {
+int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
+{
 	int32_t ret = 0;
 
 	st->tx[0] = data;
@@ -38,11 +38,12 @@ int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data) {
 }
 
 /* read value from one of the registers */
-int32_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address) {
+int32_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address)
+{
 	struct spi_transfer xfers[] = { { .xf_setup = { .length = 1, .rx_data =
 			&st->rx[0], .tx_data = &st->tx[0], .rx_cnt = 0, .tx_cnt = 0 },
-			.cs_change = 1, }, { .xf_setup = { .length = 1, .rx_data = &st->rx[1],
-			.tx_data = &st->tx[1], .rx_cnt = 0, .tx_cnt = 0 }, }, };
+			.cs_change = 1, }, { .xf_setup = { .length = 1, .rx_data =
+			&st->rx[1], .tx_data = &st->tx[1], .rx_cnt = 0, .tx_cnt = 0 }, }, };
 
 	int32_t ret = 0;
 
@@ -55,7 +56,8 @@ int32_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address) {
 	return st->rx[1];
 }
 
-int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st) {
+int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
+{
 	int32_t ret = 0;
 	uint8_t fcw;
 
@@ -72,7 +74,8 @@ int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st) {
 	return ad2s1210_config_write(st, fcw);
 }
 
-int32_t ad2s1210_soft_reset(struct ad2s1210_state *st) {
+int32_t ad2s1210_soft_reset(struct ad2s1210_state *st)
+{
 	int32_t ret;
 
 	ret = ad2s1210_config_write(st, AD2S1210_REG_SOFT_RESET);
@@ -82,18 +85,21 @@ int32_t ad2s1210_soft_reset(struct ad2s1210_state *st) {
 	return ad2s1210_config_write(st, 0x0);
 }
 
-void ad2s1210_hard_reset(struct ad2s1210_state *st) {
+void ad2s1210_hard_reset(struct ad2s1210_state *st)
+{
 	st->gpios.reset(0);
 	vTaskDelay(pdMS_TO_TICKS(0.02));
 	st->gpios.reset(1);
 }
 
-uint32_t ad2s1210_get_fclkin(struct ad2s1210_state *st) {
+uint32_t ad2s1210_get_fclkin(struct ad2s1210_state *st)
+{
 
 	return st->fclkin;
 }
 
-int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin) {
+int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
+{
 
 	int32_t ret = 0;
 
@@ -111,7 +117,7 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin) {
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_soft_reset(st);
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		} else {
 			printf("unable to take mutex\n");
@@ -121,12 +127,14 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin) {
 	return ret;
 }
 
-uint32_t ad2s1210_get_fexcit(struct ad2s1210_state *st) {
+uint32_t ad2s1210_get_fexcit(struct ad2s1210_state *st)
+{
 
 	return st->fexcit;
 }
 
-int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit) {
+int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
+{
 	int32_t ret = 0;
 
 	if (fexcit < AD2S1210_MIN_EXCIT || fexcit > AD2S1210_MAX_EXCIT) {
@@ -140,7 +148,7 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit) {
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_soft_reset(st);
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		} else {
 			printf("unable to take mutex\n");
@@ -150,7 +158,8 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit) {
 	return ret;
 }
 
-int32_t ad2s1210_get_control(struct ad2s1210_state *st) {
+int32_t ad2s1210_get_control(struct ad2s1210_state *st)
+{
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
@@ -165,7 +174,8 @@ int32_t ad2s1210_get_control(struct ad2s1210_state *st) {
 	return ret;
 }
 
-int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata) {
+int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
+{
 
 	uint8_t data;
 	int32_t ret = 0;
@@ -193,7 +203,7 @@ int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata) {
 					& AD2S1210_SET_RESOLUTION];
 			st->hysteresis = !!(data & AD2S1210_ENABLE_HYSTERESIS);
 
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		} else {
 			printf("unable to take mutex\n");
@@ -203,12 +213,14 @@ int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata) {
 	return ret;
 }
 
-uint8_t ad2s1210_get_resolution(struct ad2s1210_state *st) {
+uint8_t ad2s1210_get_resolution(struct ad2s1210_state *st)
+{
 
 	return st->resolution;
 }
 
-int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata) {
+int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata)
+{
 	uint8_t data;
 	int32_t ret = 0;
 
@@ -242,7 +254,7 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata) {
 			}
 			st->resolution = ad2s1210_resolution_value[data
 					& AD2S1210_SET_RESOLUTION];
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		} else {
 			printf("unable to take mutex\n");
@@ -253,7 +265,8 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata) {
 }
 
 /* read the fault register since last sample */
-int32_t ad2s1210_get_fault(struct ad2s1210_state *st) {
+int32_t ad2s1210_get_fault(struct ad2s1210_state *st)
+{
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
@@ -269,7 +282,8 @@ int32_t ad2s1210_get_fault(struct ad2s1210_state *st) {
 	return ret;
 }
 
-int32_t ad2s1210_clear_fault(struct ad2s1210_state *st) {
+int32_t ad2s1210_clear_fault(struct ad2s1210_state *st)
+{
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
@@ -285,7 +299,7 @@ int32_t ad2s1210_clear_fault(struct ad2s1210_state *st) {
 			st->gpios.sample(0);
 			st->gpios.sample(1);
 
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		} else {
 			printf("unable to take mutex\n");
@@ -295,7 +309,8 @@ int32_t ad2s1210_clear_fault(struct ad2s1210_state *st) {
 	return ret;
 }
 
-int32_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address) {
+int32_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address)
+{
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
@@ -311,7 +326,8 @@ int32_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address) {
 }
 
 int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
-		uint8_t data) {
+		uint8_t data)
+{
 
 	int32_t ret = 0;
 
@@ -321,7 +337,7 @@ int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_config_write(st, data & AD2S1210_MSB_IS_LOW);
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		} else {
 			printf("unable to take mutex\n");
@@ -331,7 +347,8 @@ int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 	return ret;
 }
 
-int32_t ad2s1210_init(struct ad2s1210_state *st) {
+int32_t ad2s1210_init(struct ad2s1210_state *st)
+{
 	uint8_t data;
 	int32_t ret = 0;
 
@@ -359,7 +376,7 @@ int32_t ad2s1210_init(struct ad2s1210_state *st) {
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_soft_reset(st);
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		} else {
 			printf("unable to take mutex\n");
@@ -369,7 +386,8 @@ int32_t ad2s1210_init(struct ad2s1210_state *st) {
 	return ret;
 }
 
-int32_t ad2s1210_read_position(struct ad2s1210_state *st) {
+int32_t ad2s1210_read_position(struct ad2s1210_state *st)
+{
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {

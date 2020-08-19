@@ -1,10 +1,3 @@
-/*
- * pid.h
- *
- *  Created on: 13 jul. 2020
- *      Author: gustavo
- */
-
 #ifndef PID_H_
 #define PID_H_
 
@@ -13,7 +6,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 struct pid {
 	float kp, ki, kd;

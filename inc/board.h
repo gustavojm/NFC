@@ -1,5 +1,5 @@
-#ifndef __BOARD_H__
-#define __BOARD_H__
+#ifndef BOARD_H_
+#define BOARD_H_
 
 #include <chip.h>
 
@@ -105,4 +105,4 @@ static void Board_I2C_Init();
 }
 #endif
 
-#endif /* __BOARD_H_ */
+#endif /* BOARD_H_ */

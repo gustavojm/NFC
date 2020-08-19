@@ -1,14 +1,11 @@
-/*
- * core_cm4_v5.h
- *
- *  Created on: 18 ago. 2020
- *      Author: gustavo
- */
-
-#ifndef INC_CORE_CM4_V5_H_
-#define INC_CORE_CM4_V5_H_
+#ifndef CORE_CM4_V5_H_
+#define CORE_CM4_V5_H_
 
 #include "core_cm4.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
   \brief   Get Interrupt Enable status
@@ -30,4 +27,8 @@ __STATIC_INLINE uint32_t NVIC_GetEnableIRQ(IRQn_Type IRQn)
   }
 }
 
-#endif /* INC_CORE_CM4_V5_H_ */
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* CORE_CM4_V5_H_ */

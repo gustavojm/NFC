@@ -23,11 +23,13 @@ extern bool stall_detection;
 struct ad2s1210_state pole_rdc;
 struct pid pole_pid;
 
-static bool direction_calculate(int32_t error) {
+static bool direction_calculate(int32_t error)
+{
 	return error < 0 ? RIGHT : LEFT;
 }
 
-static float freq_calculate(int32_t setpoint, int32_t pos) {
+static float freq_calculate(int32_t setpoint, int32_t pos)
+{
 	float cout, freq;
 	cout = pid_controller_calculate(&pole_pid, setpoint, pos);
 	printf("----COUT---- %f \n", cout);
@@ -36,11 +38,12 @@ static float freq_calculate(int32_t setpoint, int32_t pos) {
 	return freq;
 }
 
-static void pole_task(void *par) {
+static void pole_task(void *par)
+{
 
 	struct pole_msg *msg_rcv, *cmd_ptr = NULL;
 	struct pole_msg cmd;
-	int32_t error, pos, threshold, setpoint = INT32_MAX;
+	int32_t error, pos, threshold = 10;
 	bool llegamos, direction;
 
 	while (1) {
@@ -58,42 +61,42 @@ static void pole_task(void *par) {
 
 		if (cmd_ptr != NULL) {
 			switch (cmd_ptr->type) {
-				case FREE_RUNNING:
-					// GPIO(GPIO_DIR_POLE, cmd_ptr->free_run_direction);
-					pole_tmr_set_freq(cmd_ptr->free_run_speed * FREQ_MULTIPLIER);
-					pole_tmr_start();
+			case POLE_MSG_TYPE_FREE_RUNNING:
+				// GPIO(GPIO_DIR_POLE, cmd_ptr->free_run_direction);
+				pole_tmr_set_freq(cmd_ptr->free_run_speed * FREQ_MULTIPLIER);
+				pole_tmr_start();
+				break;
 
-					break;
+			case POLE_MSG_TYPE_CLOSED_LOOP:	//PID
+				//obtener posición del RDC,
+				pos = ad2s1210_read_position(&pole_rdc);
 
-				case CLOSED_LOOP:	//PID
-					//obtener posición del RDC,
-					pos = ad2s1210_read_position(&pole_rdc);
+				//calcular error de posición
+				error = cmd_ptr->closed_loop_setpoint - pos;
+				llegamos = (abs(error) < threshold);
 
-					//calcular error de posición
-					error = cmd_ptr->setpoint - pos;
-					llegamos = (abs(error) < threshold);
-
-					if (llegamos) {
-						pole_tmr_stop();
-						cmd_ptr = NULL;
-					} else {
-						direction = direction_calculate(error);
-						// Set the GPIO to indicate direction of movement
-						// GPIO(GPIO_DIR_POLE, direction);
-						//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
-
-						pole_tmr_set_freq(freq_calculate(setpoint, pos));
-
-						if (!pole_tmr_started()) {
-							pole_tmr_start();
-						}
-					}
-					break;
-
-				default:			//STOP
+				if (llegamos) {
 					pole_tmr_stop();
 					cmd_ptr = NULL;
-					break;
+				} else {
+					direction = direction_calculate(error);
+					// Set the GPIO to indicate direction of movement
+					// GPIO(GPIO_DIR_POLE, direction);
+					//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
+
+					pole_tmr_set_freq(
+							freq_calculate(cmd_ptr->closed_loop_setpoint, pos));
+
+					if (!pole_tmr_started()) {
+						pole_tmr_start();
+					}
+				}
+				break;
+
+			default:			//STOP
+				pole_tmr_stop();
+				cmd_ptr = NULL;
+				break;
 			}
 		}
 
@@ -101,7 +104,8 @@ static void pole_task(void *par) {
 	}
 }
 
-void pole_init() {
+void pole_init()
+{
 	pole_queue = xQueueCreate(5, sizeof(struct pole_msg*));
 
 	pid_controller_init(&pole_pid, 1, 200, 1, 1, 100, 5);

@@ -1,10 +1,3 @@
-/*
- * pole.h
- *
- *  Created on: 13 jul. 2020
- *      Author: gustavo
- */
-
 #ifndef POLE_H_
 #define POLE_H_
 
@@ -18,17 +11,15 @@ extern "C" {
 #define LEFT	0
 #define RIGHT	1
 
-enum msg_types {
-	FREE_RUNNING,
-	CLOSED_LOOP,
-	STOP
-};
-
 struct pole_msg {
-	enum  msg_types type;
-	uint32_t setpoint;
+	enum {
+		POLE_MSG_TYPE_FREE_RUNNING,
+		POLE_MSG_TYPE_CLOSED_LOOP,
+		POLE_MSG_TYPE_STOP
+	} type;
 	bool free_run_direction;
 	uint32_t free_run_speed;
+	uint32_t closed_loop_setpoint;
 };
 
 struct pole_tmr_id {

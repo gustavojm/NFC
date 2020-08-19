@@ -1,10 +1,3 @@
-/*
- * ad2s1210.h
- *
- *  Created on: 1 jul. 2020
- *      Author: gustavo
- */
-
 #ifndef AD2S1210_H_
 #define AD2S1210_H_
 

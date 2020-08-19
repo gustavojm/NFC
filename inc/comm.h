@@ -1,10 +1,3 @@
-/*
- * comm.h
- *
- *  Created on: 13 jul. 2020
- *      Author: gustavo
- */
-
 #ifndef COMM_H_
 #define COMM_H_
 

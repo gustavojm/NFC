@@ -34,8 +34,8 @@ static void comm_task(void *par)
 
 	while (1) {
 		dir = !dir;
-		lift_msg_snd = (struct lift_msg *) malloc(sizeof(struct lift_msg));
-		lift_msg_snd->direction = dir;
+		lift_msg_snd = (struct lift_msg*) malloc(sizeof(struct lift_msg));
+		lift_msg_snd->type = dir;
 		if (xQueueSend(lift_queue, &lift_msg_snd,
 				(TickType_t) 10) == pdPASS) {
 			printf("comm: lift command sent \n");
@@ -46,8 +46,8 @@ static void comm_task(void *par)
 		struct tms time;
 		srandom(times(&time));
 
-		pole_msg_snd = (struct pole_msg *) malloc(sizeof(struct pole_msg *));
-		pole_msg_snd->setpoint = random() % ((2^16)-1);
+		pole_msg_snd = (struct pole_msg*) malloc(sizeof(struct pole_msg*));
+		pole_msg_snd->closed_loop_setpoint = random() % ((2 ^ 16) - 1);
 		if (xQueueSend(pole_queue, &pole_msg_snd,
 				(TickType_t) 10) == pdPASS) {
 			printf("comm: pole command sent \n");
@@ -55,17 +55,14 @@ static void comm_task(void *par)
 			printf("comm: unable to send pole command \n");
 		}
 
-
-
 		vTaskDelay(pdMS_TO_TICKS(2000));
 	}
 }
 
 void comm_init()
 {
-
 	xTaskCreate(comm_task, "Comm", configMINIMAL_STACK_SIZE, NULL,
-			COMM_TASK_PRIORITY, NULL);
+	COMM_TASK_PRIORITY, NULL);
 }
 /*-----------------------------------------------------------*/
 
