@@ -1,9 +1,10 @@
 #ifndef AD2S1210_H_
 #define AD2S1210_H_
 
-#include <stdint.h>
-#include <FreeRTOS.h>
-#include <semphr.h>
+#include "stdint.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "poncho_rdc.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,9 +47,9 @@ extern "C" {
 #define AD2S1210_DEF_EXCIT	10000
 
 struct ad2s1210_gpios {
-	void (*sample)(int);	//Pointer to functions to handle GPIO lines
-	void (*wr_fsync)(int);
-	void (*reset)(int);
+	void (*sample)(bool);	//Pointer to functions to handle GPIO lines
+	void (*wr_fsync)(bool);
+	void (*reset)(bool);
 };
 
 struct ad2s1210_state {

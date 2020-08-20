@@ -1,10 +1,3 @@
-/*
- * lift.c
- *
- *  Created on: 1 jul. 2020
- *      Author: gustavo
- */
-
 #include "lift.h"
 #include "stdio.h"
 #include "stdlib.h"

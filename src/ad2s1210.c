@@ -1,10 +1,3 @@
-/*
- * ad2s1210.c
- *
- *  Created on: 1 jul. 2020
- *      Author: gustavo
- */
-
 #include "ad2s1210.h"
 #include <stdio.h>
 #include <stdint.h>

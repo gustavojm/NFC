@@ -1,10 +1,3 @@
-/*
- * pid.c
- *
- *  Created on: 13 jul. 2020
- *      Author: gustavo
- */
-
 #include "pid.h"
 #include <stddef.h>
 
@@ -36,14 +29,15 @@ void pid_controller_init(struct pid *pid, float kp, float sample_time, float ti,
 	pid->out = 0.0f;
 }
 
-static float rate_limit(struct pid *pid, float setpoint) {
+static float rate_limit(struct pid *pid, float setpoint)
+{
 	// Implementar rate limiter;
 	return setpoint;
 }
 
 float pid_controller_calculate(struct pid *pid, float setpoint, float actual)
 {
-	if (pid->setpoint != setpoint){
+	if (pid->setpoint != setpoint) {
 		pid->setpoint = rate_limit(pid, setpoint);
 	}
 

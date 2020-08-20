@@ -1,10 +1,3 @@
-/*
- * comm.c
- *
- *  Created on: 1 jul. 2020
- *      Author: gustavo
- */
-
 #include <sys/times.h>
 #include "lift.h"
 #include "stdio.h"

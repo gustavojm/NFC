@@ -3,6 +3,7 @@
 #include "semphr.h"
 #include <stdio.h>
 #include "core_cm4_v5.h"
+#include "dout.h"
 
 extern bool stall_detection;
 extern SemaphoreHandle_t pole_stalled_semaphore;
@@ -20,8 +21,8 @@ void TIMER0_IRQHandler(void)
 	if (Chip_TIMER_MatchPending(LPC_TIMER0, 1)) {
 		Chip_TIMER_ClearMatch(LPC_TIMER0, 1);
 		On = (bool) !On;
-		// Toggle GPIO to generate waveform
-		// GPIO_toggle(GPIO_PULSE_POLE);
+		// Generate waveform
+		dout_pole_pulse(On);
 
 		if (stall_detection) {
 			xHigherPriorityTaskWoken = pdFALSE;

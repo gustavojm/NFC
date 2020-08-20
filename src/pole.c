@@ -11,6 +11,7 @@
 #include "stdint.h"
 #include "ad2s1210.h"
 #include "pid.h"
+#include "dout.h"
 
 #define POLE_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 #define FREQ_MULTIPLIER  400
@@ -44,7 +45,7 @@ static void pole_task(void *par)
 	struct pole_msg *msg_rcv, *cmd_ptr = NULL;
 	struct pole_msg cmd;
 	int32_t error, pos, threshold = 10;
-	bool llegamos, direction;
+	bool llegamos;
 
 	while (1) {
 
@@ -62,7 +63,7 @@ static void pole_task(void *par)
 		if (cmd_ptr != NULL) {
 			switch (cmd_ptr->type) {
 			case POLE_MSG_TYPE_FREE_RUNNING:
-				// GPIO(GPIO_DIR_POLE, cmd_ptr->free_run_direction);
+				dout_pole_dir(cmd_ptr->free_run_direction);
 				pole_tmr_set_freq(cmd_ptr->free_run_speed * FREQ_MULTIPLIER);
 				pole_tmr_start();
 				break;
@@ -79,9 +80,7 @@ static void pole_task(void *par)
 					pole_tmr_stop();
 					cmd_ptr = NULL;
 				} else {
-					direction = direction_calculate(error);
-					// Set the GPIO to indicate direction of movement
-					// GPIO(GPIO_DIR_POLE, direction);
+					dout_pole_dir(direction_calculate(error));
 					//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
 
 					pole_tmr_set_freq(
@@ -110,11 +109,9 @@ void pole_init()
 
 	pid_controller_init(&pole_pid, 1, 200, 1, 1, 100, 5);
 
-	//Configurar GPIO0,1,3 como salidas digitales;
-
-	//rdc_pole.gpios.reset = GPIO0;
-	//rdc_pole.gpios.sample = GPIO1;
-	//rdc_pole.gpios.wr_fsync = GPIO3;
+	pole_rdc.gpios.reset = poncho_rdc_reset;
+	pole_rdc.gpios.sample = poncho_rdc_sample;
+	pole_rdc.gpios.wr_fsync = poncho_rdc_pole_wr_fsync;
 	pole_rdc.lock = pole_lock;
 	pole_rdc.resolution = 12;
 
