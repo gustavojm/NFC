@@ -1,22 +1,40 @@
-#ifndef TMR_POLE_H_
-#define TMR_POLE_H_
+#ifndef LIFT_H_
+#define LIFT_H_
+
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void pole_tmr_init(void);
+struct lift_msg {
+	bool ctrl_en;
+	enum {
+		LIFT_MSG_TYPE_UP, LIFT_MSG_TYPE_DOWN, LIFT_MSG_TYPE_STOP
+	} type;
+};
 
-void pole_tmr_set_freq(int32_t tick_rate_hz);
+struct lift_status {
+	enum {
+		LIFT_STATUS_UP, LIFT_STATUS_DOWN, LIFT_STATUS_STOP
+	} dir;
+	bool limitUp;
+	bool limitDown;
+};
 
-void pole_tmr_start(void);
 
-void pole_tmr_stop(void);
+void lift_init();
 
-uint32_t pole_tmr_started(void);
+static void lift_up();
+
+static void lift_down();
+
+void lift_stop();
+
+lift_status lift_status_get(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* TMR_POLE_H_ */
+#endif /* LIFT_H_ */

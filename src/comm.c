@@ -17,7 +17,7 @@
 #define COMM_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
 extern QueueHandle_t lift_queue;
-extern QueueHandle_t pole_queue;
+extern QueueHandle_t queue_pole;
 
 static void comm_task(void *par)
 {
@@ -41,7 +41,7 @@ static void comm_task(void *par)
 
 		pole_msg_snd = (struct pole_msg*) malloc(sizeof(struct pole_msg*));
 		pole_msg_snd->closed_loop_setpoint = random() % ((2 ^ 16) - 1);
-		if (xQueueSend(pole_queue, &pole_msg_snd,
+		if (xQueueSend(queue_pole, &pole_msg_snd,
 				(TickType_t) 10) == pdPASS) {
 			printf("comm: pole command sent \n");
 		} else {

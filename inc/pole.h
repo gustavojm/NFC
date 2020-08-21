@@ -12,6 +12,7 @@ extern "C" {
 #define RIGHT	1
 
 struct pole_msg {
+	bool ctrl_en;
 	enum {
 		POLE_MSG_TYPE_FREE_RUNNING,
 		POLE_MSG_TYPE_CLOSED_LOOP,
@@ -22,12 +23,21 @@ struct pole_msg {
 	uint32_t closed_loop_setpoint;
 };
 
-struct pole_tmr_id {
-	bool direction;
-	bool stall_detection;
+struct pole_status {
+	enum {
+		POLE_STATUS_UP, POLE_STATUS_DOWN, POLE_STATUS_STOP
+	} dir;
+	bool dirPole;
+	int32_t	posCmdPole;
+	int32_t posActPole;
+	uint32_t velPole;
+	bool cwLimitPole;
+	bool ccwLimitPole;
 };
 
 void pole_init();
+
+pole_status pole_status_get(void);
 
 #ifdef __cplusplus
 }

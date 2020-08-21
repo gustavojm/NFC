@@ -18,6 +18,9 @@
 
 QueueHandle_t pole_queue = NULL;
 SemaphoreHandle_t pole_lock;
+static volatile uint32_t last_pole_moved_tick;
+
+static struct pole_status pole_status;
 
 extern bool stall_detection;
 
@@ -31,10 +34,12 @@ static bool direction_calculate(int32_t error)
 
 static float freq_calculate(int32_t setpoint, int32_t pos)
 {
-	float cout, freq;
+	float cout;
+	float freq;
+
 	cout = pid_controller_calculate(&pole_pid, setpoint, pos);
 	printf("----COUT---- %f \n", cout);
-	freq = (1.0f / cout) * FREQ_MULTIPLIER;
+	freq = cout * FREQ_MULTIPLIER;
 	printf("----FREQ---- %f \n", freq);
 	return freq;
 }
@@ -48,7 +53,6 @@ static void pole_task(void *par)
 	bool llegamos;
 
 	while (1) {
-
 		if (xQueueReceive(pole_queue, &msg_rcv, (TickType_t) 10) == pdPASS) {
 			printf("pole: command received \n");
 
@@ -56,35 +60,41 @@ static void pole_task(void *par)
 			*cmd_ptr = *msg_rcv;	//Create local copy of msg_rcv
 			free(msg_rcv);
 
+			if (!cmd_ptr->ctr_en) {
+				printf("pole: no command received with control disabled\n");
+			}
 		} else {
 			printf("pole: no command received \n");
 		}
 
+		//obtener posición del RDC
+		status.posActPole = ad2s1210_read_position(&pole_rdc);
+
 		if (cmd_ptr != NULL) {
 			switch (cmd_ptr->type) {
 			case POLE_MSG_TYPE_FREE_RUNNING:
-				dout_pole_dir(cmd_ptr->free_run_direction);
-				pole_tmr_set_freq(cmd_ptr->free_run_speed * FREQ_MULTIPLIER);
+				pole_status.dirPole = cmd_ptr->free_run_direction;
+				dout_pole_dir(pole_status.dirPole);
+				pole_status.velPole = cmd_ptr->free_run_speed * FREQ_MULTIPLIER;
+				pole_tmr_set_freq(pole_status.velPole);
 				pole_tmr_start();
 				break;
 
 			case POLE_MSG_TYPE_CLOSED_LOOP:	//PID
-				//obtener posición del RDC,
-				pos = ad2s1210_read_position(&pole_rdc);
-
 				//calcular error de posición
-				error = cmd_ptr->closed_loop_setpoint - pos;
+				error = cmd_ptr->closed_loop_setpoint - pole_status.posActPole;
 				llegamos = (abs(error) < threshold);
 
 				if (llegamos) {
 					pole_tmr_stop();
 					cmd_ptr = NULL;
 				} else {
-					dout_pole_dir(direction_calculate(error));
+					pole_status.dirPole = direction_calculate(error);
+					dout_pole_dir(pole_status.dirPole);
 					//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
 
-					pole_tmr_set_freq(
-							freq_calculate(cmd_ptr->closed_loop_setpoint, pos));
+					pole_status.velPole = freq_calculate(cmd_ptr->closed_loop_setpoint, pole_status.posActPole);
+					pole_tmr_set_freq(pole_status.velPole);
 
 					if (!pole_tmr_started()) {
 						pole_tmr_start();
@@ -109,6 +119,14 @@ void pole_init()
 
 	pid_controller_init(&pole_pid, 1, 200, 1, 1, 100, 5);
 
+	pole_status.dirPole = POLE_STATUS_STOP;
+	pole_status.posCmdPole = 0;
+	pole_status.posActPole = 0;
+	pole_status.velPole = 0;
+	pole_status.cwLimitPole = 0;
+	pole_status.ccwLimitPole = 0;
+
+
 	pole_rdc.gpios.reset = poncho_rdc_reset;
 	pole_rdc.gpios.sample = poncho_rdc_sample;
 	pole_rdc.gpios.wr_fsync = poncho_rdc_pole_wr_fsync;
@@ -121,4 +139,9 @@ void pole_init()
 	POLE_TASK_PRIORITY, NULL);
 
 }
+
+pole_status pole_status_get(void) {
+	return pole_status;
+}
+
 

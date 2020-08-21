@@ -6,7 +6,7 @@
 #include "dout.h"
 
 extern bool stall_detection;
-extern SemaphoreHandle_t pole_stalled_semaphore;
+extern SemaphoreHandle_t pole_supervisor_semaphore;
 
 /**
  * @brief	Handle interrupt from 32-bit timer
@@ -26,7 +26,7 @@ void TIMER0_IRQHandler(void)
 
 		if (stall_detection) {
 			xHigherPriorityTaskWoken = pdFALSE;
-			xSemaphoreGiveFromISR(pole_stalled_semaphore,
+			xSemaphoreGiveFromISR(pole_supervisor_semaphore,
 					&xHigherPriorityTaskWoken);
 			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 		}

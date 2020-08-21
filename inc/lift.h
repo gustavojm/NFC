@@ -8,18 +8,29 @@ extern "C" {
 #endif
 
 struct lift_msg {
+	bool ctrl_en;
 	enum {
 		LIFT_MSG_TYPE_UP, LIFT_MSG_TYPE_DOWN, LIFT_MSG_TYPE_STOP
 	} type;
 };
 
+struct lift_status {
+	enum {
+		LIFT_STATUS_UP, LIFT_STATUS_DOWN, LIFT_STATUS_STOP
+	} dir;
+	bool limitUp;
+	bool limitDown;
+};
+
 void lift_init();
 
-void lift_up();
+static void lift_up();
 
-void lift_down();
+static void lift_down();
 
 void lift_stop();
+
+lift_status lift_status_get(void);
 
 #ifdef __cplusplus
 }
