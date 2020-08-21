@@ -17,6 +17,26 @@ SemaphoreHandle_t lift_interrupt_counting_semaphore;
 
 static struct lift_status lift_status;
 
+static void lift_up()
+{
+	if (!lift_status.limitUp) {
+		relay_lift_dir(1);
+		relay_lift_pwr(1);
+	} else {
+		printf("lift: limit switch reached, cannot go up \n");
+	}
+}
+
+static void lift_down()
+{
+	if (!lift_status.limitDown) {
+	relay_lift_dir(0);
+	relay_lift_pwr(1);
+	} else {
+		printf("lift: limit switch reached, cannot go down \n");
+	}
+}
+
 static void lift_task(void *par)
 {
 	struct lift_msg *msg_rcv;
@@ -26,7 +46,7 @@ static void lift_task(void *par)
 		if (xQueueReceive(lift_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
 			printf("lift: command received %s", (msg_rcv->type) ? "DOWN" : "UP");
 
-			if (msg_rcv->ctrl_en) {
+			if (msg_rcv->ctrlEn) {
 				switch (msg_rcv->type) {
 				case LIFT_MSG_TYPE_UP:
 					printf("UP \n");
@@ -73,8 +93,8 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 
 		//Determinar cual de los límites se accionó
 
-		//status.ls_up = 1;
-		//status.ls_down = 1;
+		//status.limitUp = 1;
+		//status.limitDown = 1;
 
 		/* To get here the event must have occurred.  Process the event (in this
 		 case just print out a message). */
@@ -118,31 +138,23 @@ void lift_init()
 	LIFT_TASK_PRIORITY, NULL);
 }
 
-lift_status lift_status_get(void) {
+struct lift_status lift_status_get(void) {
 	return lift_status;
 }
 
 /*-----------------------------------------------------------*/
 
-static void lift_up()
+
+void set_limit_up(bool state)
 {
-	if (!lift_status.ls_up) {
-		relay_lift_dir(1);
-		relay_lift_pwr(1);
-	} else {
-		printf("lift: limit switch reached, cannot go up \n");
-	}
+	lift_status.limitUp = state;
 }
 
-static void lift_down()
+void set_limit_down(bool state)
 {
-	if (!lift_status.ls_down) {
-	relay_lift_dir(0);
-	relay_lift_pwr(1);
-	} else {
-		printf("lift: limit switch reached, cannot go down \n");
-	}
+	lift_status.limitUp = state;
 }
+
 
 void lift_stop()
 {

@@ -1,5 +1,5 @@
+#include <pole_tmr.h>
 #include "pole.h"
-#include "tmr_pole.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -17,15 +17,14 @@
 #define FREQ_MULTIPLIER  400
 
 QueueHandle_t pole_queue = NULL;
-SemaphoreHandle_t pole_lock;
-static volatile uint32_t last_pole_moved_tick;
+SemaphoreHandle_t lock;
 
-static struct pole_status pole_status;
+static struct mot_pap_status status;
 
 extern bool stall_detection;
 
-struct ad2s1210_state pole_rdc;
-struct pid pole_pid;
+struct ad2s1210_state rdc;
+struct pid pid;
 
 static bool direction_calculate(int32_t error)
 {
@@ -37,7 +36,7 @@ static float freq_calculate(int32_t setpoint, int32_t pos)
 	float cout;
 	float freq;
 
-	cout = pid_controller_calculate(&pole_pid, setpoint, pos);
+	cout = pid_controller_calculate(&pid, setpoint, pos);
 	printf("----COUT---- %f \n", cout);
 	freq = cout * FREQ_MULTIPLIER;
 	printf("----FREQ---- %f \n", freq);
@@ -47,9 +46,9 @@ static float freq_calculate(int32_t setpoint, int32_t pos)
 static void pole_task(void *par)
 {
 
-	struct pole_msg *msg_rcv, *cmd_ptr = NULL;
-	struct pole_msg cmd;
-	int32_t error, pos, threshold = 10;
+	struct mot_pap_msg *msg_rcv, *cmd_ptr = NULL;
+	struct mot_pap_msg cmd;
+	int32_t error, threshold = 10;
 	bool llegamos;
 
 	while (1) {
@@ -60,7 +59,7 @@ static void pole_task(void *par)
 			*cmd_ptr = *msg_rcv;	//Create local copy of msg_rcv
 			free(msg_rcv);
 
-			if (!cmd_ptr->ctr_en) {
+			if (!cmd_ptr->ctrlEn) {
 				printf("pole: no command received with control disabled\n");
 			}
 		} else {
@@ -68,33 +67,33 @@ static void pole_task(void *par)
 		}
 
 		//obtener posición del RDC
-		status.posActPole = ad2s1210_read_position(&pole_rdc);
+		status.posAct = pole_read_position();
 
 		if (cmd_ptr != NULL) {
 			switch (cmd_ptr->type) {
-			case POLE_MSG_TYPE_FREE_RUNNING:
-				pole_status.dirPole = cmd_ptr->free_run_direction;
-				dout_pole_dir(pole_status.dirPole);
-				pole_status.velPole = cmd_ptr->free_run_speed * FREQ_MULTIPLIER;
-				pole_tmr_set_freq(pole_status.velPole);
+			case MOT_PAP_MSG_TYPE_FREE_RUNNING:
+				status.dir = cmd_ptr->free_run_direction;
+				dout_pole_dir(status.dir);
+				status.vel = cmd_ptr->free_run_speed * FREQ_MULTIPLIER;
+				pole_tmr_set_freq(status.vel);
 				pole_tmr_start();
 				break;
 
-			case POLE_MSG_TYPE_CLOSED_LOOP:	//PID
+			case MOT_PAP_MSG_TYPE_CLOSED_LOOP:	//PID
 				//calcular error de posición
-				error = cmd_ptr->closed_loop_setpoint - pole_status.posActPole;
+				error = cmd_ptr->closed_loop_setpoint - status.posAct;
 				llegamos = (abs(error) < threshold);
 
 				if (llegamos) {
 					pole_tmr_stop();
 					cmd_ptr = NULL;
 				} else {
-					pole_status.dirPole = direction_calculate(error);
-					dout_pole_dir(pole_status.dirPole);
+					status.dir = direction_calculate(error);
+					dout_pole_dir(status.dir);
 					//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
 
-					pole_status.velPole = freq_calculate(cmd_ptr->closed_loop_setpoint, pole_status.posActPole);
-					pole_tmr_set_freq(pole_status.velPole);
+					status.vel = freq_calculate(cmd_ptr->closed_loop_setpoint, status.posAct);
+					pole_tmr_set_freq(status.vel);
 
 					if (!pole_tmr_started()) {
 						pole_tmr_start();
@@ -115,41 +114,48 @@ static void pole_task(void *par)
 
 void pole_init()
 {
-	pole_queue = xQueueCreate(5, sizeof(struct pole_msg*));
+	pole_queue = xQueueCreate(5, sizeof(struct mot_pap_msg*));
 
-	pid_controller_init(&pole_pid, 1, 200, 1, 1, 100, 5);
+	pid_controller_init(&pid, 1, 200, 1, 1, 100, 5);
 
-	pole_status.dirPole = POLE_STATUS_STOP;
-	pole_status.posCmdPole = 0;
-	pole_status.posActPole = 0;
-	pole_status.velPole = 0;
-	pole_status.cwLimitPole = 0;
-	pole_status.ccwLimitPole = 0;
+	status.dir = MOT_PAP_STATUS_STOP;
+	status.posCmd = 0;
+	status.posAct = 0;
+	status.vel = 0;
+	status.cwLimit = 0;
+	status.ccwLimit = 0;
 
 
-	pole_rdc.gpios.reset = poncho_rdc_reset;
-	pole_rdc.gpios.sample = poncho_rdc_sample;
-	pole_rdc.gpios.wr_fsync = poncho_rdc_pole_wr_fsync;
-	pole_rdc.lock = pole_lock;
-	pole_rdc.resolution = 12;
+	rdc.gpios.reset = poncho_rdc_reset;
+	rdc.gpios.sample = poncho_rdc_sample;
+	rdc.gpios.wr_fsync = poncho_rdc_pole_wr_fsync;
+	rdc.lock = lock;
+	rdc.resolution = 12;
 
-	ad2s1210_init(&pole_rdc);
+	ad2s1210_init(&rdc);
+
+	pole_tmr_init();
 
 	xTaskCreate(pole_task, "Pole", configMINIMAL_STACK_SIZE, NULL,
 	POLE_TASK_PRIORITY, NULL);
-
 }
 
-void pole_set_limit_cw(bool status){
-	pole_status.cwLimitPole = status;
+void pole_set_limit_cw(bool state){
+	status.cwLimit = state;
 }
 
-void pole_set_limit_ccw(bool status){
-	pole_status.ccwLimitPole = status;
+void pole_set_limit_ccw(bool state){
+	status.ccwLimit = state;
 }
 
-pole_status pole_status_get(void) {
-	return pole_status;
+void pole_set_stalled(bool state){
+	status.stalled = state;
 }
 
+struct mot_pap_status pole_status_get(void) {
+	return status;
+}
 
+int32_t pole_read_position(void) {
+	return ad2s1210_read_position(&rdc);
+}

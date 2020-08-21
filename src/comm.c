@@ -23,7 +23,7 @@ static void comm_task(void *par)
 {
 	bool dir = UP;
 	struct lift_msg *lift_msg_snd;
-	struct pole_msg *pole_msg_snd;
+	struct mot_pap_msg *pole_msg_snd;
 
 	while (1) {
 		dir = !dir;
@@ -39,7 +39,7 @@ static void comm_task(void *par)
 		struct tms time;
 		srandom(times(&time));
 
-		pole_msg_snd = (struct pole_msg*) malloc(sizeof(struct pole_msg*));
+		pole_msg_snd = (struct mot_pap_msg*) malloc(sizeof(struct mot_pap_msg*));
 		pole_msg_snd->closed_loop_setpoint = random() % ((2 ^ 16) - 1);
 		if (xQueueSend(queue_pole, &pole_msg_snd,
 				(TickType_t) 10) == pdPASS) {
@@ -59,38 +59,33 @@ void comm_init()
 }
 
 void task_status_get_all() {
-	union {
-		//	struct arm_status;
-			struct pole_status;
-			struct lift_status;
+	union status {
+		struct mot_pap_status pap_st;
+		struct lift_status lift_st;
 	} status;
 
-	status = arm_status_get();
-
-//	status.dirArm;
-//	status.posCmdArm;
-//	status.posActArm;
-//	status.velArm;
-//	status.cwLimitArm;
-//	status.ccwLimitArm;
-//	status.stalled;
-
-
-	status = pole_status_get();
-
-//	status.dirPole;
-//	status.posCmdPole;
-//	status.posActPole;
-//	status.velPole;
-//	status.cwLimitPole;
-//	status.ccwLimitPole;
-//	status.stalled;
-
-	status = lift_status_get();
-
+//	status = arm_status_get();
 //	status.dir;
-//	status.limitUp;
-//	status.limitDown;
+//	status.posCmd;
+//	status.posAct;
+//	status.vel;
+//	status.cwLimit;
+//	status.ccwLimit;
+//	status.stalled;
+
+	status.pap_st = pole_status_get();
+//	status.pap_st.dir;
+//	status.pap_st.posCmd;
+//	status.pap_st.posAct;
+//	status.pap_st.vel;
+//	status.pap_st.cwLimit;
+//	status.pap_st.ccwLimit;
+//	status.pap_st.stalled;
+
+	status.lift_st = lift_status_get();
+//	status.lift_st.dir;
+//	status.lift_st.limitUp;
+//	status.lift_st.limitDown;
 
 
 }

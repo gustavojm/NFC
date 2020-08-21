@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include "core_cm4_v5.h"
 #include "dout.h"
+#include "errno.h"
+
+#define COMPUMOTOR_MAX_FREQ		300000
 
 extern bool stall_detection;
 extern SemaphoreHandle_t pole_supervisor_semaphore;
@@ -47,9 +50,15 @@ void pole_tmr_init(void)
 	Chip_TIMER_ResetOnMatchEnable(LPC_TIMER0, 1);
 }
 
-void pole_tmr_set_freq(int32_t tick_rate_hz)
+int32_t pole_tmr_set_freq(int32_t tick_rate_hz)
 {
 	uint32_t timerFreq;
+
+	if ((tick_rate_hz < 0) || (tick_rate_hz < COMPUMOTOR_MAX_FREQ)) {
+		printf("pole: invalid freq");
+		return -EINVAL;
+	}
+
 	/* Get timer 0 peripheral clock rate */
 	timerFreq = Chip_Clock_GetRate(CLK_MX_TIMER0);
 

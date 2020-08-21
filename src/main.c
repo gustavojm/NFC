@@ -10,7 +10,10 @@
 
 int main(void)
 {
+	pole_supervisor_init();
+//	arm_supervisor_init();
 	pole_init();
+//	arm_init();
 	lift_init();
 	comm_init();
 
