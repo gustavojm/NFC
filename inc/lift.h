@@ -18,8 +18,8 @@ struct lift_status {
 	enum {
 		LIFT_STATUS_UP, LIFT_STATUS_DOWN, LIFT_STATUS_STOP
 	} dir;
-	bool limitUp;
-	bool limitDown;
+	volatile bool limitUp;
+	volatile bool limitDown;
 };
 
 void lift_init();
@@ -29,6 +29,10 @@ static void lift_up();
 static void lift_down();
 
 void lift_stop();
+
+void set_limit_up(bool state);
+
+void set_limit_down(bool state);
 
 lift_status lift_status_get(void);
 

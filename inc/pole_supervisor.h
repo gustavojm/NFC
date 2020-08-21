@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void pole_stall_init();
+void pole_supervisor_init();
 
 #ifdef __cplusplus
 }

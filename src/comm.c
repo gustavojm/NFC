@@ -57,5 +57,40 @@ void comm_init()
 	xTaskCreate(comm_task, "Comm", configMINIMAL_STACK_SIZE, NULL,
 	COMM_TASK_PRIORITY, NULL);
 }
-/*-----------------------------------------------------------*/
 
+void task_status_get_all() {
+	union {
+		//	struct arm_status;
+			struct pole_status;
+			struct lift_status;
+	} status;
+
+	status = arm_status_get();
+
+//	status.dirArm;
+//	status.posCmdArm;
+//	status.posActArm;
+//	status.velArm;
+//	status.cwLimitArm;
+//	status.ccwLimitArm;
+//	status.stalled;
+
+
+	status = pole_status_get();
+
+//	status.dirPole;
+//	status.posCmdPole;
+//	status.posActPole;
+//	status.velPole;
+//	status.cwLimitPole;
+//	status.ccwLimitPole;
+//	status.stalled;
+
+	status = lift_status_get();
+
+//	status.dir;
+//	status.limitUp;
+//	status.limitDown;
+
+
+}

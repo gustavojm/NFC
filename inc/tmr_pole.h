@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 struct lift_msg {
-	bool ctrl_en;
+	bool ctrlEn;
 	enum {
 		LIFT_MSG_TYPE_UP, LIFT_MSG_TYPE_DOWN, LIFT_MSG_TYPE_STOP
 	} type;

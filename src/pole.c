@@ -140,6 +140,14 @@ void pole_init()
 
 }
 
+void pole_set_limit_cw(bool status){
+	pole_status.cwLimitPole = status;
+}
+
+void pole_set_limit_ccw(bool status){
+	pole_status.ccwLimitPole = status;
+}
+
 pole_status pole_status_get(void) {
 	return pole_status;
 }

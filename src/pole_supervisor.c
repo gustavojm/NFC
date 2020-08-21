@@ -36,12 +36,12 @@ static void pole_stall_task(void *par)
 
 		pos = ad2s1210_read_position(&pole_rdc);
 		if (pos > CWLIMIT) {
-			pole_status.cwLimitPole = 1;
+			pole_set_limit_cw(1);
 			pole_tmr_stop();
 		}
 
 		if (pos < CCWLIMIT) {
-			pole_status.ccwLimitPole = 1;
+			pole_set_limit_ccw(1);
 			pole_tmr_stop();
 		}
 		if (stall_detection) {
