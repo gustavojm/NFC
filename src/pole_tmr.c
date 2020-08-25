@@ -27,12 +27,10 @@ void TIMER0_IRQHandler(void)
 		// Generate waveform
 		dout_pole_pulse(On);
 
-		if (stall_detection) {
-			xHigherPriorityTaskWoken = pdFALSE;
-			xSemaphoreGiveFromISR(pole_supervisor_semaphore,
-					&xHigherPriorityTaskWoken);
-			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-		}
+		xHigherPriorityTaskWoken = pdFALSE;
+		xSemaphoreGiveFromISR(pole_supervisor_semaphore,
+				&xHigherPriorityTaskWoken);
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 	}
 }
 

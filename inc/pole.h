@@ -9,16 +9,15 @@
 extern "C" {
 #endif
 
-#define LEFT	0
-#define RIGHT	1
-
 void pole_init();
 
-struct mot_pap_status pole_status_get(void);
+enum mot_pap_direction pole_get_direction(void);
 
-void pole_set_limit_cw(bool state);
+struct mot_pap_status pole_get_status(void);
 
-void pole_set_limit_ccw(bool state);
+void pole_set_cw_limit_reached(bool state);
+
+void pole_set_ccw_limit_reached(bool state);
 
 void pole_set_stalled(bool state);
 

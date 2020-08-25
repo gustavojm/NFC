@@ -25,20 +25,26 @@ static void pole_supervisor_task(void *par)
 	int32_t pos;
 	static int32_t last_pos = 0;
 	int32_t stall_threshold = 10;
+	bool cw_limit_reached = 0, ccw_limit_reached = 0;
 
 	while (1) {
 		xSemaphoreTake(pole_supervisor_semaphore, portMAX_DELAY);
 
 		pos = pole_read_position();
-		if (pos > CWLIMIT) {
-			pole_set_limit_cw(1);
+
+		if ((pole_get_direction() == MOT_PAP_DIRECTION_CW) && (pos > CWLIMIT)) {
+			cw_limit_reached = 1;
 			pole_tmr_stop();
 		}
 
-		if (pos < CCWLIMIT) {
-			pole_set_limit_ccw(1);
+		if ((pole_get_direction() == MOT_PAP_DIRECTION_CCW) && (pos < CCWLIMIT)) {
+			ccw_limit_reached = 1;
 			pole_tmr_stop();
 		}
+
+		pole_set_cw_limit_reached(cw_limit_reached);
+		pole_set_ccw_limit_reached(ccw_limit_reached);
+
 		if (stall_detection) {
 			if (abs((abs(pos) - abs(last_pos))) < stall_threshold) {
 				//Pole stalled

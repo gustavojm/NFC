@@ -8,10 +8,14 @@
 extern "C" {
 #endif
 
+enum lift_direction {
+	LIFT_DIRECTION_UP = 0, LIFT_DIRECTION_DOWN = 1,
+};
+
 struct lift_msg {
 	bool ctrlEn;
 	enum {
-		LIFT_MSG_TYPE_UP, LIFT_MSG_TYPE_DOWN, LIFT_MSG_TYPE_STOP
+		LIFT_MSG_TYPE_UP = 0, LIFT_MSG_TYPE_DOWN = 1, LIFT_MSG_TYPE_STOP
 	} type;
 };
 

@@ -81,7 +81,7 @@ int32_t ad2s1210_soft_reset(struct ad2s1210_state *st)
 void ad2s1210_hard_reset(struct ad2s1210_state *st)
 {
 	st->gpios.reset(0);
-	vTaskDelay(pdMS_TO_TICKS(0.02));
+	vTaskDelay(pdMS_TO_TICKS(1));
 	st->gpios.reset(1);
 }
 
@@ -102,7 +102,7 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 	}
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake( st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake( st->lock, portMAX_DELAY ) == pdTRUE) {
 
 			st->fclkin = fclkin;
 
@@ -135,7 +135,7 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 		return -EINVAL;
 	}
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			st->fexcit = fexcit;
 			ret = ad2s1210_update_frequency_control_word(st);
 			if (ret < 0)
@@ -156,7 +156,7 @@ int32_t ad2s1210_get_control(struct ad2s1210_state *st)
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
 			xSemaphoreGive(st->lock);
 		} else {
@@ -174,7 +174,7 @@ int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 
 			ret = ad2s1210_config_write(st, AD2S1210_REG_CONTROL);
 			if (ret < 0)
@@ -223,7 +223,7 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata)
 	}
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
 			if (ret < 0)
 				goto error_ret;
@@ -263,7 +263,7 @@ int32_t ad2s1210_get_fault(struct ad2s1210_state *st)
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 
 			ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
 			xSemaphoreGive(st->lock);
@@ -280,7 +280,7 @@ int32_t ad2s1210_clear_fault(struct ad2s1210_state *st)
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			st->gpios.sample(0);
 			/* delay (2 * tck + 20) nano seconds */
 			vTaskDelay(pdMS_TO_TICKS(0.02));
@@ -307,7 +307,7 @@ int32_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address)
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			ret = ad2s1210_config_read(st, address);
 			xSemaphoreGive(st->lock);
 		} else {
@@ -325,7 +325,7 @@ int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			ret = ad2s1210_config_write(st, address);
 			if (ret < 0)
 				goto error_ret;
@@ -346,7 +346,7 @@ int32_t ad2s1210_init(struct ad2s1210_state *st)
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 
 			ret = ad2s1210_config_write(st, AD2S1210_REG_CONTROL);
 			if (ret < 0)
@@ -384,7 +384,7 @@ int32_t ad2s1210_read_position(struct ad2s1210_state *st)
 	int32_t ret = 0;
 
 	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, ( TickType_t ) 10 ) == pdTRUE) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			ret = ad2s1210_config_read(st, AD2S1210_REG_POSITION);
 			xSemaphoreGive(st->lock);
 		} else {

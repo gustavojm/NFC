@@ -98,8 +98,6 @@ void Board_SSP_Init(LPC_SSP_T *pSSP);
 
 void Board_UART_Init(LPC_USART_T *pUART);
 
-static void Board_I2C_Init();
-
 
 #ifdef __cplusplus
 }

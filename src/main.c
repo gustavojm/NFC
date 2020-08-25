@@ -1,3 +1,4 @@
+#include <RTUcomHMI.h>
 #include "board.h"
 #include "stdint.h"
 #include "stdbool.h"
@@ -6,7 +7,6 @@
 #include "task.h"
 #include "pole.h"
 #include "lift.h"
-#include "comm.h"
 
 int main(void)
 {

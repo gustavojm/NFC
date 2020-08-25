@@ -26,9 +26,9 @@ extern bool stall_detection;
 struct ad2s1210_state rdc;
 struct pid pid;
 
-static bool direction_calculate(int32_t error)
+static enum mot_pap_direction direction_calculate(int32_t error)
 {
-	return error < 0 ? RIGHT : LEFT;
+	return error < 0 ? MOT_PAP_DIRECTION_CW : MOT_PAP_DIRECTION_CCW;
 }
 
 static float freq_calculate(int32_t setpoint, int32_t pos)
@@ -92,7 +92,8 @@ static void pole_task(void *par)
 					dout_pole_dir(status.dir);
 					//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
 
-					status.vel = freq_calculate(cmd_ptr->closed_loop_setpoint, status.posAct);
+					status.vel = freq_calculate(cmd_ptr->closed_loop_setpoint,
+							status.posAct);
 					pole_tmr_set_freq(status.vel);
 
 					if (!pole_tmr_started()) {
@@ -125,7 +126,6 @@ void pole_init()
 	status.cwLimit = 0;
 	status.ccwLimit = 0;
 
-
 	rdc.gpios.reset = poncho_rdc_reset;
 	rdc.gpios.sample = poncho_rdc_sample;
 	rdc.gpios.wr_fsync = poncho_rdc_pole_wr_fsync;
@@ -140,22 +140,32 @@ void pole_init()
 	POLE_TASK_PRIORITY, NULL);
 }
 
-void pole_set_limit_cw(bool state){
+inline void pole_set_cw_limit_reached(bool state)
+{
 	status.cwLimit = state;
 }
 
-void pole_set_limit_ccw(bool state){
+inline void pole_set_ccw_limit_reached(bool state)
+{
 	status.ccwLimit = state;
 }
 
-void pole_set_stalled(bool state){
+void pole_set_stalled(bool state)
+{
 	status.stalled = state;
 }
 
-struct mot_pap_status pole_status_get(void) {
+enum mot_pap_direction pole_get_direction(void)
+{
+	return status.dir;
+}
+
+struct mot_pap_status pole_get_status(void)
+{
 	return status;
 }
 
-int32_t pole_read_position(void) {
+int32_t pole_read_position(void)
+{
 	return ad2s1210_read_position(&rdc);
 }

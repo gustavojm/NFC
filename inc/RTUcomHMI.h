@@ -1,5 +1,5 @@
-#ifndef COMM_H_
-#define COMM_H_
+#ifndef RTUCOMHMI_H_
+#define RTUCOMHMI_H_
 
 #include <stdint.h>
 
@@ -13,4 +13,4 @@ void comm_init();
 }
 #endif
 
-#endif /* COMM_H_ */
+#endif /* RTUCOMHMI_H_ */
