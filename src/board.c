@@ -97,7 +97,7 @@ void Board_UARTPutChar(char ch)
 }
 
 /* Gets a character from the UART, returns EOF if no character is ready */
-int Board_UARTGetChar(void)
+int32_t Board_UARTGetChar(void)
 {
 #if defined(DEBUG_UART)
 	if (Chip_UART_ReadLineStatus(DEBUG_UART) & UART_LSR_RDR) {
@@ -147,7 +147,7 @@ void Board_Init(void)
 
 static ADC_CHANNEL_T curADCChannel = 0xFF;
 
-int __stdio_getchar()
+int32_t __stdio_getchar()
 {
 	return Board_UARTGetChar();;
 }

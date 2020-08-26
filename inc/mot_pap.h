@@ -7,6 +7,9 @@
 extern "C" {
 #endif
 
+#define CWLIMIT 	5000
+#define CCWLIMIT 	5
+
 enum mot_pap_direction {
 	MOT_PAP_DIRECTION_CW = 0, MOT_PAP_DIRECTION_CCW = 1,
 };

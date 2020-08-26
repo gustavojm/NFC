@@ -1,3 +1,5 @@
+#include "board.h"
+#include "din.h"
 #include "lift.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -15,11 +17,11 @@
 QueueHandle_t lift_queue = NULL;
 SemaphoreHandle_t lift_interrupt_counting_semaphore;
 
-static struct lift_status lift_status;
+static struct lift_status status;
 
 static void lift_up()
 {
-	if (!lift_status.limitUp) {
+	if (!status.limitUp) {
 		relay_lift_dir(1);
 		relay_lift_pwr(1);
 	} else {
@@ -29,9 +31,9 @@ static void lift_up()
 
 static void lift_down()
 {
-	if (!lift_status.limitDown) {
-	relay_lift_dir(0);
-	relay_lift_pwr(1);
+	if (!status.limitDown) {
+		relay_lift_dir(0);
+		relay_lift_pwr(1);
 	} else {
 		printf("lift: limit switch reached, cannot go down \n");
 	}
@@ -44,23 +46,27 @@ static void lift_task(void *par)
 	while (1) {
 
 		if (xQueueReceive(lift_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
-			printf("lift: command received %s", (msg_rcv->type) ? "DOWN" : "UP");
+			printf("lift: command received %s",
+					(msg_rcv->type) ? "DOWN" : "UP");
 
 			if (msg_rcv->ctrlEn) {
+				status.limitUp = din_zs1_lift_state();
+				status.limitDown = din_zs2_lift_state();
+
 				switch (msg_rcv->type) {
 				case LIFT_MSG_TYPE_UP:
 					printf("UP \n");
-					lift_status.dir = LIFT_STATUS_UP;
+					status.dir = LIFT_STATUS_UP;
 					lift_up();
 					break;
 				case LIFT_MSG_TYPE_DOWN:
 					printf("DOWN \n");
-					lift_status.dir = LIFT_STATUS_DOWN;
+					status.dir = LIFT_STATUS_DOWN;
 					lift_down();
 					break;
 				default:
 					printf("STOP \n");
-					lift_status.dir = LIFT_STATUS_STOP;
+					status.dir = LIFT_STATUS_STOP;
 					lift_stop();
 					break;
 				}
@@ -73,7 +79,6 @@ static void lift_task(void *par)
 		} else {
 			printf("lift: no command received \n");
 		}
-		vTaskDelay(pdMS_TO_TICKS(200));
 	}
 }
 
@@ -93,32 +98,51 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 
 		//Determinar cual de los límites se accionó
 
-		//status.limitUp = 1;
-		//status.limitDown = 1;
+		if (status.limitUp) {
+			printf("lift: limit switch superior alcanzado \n");
+		}
 
-		/* To get here the event must have occurred.  Process the event (in this
-		 case just print out a message). */
-		printf("lift: limit switch alcanzado \n");
+		if (status.limitDown) {
+			printf("lift: limit switch inferior alcanzado \n");
+		}
 	}
 }
 
-//static uint32_t lift_limit_switches_interrupt_handler(void)
-//{
-//	BaseType_t xHigherPriorityTaskWoken;
-//	xHigherPriorityTaskWoken = pdFALSE;
-//	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore, &xHigherPriorityTaskWoken);
-//	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-//}
+//IRQHandler for ZS1_LIFT
+void GPIO0_IRQHandler(void)
+{
+	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(0));
+	status.limitUp = 1;
+	BaseType_t xHigherPriorityTaskWoken;
+	xHigherPriorityTaskWoken = pdFALSE;
+	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
+			&xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+//IRQHandler for ZS2_LIFT
+void GPIO1_IRQHandler(void)
+{
+	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(1));
+	status.limitDown = 1;
+	BaseType_t xHigherPriorityTaskWoken;
+	xHigherPriorityTaskWoken = pdFALSE;
+	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
+			&xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
 
 void lift_init()
 {
 	lift_queue = xQueueCreate(5, sizeof(struct lift_msg*));
 
-	lift_status.dir = LIFT_STATUS_STOP;
-	lift_status.limitUp = 0;
-	lift_status.limitDown = 0;
+	status.dir = LIFT_STATUS_STOP;
+	status.limitUp = 0;
+	status.limitDown = 0;
 
-	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales;
+	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales que generan interrupción por flanco descendiente;
+	//Install the handler for the software interrupt.
+	din_init();
 
 	lift_interrupt_counting_semaphore = xSemaphoreCreateCounting(10, 0);
 
@@ -127,34 +151,17 @@ void lift_init()
 		xTaskCreate(lift_limit_switches_handler_task, "LSHandler",
 		configMINIMAL_STACK_SIZE, NULL, 3, NULL);
 
-		/* Install the handler for the software interrupt.  The syntax necessary
-		 to do this is dependent on the FreeRTOS port being used.  The syntax
-		 shown here can only be used with the FreeRTOS Windows port, where such
-		 interrupts are only simulated. */
-		//vPortSetInterruptHandler(mainINTERRUPT_NUMBER, lift_limit_switches_interrupt_handler);
+
 	}
 
 	xTaskCreate(lift_task, "Lift", configMINIMAL_STACK_SIZE, NULL,
 	LIFT_TASK_PRIORITY, NULL);
 }
 
-struct lift_status lift_status_get(void) {
-	return lift_status;
-}
-
-/*-----------------------------------------------------------*/
-
-
-void set_limit_up(bool state)
+struct lift_status lift_status_get(void)
 {
-	lift_status.limitUp = state;
+	return status;
 }
-
-void set_limit_down(bool state)
-{
-	lift_status.limitUp = state;
-}
-
 
 void lift_stop()
 {

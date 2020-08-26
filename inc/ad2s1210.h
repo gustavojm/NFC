@@ -55,8 +55,8 @@ struct ad2s1210_gpios {
 struct ad2s1210_state {
 	SemaphoreHandle_t lock;
 	struct ad2s1210_gpios gpios;
-	unsigned int fclkin;
-	unsigned int fexcit;
+	uint32_t fclkin;
+	uint32_t fexcit;
 	uint8_t hysteresis;
 	uint8_t resolution;
 	uint8_t rx[2];
@@ -64,45 +64,47 @@ struct ad2s1210_state {
 };
 
 /* write 1 bytes (address or data) to the chip */
-int ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data);
+int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data);
 
 /* read value from one of the registers */
-int ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address);
+int32_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address);
 
-int ad2s1210_update_frequency_control_word(struct ad2s1210_state *st);
+int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st);
 
-int ad2s1210_soft_reset(struct ad2s1210_state *st);
+int32_t ad2s1210_soft_reset(struct ad2s1210_state *st);
 
 void ad2s1210_hard_reset(struct ad2s1210_state *st);
 
-unsigned int ad2s1210_get_fclkin(struct ad2s1210_state *st);
+uint32_t ad2s1210_get_fclkin(struct ad2s1210_state *st);
 
-int ad2s1210_set_fclkin(struct ad2s1210_state *st, unsigned int fclkin);
+int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin);
 
-unsigned int ad2s1210_get_fexcit(struct ad2s1210_state *st);
+uint32_t ad2s1210_get_fexcit(struct ad2s1210_state *st);
 
-int ad2s1210_set_fexcit(struct ad2s1210_state *st, unsigned int fexcit);
+int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit);
 
-int ad2s1210_get_control(struct ad2s1210_state *st);
+int32_t ad2s1210_get_control(struct ad2s1210_state *st);
 
-int ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata);
+int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata);
 
 uint8_t ad2s1210_get_resolution(struct ad2s1210_state *st);
 
-int ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata);
+int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata);
 
 /* read the fault register since last sample */
-int ad2s1210_get_fault(struct ad2s1210_state *st);
+int32_t ad2s1210_get_fault(struct ad2s1210_state *st);
 
-int ad2s1210_clear_fault(struct ad2s1210_state *st);
+int32_t ad2s1210_clear_fault(struct ad2s1210_state *st);
 
-int ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address);
+int32_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address);
 
-int ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address, uint8_t data);
+int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address, uint8_t data);
 
-int ad2s1210_init(struct ad2s1210_state *st);
+int32_t ad2s1210_init(struct ad2s1210_state *st);
 
-int ad2s1210_read_position(struct ad2s1210_state *st);
+int32_t ad2s1210_read_position(struct ad2s1210_state *st);
+
+int32_t ad2s1210_read_velocity(struct ad2s1210_state *st);
 
 #ifdef __cplusplus
 }

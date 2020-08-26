@@ -395,6 +395,23 @@ int32_t ad2s1210_read_position(struct ad2s1210_state *st)
 	return ret;
 }
 
+int32_t ad2s1210_read_velocity(struct ad2s1210_state *st)
+{
+	int32_t ret = 0;
+
+	if (st->lock != NULL) {
+		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
+			ret = ad2s1210_config_read(st, AD2S1210_REG_VELOCITY);
+			xSemaphoreGive(st->lock);
+		} else {
+			printf("unable to take mutex\n");
+			ret = -EBUSY;
+		}
+	}
+	return ret;
+}
+
+
 //Truncar a la resolución configurada
 //if (st->hysteresis)
 //	pos >>= 16 - st->resolution;

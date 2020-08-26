@@ -7,6 +7,7 @@
 #include "errno.h"
 
 #define COMPUMOTOR_MAX_FREQ		300000
+#define POLE_SUPERVISOR_RATE    10		//every 10 steps call supervisor task
 
 extern bool stall_detection;
 extern SemaphoreHandle_t pole_supervisor_semaphore;
@@ -18,6 +19,7 @@ extern SemaphoreHandle_t pole_supervisor_semaphore;
 
 void TIMER0_IRQHandler(void)
 {
+	uint32_t static steps = 0;
 	static bool On = false;
 	BaseType_t xHigherPriorityTaskWoken;
 
@@ -27,10 +29,13 @@ void TIMER0_IRQHandler(void)
 		// Generate waveform
 		dout_pole_pulse(On);
 
-		xHigherPriorityTaskWoken = pdFALSE;
-		xSemaphoreGiveFromISR(pole_supervisor_semaphore,
-				&xHigherPriorityTaskWoken);
-		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+		if (++steps == POLE_SUPERVISOR_RATE) {
+			steps = 0;
+			xHigherPriorityTaskWoken = pdFALSE;
+			xSemaphoreGiveFromISR(pole_supervisor_semaphore,
+					&xHigherPriorityTaskWoken);
+			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+		}
 	}
 }
 
