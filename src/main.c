@@ -1,5 +1,6 @@
 #include <RTUcomHMI.h>
 #include "board.h"
+#include "stdio.h"
 #include "stdint.h"
 #include "stdbool.h"
 #include "stdint.h"

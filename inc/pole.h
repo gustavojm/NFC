@@ -11,8 +11,6 @@ extern "C" {
 
 void pole_init();
 
-enum mot_pap_direction pole_get_direction(void);
-
 struct mot_pap_status pole_get_status(void);
 
 int32_t pole_read_position(void);

@@ -147,27 +147,28 @@ static void supervisor_task(void *par)
 	int32_t error, threshold = 10;
 	bool already_there;
 
-	bool cw_limit_reached = 0, ccw_limit_reached = 0;
-
 	while (1) {
 		xSemaphoreTake(pole_supervisor_semaphore, portMAX_DELAY);
 
 		status.posAct = pole_read_position();
 
-		if ((pole_get_direction() == MOT_PAP_DIRECTION_CW)
-				&& (status.posAct > CWLIMIT)) {
-			cw_limit_reached = 1;
+		status.cwLimit = 0;
+		status.ccwLimit = 0;
+
+		if ((status.dir == MOT_PAP_DIRECTION_CW) && (status.posAct > CWLIMIT)) {
+			status.cwLimit = 1;
 			pole_tmr_stop();
+			printf("pole: limit CW reached");
+			continue;
 		}
 
-		if ((pole_get_direction() == MOT_PAP_DIRECTION_CCW)
+		if ((status.dir == MOT_PAP_DIRECTION_CCW)
 				&& (status.posAct < CCWLIMIT)) {
-			ccw_limit_reached = 1;
+			status.ccwLimit = 1;
 			pole_tmr_stop();
+			printf("pole: limit CCW reached");
+			continue;
 		}
-
-		status.cwLimit = cw_limit_reached;
-		status.ccwLimit = ccw_limit_reached;
 
 		if (stall_detection) {
 			if (abs((abs(status.posAct) - abs(last_pos))) < stall_threshold) {
@@ -175,6 +176,8 @@ static void supervisor_task(void *par)
 				status.stalled = 1;
 				pole_tmr_stop();
 				relay_main_pwr(0);
+				printf("pole: stalled");
+				continue;
 			}
 		}
 		last_pos = status.posAct;
@@ -184,6 +187,7 @@ static void supervisor_task(void *par)
 
 		if (already_there) {
 			pole_tmr_stop();
+			printf("pole: llegamos");
 		} else {
 			status.dir = direction_calculate(error);
 			dout_pole_dir(status.dir);
@@ -191,7 +195,6 @@ static void supervisor_task(void *par)
 			status.vel = freq_calculate(status.posCmd, status.posAct);
 			pole_tmr_set_freq(status.vel);
 		}
-
 	}
 }
 
@@ -229,11 +232,6 @@ void pole_init()
 		configMINIMAL_STACK_SIZE,
 		NULL, POLE_SUPERVISOR_TASK_PRIORITY, NULL);
 	}
-}
-
-enum mot_pap_direction pole_get_direction(void)
-{
-	return status.dir;
 }
 
 struct mot_pap_status pole_get_status(void)
