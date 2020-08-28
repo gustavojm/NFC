@@ -5,8 +5,8 @@
 #include "core_cm4_v5.h"
 #include "dout.h"
 #include "errno.h"
+#include "mot_pap.h"
 
-#define COMPUMOTOR_MAX_FREQ		300000
 #define POLE_SUPERVISOR_RATE    10		//every 10 steps call supervisor task
 
 extern bool stall_detection;
@@ -57,7 +57,7 @@ int32_t pole_tmr_set_freq(int32_t tick_rate_hz)
 {
 	uint32_t timerFreq;
 
-	if ((tick_rate_hz < 0) || (tick_rate_hz < COMPUMOTOR_MAX_FREQ)) {
+	if ((tick_rate_hz < 0) || (tick_rate_hz > COMPUMOTOR_MAX_FREQ)) {
 		printf("pole: invalid freq");
 		return -EINVAL;
 	}
@@ -67,6 +67,7 @@ int32_t pole_tmr_set_freq(int32_t tick_rate_hz)
 
 	/* Timer setup for match at tick_rate_hz */
 	Chip_TIMER_SetMatch(LPC_TIMER0, 1, (timerFreq / tick_rate_hz));
+	return 0;
 }
 
 void pole_tmr_start(void)

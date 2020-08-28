@@ -13,8 +13,6 @@ void pole_init();
 
 struct mot_pap_status pole_get_status(void);
 
-int32_t pole_read_position(void);
-
 #ifdef __cplusplus
 }
 #endif

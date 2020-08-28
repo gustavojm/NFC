@@ -17,8 +17,6 @@
 #define POLE_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 #define POLE_SUPERVISOR_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
-#define FREQ_MULTIPLIER  400
-
 QueueHandle_t pole_queue = NULL;
 SemaphoreHandle_t lock;
 
@@ -32,37 +30,12 @@ extern bool stall_detection;
 struct ad2s1210_state rdc;
 struct pid pid;
 
-static enum mot_pap_direction direction_calculate(int32_t error)
-{
-	return error < 0 ? MOT_PAP_DIRECTION_CW : MOT_PAP_DIRECTION_CCW;
-}
-
-static inline bool movement_allowed(enum mot_pap_direction dir)
-{
-	if ((dir == MOT_PAP_DIRECTION_CW && !status.cwLimit)
-			|| (dir == MOT_PAP_DIRECTION_CCW && !status.ccwLimit))
-		return 1;
-	return 0;
-}
-
-static float freq_calculate(int32_t setpoint, int32_t pos)
-{
-	float cout;
-	float freq;
-
-	cout = pid_controller_calculate(&pid, setpoint, pos);
-	printf("----COUT---- %f \n", cout);
-	freq = cout * FREQ_MULTIPLIER;
-	printf("----FREQ---- %f \n", freq);
-	return freq;
-}
-
 static void pole_task(void *par)
 {
-
 	struct mot_pap_msg *msg_rcv;
 	int32_t error, threshold = 10;
 	bool already_there;
+	bool allowed, speed_ok;
 
 	while (1) {
 		if (xQueueReceive(pole_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
@@ -71,7 +44,7 @@ static void pole_task(void *par)
 			if (msg_rcv->ctrlEn) {
 
 				//obtener posición del RDC
-				status.posAct = pole_read_position();
+				status.posAct = ad2s1210_read_position(&rdc);
 
 				if (status.posAct > CWLIMIT) {
 					status.cwLimit = 1;
@@ -83,16 +56,26 @@ static void pole_task(void *par)
 
 				switch (msg_rcv->type) {
 				case MOT_PAP_MSG_TYPE_FREE_RUNNING:
-					if (movement_allowed(msg_rcv->free_run_direction)) {
+					allowed = movement_allowed(msg_rcv->free_run_direction,
+							status.cwLimit, status.ccwLimit);
+					speed_ok = free_run_speed_ok(msg_rcv->free_run_speed);
+
+					if (allowed && speed_ok) {
 						status.dir = msg_rcv->free_run_direction;
 						dout_pole_dir(status.dir);
-						status.vel = msg_rcv->free_run_speed * FREQ_MULTIPLIER;
+						status.vel = msg_rcv->free_run_speed
+								* MOT_PAP_FREE_RUN_FREQ_MULTIPLIER;
 						pole_tmr_set_freq(status.vel);
 						pole_tmr_start();
 					} else {
-						printf("pole: movement out of bounds %s",
-								msg_rcv->free_run_direction
-										== MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
+						if (!allowed)
+							printf("pole: movement out of bounds %s",
+									msg_rcv->free_run_direction
+											== MOT_PAP_DIRECTION_CW ?
+											"CW" : "CCW");
+						if (!speed_ok)
+							printf("pole: chosen speed out of bounds %i",
+									msg_rcv->free_run_speed);
 					}
 					break;
 
@@ -106,11 +89,12 @@ static void pole_task(void *par)
 						pole_tmr_stop();
 					} else {
 						dir = direction_calculate(error);
-						if (movement_allowed(dir)) {
+						if (movement_allowed(dir, status.cwLimit,
+								status.ccwLimit)) {
 							status.dir = dir;
 							dout_pole_dir(status.dir);
 							//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
-							status.vel = freq_calculate(status.posCmd,
+							status.vel = freq_calculate(&pid, status.posCmd,
 									status.posAct);
 							pole_tmr_set_freq(status.vel);
 
@@ -150,19 +134,20 @@ static void supervisor_task(void *par)
 	while (1) {
 		xSemaphoreTake(pole_supervisor_semaphore, portMAX_DELAY);
 
-		status.posAct = pole_read_position();
+		status.posAct = ad2s1210_read_position(&rdc);
 
 		status.cwLimit = 0;
 		status.ccwLimit = 0;
 
-		if ((status.dir == MOT_PAP_DIRECTION_CW) && (status.posAct > CWLIMIT)) {
+		if (((enum mot_pap_direction) status.dir == MOT_PAP_DIRECTION_CW)
+				&& (status.posAct > CWLIMIT)) {
 			status.cwLimit = 1;
 			pole_tmr_stop();
 			printf("pole: limit CW reached");
 			continue;
 		}
 
-		if ((status.dir == MOT_PAP_DIRECTION_CCW)
+		if (((enum mot_pap_direction) status.dir == MOT_PAP_DIRECTION_CCW)
 				&& (status.posAct < CCWLIMIT)) {
 			status.ccwLimit = 1;
 			pole_tmr_stop();
@@ -192,7 +177,7 @@ static void supervisor_task(void *par)
 			status.dir = direction_calculate(error);
 			dout_pole_dir(status.dir);
 			//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
-			status.vel = freq_calculate(status.posCmd, status.posAct);
+			status.vel = freq_calculate(&pid, status.posCmd, status.posAct);
 			pole_tmr_set_freq(status.vel);
 		}
 	}
@@ -239,7 +224,3 @@ struct mot_pap_status pole_get_status(void)
 	return status;
 }
 
-int32_t pole_read_position(void)
-{
-	return ad2s1210_read_position(&rdc);
-}

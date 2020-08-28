@@ -102,11 +102,11 @@ void task_status_get_all()
 
 	//Forma de pedir el estado de cada tarea. Ver cómo poner esos valores en los mensajes TCP/IP para el HMI
 
-	union status {
-		struct mot_pap_status arm_st;
-		struct mot_pap_status pole_st;
-		struct lift_status lift_st;
-	} status;
+//	union status {
+//		struct mot_pap_status arm_st;
+//		struct mot_pap_status pole_st;
+//		struct lift_status lift_st;
+//	} status;
 
 //	status.arm_st = arm_status_get();
 //	status.arm_st.dir;
@@ -117,7 +117,7 @@ void task_status_get_all()
 //	status.arm_st.ccwLimit;
 //	status.arm_st.stalled;
 
-	status.pole_st = pole_get_status();
+//	status.pole_st = pole_get_status();
 //	status.pole_st.dir;
 //	status.pole_st.posCmd;
 //	status.pole_st.posAct;
@@ -126,7 +126,7 @@ void task_status_get_all()
 //	status.pole_st.ccwLimit;
 //	status.pole_st.stalled;
 
-	status.lift_st = lift_status_get();
+//	status.lift_st = lift_status_get();
 //	status.lift_st.dir;
 //	status.lift_st.limitUp;
 //	status.lift_st.limitDown;
