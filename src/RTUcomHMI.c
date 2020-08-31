@@ -11,6 +11,7 @@
 #include "stdbool.h"
 #include "pid.h"
 #include "pole.h"
+#include "debug.h"
 
 #define UP		0
 #define DOWN	1
@@ -37,9 +38,9 @@ static void RTUcomHMI_task(void *par)
 		lift_msg_snd->type = dir;
 		if (xQueueSend(lift_queue, &lift_msg_snd,
 				(TickType_t) 10) == pdPASS) {
-			printf("comm: lift command sent \n");
+			lDebug(Warn, "comm: lift command sent \n");
 		} else {
-			printf("comm: unable to send lift command \n");
+			lDebug(Warn, "comm: unable to send lift command \n");
 		}
 		vTaskDelay(pdMS_TO_TICKS(1000));
 
@@ -52,9 +53,9 @@ static void RTUcomHMI_task(void *par)
 		pole_msg_snd->free_run_speed = 5;
 		if (xQueueSend(queue_pole, &pole_msg_snd,
 				(TickType_t) 10) == pdPASS) {
-			printf("comm: pole command sent \n");
+			lDebug(Warn, "comm: pole command sent \n");
 		} else {
-			printf("comm: unable to send pole command \n");
+			lDebug(Warn, "comm: unable to send pole command \n");
 		}
 		vTaskDelay(pdMS_TO_TICKS(1000));
 
@@ -69,9 +70,9 @@ static void RTUcomHMI_task(void *par)
 		pole_msg_snd->closed_loop_setpoint = random() % ((2 ^ 16) - 1);
 		if (xQueueSend(queue_pole, &pole_msg_snd,
 				(TickType_t) 10) == pdPASS) {
-			printf("comm: pole command sent \n");
+			lDebug(Warn, "comm: pole command sent \n");
 		} else {
-			printf("comm: unable to send pole command \n");
+			lDebug(Warn, "comm: unable to send pole command \n");
 		}
 		vTaskDelay(pdMS_TO_TICKS(1000));
 
@@ -82,9 +83,9 @@ static void RTUcomHMI_task(void *par)
 		pole_msg_snd->type = MOT_PAP_MSG_TYPE_STOP;
 		if (xQueueSend(queue_pole, &pole_msg_snd,
 				(TickType_t) 10) == pdPASS) {
-			printf("comm: pole command sent \n");
+			lDebug(Warn, "comm: pole command sent \n");
 		} else {
-			printf("comm: unable to send pole command \n");
+			lDebug(Warn, "comm: unable to send pole command \n");
 		}
 
 		vTaskDelay(pdMS_TO_TICKS(2000));

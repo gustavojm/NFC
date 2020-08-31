@@ -11,6 +11,7 @@
 #include "task.h"
 #include "stdbool.h"
 #include "relay.h"
+#include "debug.h"
 
 #define LIFT_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
@@ -25,7 +26,7 @@ static void lift_up()
 		relay_lift_dir(1);
 		relay_lift_pwr(1);
 	} else {
-		printf("lift: limit switch reached, cannot go up \n");
+		lDebug(Warn, "lift: limit switch reached, cannot go up \n");
 	}
 }
 
@@ -35,7 +36,7 @@ static void lift_down()
 		relay_lift_dir(0);
 		relay_lift_pwr(1);
 	} else {
-		printf("lift: limit switch reached, cannot go down \n");
+		lDebug(Warn, "lift: limit switch reached, cannot go down \n");
 	}
 }
 
@@ -46,8 +47,7 @@ static void lift_task(void *par)
 	while (1) {
 
 		if (xQueueReceive(lift_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
-			printf("lift: command received %s",
-					(msg_rcv->type) ? "DOWN" : "UP");
+			lDebug(Info, "lift: command received");
 
 			if (msg_rcv->ctrlEn) {
 				status.limitUp = din_zs1_lift_state();
@@ -55,29 +55,26 @@ static void lift_task(void *par)
 
 				switch (msg_rcv->type) {
 				case LIFT_MSG_TYPE_UP:
-					printf("UP \n");
+					lDebug(Info, "lift: UP \n");
 					status.dir = LIFT_STATUS_UP;
 					lift_up();
 					break;
 				case LIFT_MSG_TYPE_DOWN:
-					printf("DOWN \n");
+					lDebug(Info, "lift: DOWN \n");
 					status.dir = LIFT_STATUS_DOWN;
 					lift_down();
 					break;
 				default:
-					printf("STOP \n");
+					lDebug(Info, "lift: STOP \n");
 					status.dir = LIFT_STATUS_STOP;
 					lift_stop();
 					break;
 				}
 			} else {
-				printf("lift: command received with control disabled");
+				lDebug(Warn, "lift: command received with control disabled");
 			}
 
 			free(msg_rcv);
-
-		} else {
-			printf("lift: no command received \n");
 		}
 	}
 }
@@ -99,11 +96,11 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 		//Determinar cual de los límites se accionó
 
 		if (status.limitUp) {
-			printf("lift: limit switch superior alcanzado \n");
+			lDebug(Info, "lift: limit switch superior alcanzado \n");
 		}
 
 		if (status.limitDown) {
-			printf("lift: limit switch inferior alcanzado \n");
+			lDebug(Info, "lift: limit switch inferior alcanzado \n");
 		}
 	}
 }

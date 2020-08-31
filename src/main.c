@@ -8,6 +8,10 @@
 #include "task.h"
 #include "pole.h"
 #include "lift.h"
+#include "debug.h"
+
+#define DEBUG
+int debugLevel = Error;
 
 int main(void)
 {

@@ -6,6 +6,7 @@
 #include "dout.h"
 #include "errno.h"
 #include "mot_pap.h"
+#include "debug.h"
 
 #define POLE_SUPERVISOR_RATE    10		//every 10 steps call supervisor task
 
@@ -58,7 +59,7 @@ int32_t pole_tmr_set_freq(int32_t tick_rate_hz)
 	uint32_t timerFreq;
 
 	if ((tick_rate_hz < 0) || (tick_rate_hz > COMPUMOTOR_MAX_FREQ)) {
-		printf("pole: invalid freq");
+		lDebug(Error, "pole: invalid freq");
 		return -EINVAL;
 	}
 

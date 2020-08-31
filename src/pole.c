@@ -13,6 +13,7 @@
 #include "pid.h"
 #include "dout.h"
 #include "relay.h"
+#include "debug.h"
 
 #define POLE_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 #define POLE_SUPERVISOR_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
@@ -39,7 +40,7 @@ static void pole_task(void *par)
 
 	while (1) {
 		if (xQueueReceive(pole_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
-			printf("pole: command received \n");
+			lDebug(Info, "pole: command received \n");
 
 			if (msg_rcv->ctrlEn) {
 
@@ -67,14 +68,18 @@ static void pole_task(void *par)
 								* MOT_PAP_FREE_RUN_FREQ_MULTIPLIER;
 						pole_tmr_set_freq(status.vel);
 						pole_tmr_start();
+						lDebug(Info, "pole: FREE RUN, speed: %i, direction: %s",
+								status.vel,
+								(enum mot_pap_direction) status.dir
+										== MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
 					} else {
 						if (!allowed)
-							printf("pole: movement out of bounds %s",
+							lDebug(Warn, "pole: movement out of bounds %s",
 									msg_rcv->free_run_direction
 											== MOT_PAP_DIRECTION_CW ?
 											"CW" : "CCW");
 						if (!speed_ok)
-							printf("pole: chosen speed out of bounds %i",
+							lDebug(Warn, "pole: chosen speed out of bounds %i",
 									msg_rcv->free_run_speed);
 					}
 					break;
@@ -97,12 +102,16 @@ static void pole_task(void *par)
 							status.vel = freq_calculate(&pid, status.posCmd,
 									status.posAct);
 							pole_tmr_set_freq(status.vel);
+							lDebug(Info, "pole: CLOSED LOOP, speed: %i, direction: %s",
+									status.vel,
+									(enum mot_pap_direction) status.dir
+											== MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
 
 							if (!pole_tmr_started()) {
 								pole_tmr_start();
 							}
 						} else {
-							printf("pole: movement out of bounds %s",
+							lDebug(Warn, "pole: movement out of bounds %s",
 									dir == MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
 						}
 					}
@@ -114,12 +123,10 @@ static void pole_task(void *par)
 				}
 
 			} else {
-				printf("pole: command received with control disabled\n");
+				lDebug(Warn, "pole: command received with control disabled\n");
 			}
 
 			free(msg_rcv);
-		} else {
-			printf("pole: no command received \n");
 		}
 	}
 }
@@ -143,7 +150,7 @@ static void supervisor_task(void *par)
 				&& (status.posAct > CWLIMIT)) {
 			status.cwLimit = 1;
 			pole_tmr_stop();
-			printf("pole: limit CW reached");
+			lDebug(Warn, "pole: limit CW reached");
 			continue;
 		}
 
@@ -151,7 +158,7 @@ static void supervisor_task(void *par)
 				&& (status.posAct < CCWLIMIT)) {
 			status.ccwLimit = 1;
 			pole_tmr_stop();
-			printf("pole: limit CCW reached");
+			lDebug(Warn, "pole: limit CCW reached");
 			continue;
 		}
 
@@ -161,7 +168,7 @@ static void supervisor_task(void *par)
 				status.stalled = 1;
 				pole_tmr_stop();
 				relay_main_pwr(0);
-				printf("pole: stalled");
+				lDebug(Warn, "pole: stalled");
 				continue;
 			}
 		}
@@ -172,7 +179,7 @@ static void supervisor_task(void *par)
 
 		if (already_there) {
 			pole_tmr_stop();
-			printf("pole: llegamos");
+			lDebug(Info, "pole: llegamos");
 		} else {
 			status.dir = direction_calculate(error);
 			dout_pole_dir(status.dir);

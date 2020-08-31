@@ -6,6 +6,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "spi.h"
+#include "debug.h"
 
 //xf_setup.length = BUFFER_SIZE;
 //xf_setup.tx_data = Tx_Buf;
@@ -56,7 +57,7 @@ int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
 
 	fcw = (uint8_t) (st->fexcit * (1 << 15) / st->fclkin);
 	if (fcw < AD2S1210_MIN_FCW || fcw > AD2S1210_MAX_FCW) {
-		printf("ad2s1210: FCW out of range\n");
+		lDebug(Error, "ad2s1210: FCW out of range\n");
 		return -ERANGE;
 	}
 
@@ -97,7 +98,7 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 	int32_t ret = 0;
 
 	if (fclkin < AD2S1210_MIN_CLKIN || fclkin > AD2S1210_MAX_CLKIN) {
-		printf("ad2s1210: fclkin out of range\n");
+		lDebug(Error, "ad2s1210: fclkin out of range\n");
 		return -EINVAL;
 	}
 
@@ -112,9 +113,6 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 			ret = ad2s1210_soft_reset(st);
 error_ret:
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -131,7 +129,7 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 	int32_t ret = 0;
 
 	if (fexcit < AD2S1210_MIN_EXCIT || fexcit > AD2S1210_MAX_EXCIT) {
-		printf("ad2s1210: excitation frequency out of range\n");
+		lDebug(Error, "ad2s1210: excitation frequency out of range\n");
 		return -EINVAL;
 	}
 	if (st->lock != NULL) {
@@ -143,9 +141,6 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 			ret = ad2s1210_soft_reset(st);
 error_ret:
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -159,9 +154,6 @@ int32_t ad2s1210_get_control(struct ad2s1210_state *st)
 		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -189,7 +181,7 @@ int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
 				goto error_ret;
 			if (ret & AD2S1210_MSB_IS_HIGH) {
 				ret = -EIO;
-				printf("ad2s1210: write control register fail\n");
+				lDebug(Error, "ad2s1210: write control register fail\n");
 				goto error_ret;
 			}
 			st->resolution = ad2s1210_resolution_value[data
@@ -198,9 +190,6 @@ int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
 
 error_ret:
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -218,7 +207,7 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata)
 	int32_t ret = 0;
 
 	if (udata < 10 || udata > 16) {
-		printf("ad2s1210: resolution out of range\n");
+		lDebug(Error, "ad2s1210: resolution out of range\n");
 		return -EINVAL;
 	}
 
@@ -242,16 +231,13 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata)
 			data = ret;
 			if (data & AD2S1210_MSB_IS_HIGH) {
 				ret = -EIO;
-				printf("ad2s1210: setting resolution fail\n");
+				lDebug(Error, "ad2s1210: setting resolution fail\n");
 				goto error_ret;
 			}
 			st->resolution = ad2s1210_resolution_value[data
 					& AD2S1210_SET_RESOLUTION];
 error_ret:
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -267,9 +253,6 @@ int32_t ad2s1210_get_fault(struct ad2s1210_state *st)
 
 			ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -294,9 +277,6 @@ int32_t ad2s1210_clear_fault(struct ad2s1210_state *st)
 
 error_ret:
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -310,9 +290,6 @@ int32_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address)
 		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			ret = ad2s1210_config_read(st, address);
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -332,9 +309,6 @@ int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 			ret = ad2s1210_config_write(st, data & AD2S1210_MSB_IS_LOW);
 error_ret:
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -371,9 +345,6 @@ int32_t ad2s1210_init(struct ad2s1210_state *st)
 			ret = ad2s1210_soft_reset(st);
 error_ret:
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -387,9 +358,6 @@ int32_t ad2s1210_read_position(struct ad2s1210_state *st)
 		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			ret = ad2s1210_config_read(st, AD2S1210_REG_POSITION);
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
@@ -403,9 +371,6 @@ int32_t ad2s1210_read_velocity(struct ad2s1210_state *st)
 		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			ret = ad2s1210_config_read(st, AD2S1210_REG_VELOCITY);
 			xSemaphoreGive(st->lock);
-		} else {
-			printf("unable to take mutex\n");
-			ret = -EBUSY;
 		}
 	}
 	return ret;
