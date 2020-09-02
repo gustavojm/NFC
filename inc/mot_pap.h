@@ -9,37 +9,39 @@
 extern "C" {
 #endif
 
-#define CWLIMIT 							5000
-#define CCWLIMIT 							5
+#define MOT_PAP_CWLIMIT 					5000
+#define MOT_PAP_CCWLIMIT 					5
 #define MOT_PAP_MAX_FREQ					150000
 #define MOT_PAP_FREQ_MULTIPLIER  			( MOT_PAP_MAX_FREQ / 100 )							// Multiplier for closed loop operation
 #define MOT_PAP_MAX_SPEED_FREE_RUN			8
 #define MOT_PAP_FREE_RUN_FREQ_MULTIPLIER    ( MOT_PAP_MAX_FREQ / MOT_PAP_MAX_SPEED_FREE_RUN )	// Multiplier for free run operation =
-#define COMPUMOTOR_MAX_FREQ					300000
+#define MOT_PAP_COMPUMOTOR_MAX_FREQ			300000
+#define MOT_PAP_DIRECTION_CHANGE_DELAY_MS	500
 
 enum mot_pap_direction {
 	MOT_PAP_DIRECTION_CW = 0, MOT_PAP_DIRECTION_CCW = 1,
 };
 
+enum mot_pap_type {
+	MOT_PAP_TYPE_FREE_RUNNING,
+	MOT_PAP_TYPE_CLOSED_LOOP,
+	MOT_PAP_TYPE_STOP
+};
+
 struct mot_pap_msg {
 	bool ctrlEn;
-	enum {
-		MOT_PAP_MSG_TYPE_FREE_RUNNING,
-		MOT_PAP_MSG_TYPE_CLOSED_LOOP,
-		MOT_PAP_MSG_TYPE_STOP
-	} type;
+	enum mot_pap_type type;
 	enum mot_pap_direction free_run_direction;
 	uint32_t free_run_speed;
 	uint32_t closed_loop_setpoint;
 };
 
 struct mot_pap_status {
-	enum {
-		MOT_PAP_STATUS_CW = 0, MOT_PAP_STATUS_CCW = 1, MOT_PAP_STATUS_STOP
-	} dir;
+	enum mot_pap_type type;
+	enum mot_pap_direction dir;
 	int32_t posCmd;
 	int32_t posAct;
-	uint32_t vel;
+	uint32_t freq;
 	volatile bool cwLimit;
 	volatile bool ccwLimit;
 	volatile bool stalled;

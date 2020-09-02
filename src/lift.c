@@ -22,7 +22,7 @@ static struct lift_status status;
 
 static void lift_up()
 {
-	if (!status.limitUp) {
+	if (!status.upLimit) {
 		relay_lift_dir(1);
 		relay_lift_pwr(1);
 	} else {
@@ -32,12 +32,17 @@ static void lift_up()
 
 static void lift_down()
 {
-	if (!status.limitDown) {
+	if (!status.downLimit) {
 		relay_lift_dir(0);
 		relay_lift_pwr(1);
 	} else {
 		lDebug(Warn, "lift: limit switch reached, cannot go down \n");
 	}
+}
+
+static void lift_stop()
+{
+	relay_lift_pwr(0);
 }
 
 static void lift_task(void *par)
@@ -47,31 +52,41 @@ static void lift_task(void *par)
 	while (1) {
 
 		if (xQueueReceive(lift_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
-			lDebug(Info, "lift: command received");
+			lDebug(Info, "lift: command received \n");
 
 			if (msg_rcv->ctrlEn) {
-				status.limitUp = din_zs1_lift_state();
-				status.limitDown = din_zs2_lift_state();
+				status.upLimit = din_zs1_lift_state();
+				status.downLimit = din_zs2_lift_state();
 
 				switch (msg_rcv->type) {
-				case LIFT_MSG_TYPE_UP:
-					lDebug(Info, "lift: UP \n");
-					status.dir = LIFT_STATUS_UP;
+				case LIFT_TYPE_UP:
+					if (status.type == LIFT_TYPE_DOWN) {
+						lift_stop();
+						vTaskDelay(
+								pdMS_TO_TICKS(LIFT_DIRECTION_CHANGE_DELAY_MS));
+					}
+					status.type = LIFT_TYPE_UP;
 					lift_up();
+					lDebug(Info, "lift: UP \n");
 					break;
-				case LIFT_MSG_TYPE_DOWN:
-					lDebug(Info, "lift: DOWN \n");
-					status.dir = LIFT_STATUS_DOWN;
+				case LIFT_TYPE_DOWN:
+					if (status.type == LIFT_TYPE_UP) {
+						lift_stop();
+						vTaskDelay(
+								pdMS_TO_TICKS(LIFT_DIRECTION_CHANGE_DELAY_MS));
+					}
+					status.type = LIFT_TYPE_DOWN;
 					lift_down();
+					lDebug(Info, "lift: DOWN \n");
 					break;
 				default:
-					lDebug(Info, "lift: STOP \n");
-					status.dir = LIFT_STATUS_STOP;
+					status.type = LIFT_TYPE_STOP;
 					lift_stop();
+					lDebug(Info, "lift: STOP \n");
 					break;
 				}
 			} else {
-				lDebug(Warn, "lift: command received with control disabled");
+				lDebug(Warn, "lift: command received with control disabled \n");
 			}
 
 			free(msg_rcv);
@@ -91,16 +106,16 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 		xSemaphoreTake(lift_interrupt_counting_semaphore, portMAX_DELAY);
 
 		// Detener LIFT
-		relay_lift_pwr(0);
+		lift_stop();
 
 		//Determinar cual de los límites se accionó
 
-		if (status.limitUp) {
-			lDebug(Info, "lift: limit switch superior alcanzado \n");
+		if (status.upLimit) {
+			lDebug(Info, "lift: upper limit reached \n");
 		}
 
-		if (status.limitDown) {
-			lDebug(Info, "lift: limit switch inferior alcanzado \n");
+		if (status.downLimit) {
+			lDebug(Info, "lift: lower limit reached \n");
 		}
 	}
 }
@@ -109,7 +124,7 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 void GPIO0_IRQHandler(void)
 {
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(0));
-	status.limitUp = 1;
+	status.upLimit = 1;
 	BaseType_t xHigherPriorityTaskWoken;
 	xHigherPriorityTaskWoken = pdFALSE;
 	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
@@ -121,7 +136,7 @@ void GPIO0_IRQHandler(void)
 void GPIO1_IRQHandler(void)
 {
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(1));
-	status.limitDown = 1;
+	status.downLimit = 1;
 	BaseType_t xHigherPriorityTaskWoken;
 	xHigherPriorityTaskWoken = pdFALSE;
 	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
@@ -133,9 +148,9 @@ void lift_init()
 {
 	lift_queue = xQueueCreate(5, sizeof(struct lift_msg*));
 
-	status.dir = LIFT_STATUS_STOP;
-	status.limitUp = 0;
-	status.limitDown = 0;
+	status.type = LIFT_TYPE_STOP;
+	status.upLimit = 0;
+	status.downLimit = 0;
 
 	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales que generan interrupción por flanco descendiente;
 	//Install the handler for the software interrupt.
@@ -147,20 +162,15 @@ void lift_init()
 		// Create the 'handler' task, which is the task to which interrupt processing is deferred
 		xTaskCreate(lift_limit_switches_handler_task, "LSHandler",
 		configMINIMAL_STACK_SIZE, NULL, 3, NULL);
-
-
+		lDebug(Info, "lift: limit switches task created \n");
 	}
 
 	xTaskCreate(lift_task, "Lift", configMINIMAL_STACK_SIZE, NULL,
 	LIFT_TASK_PRIORITY, NULL);
+	lDebug(Info, "lift: task created \n");
 }
 
 struct lift_status lift_status_get(void)
 {
 	return status;
-}
-
-void lift_stop()
-{
-	relay_lift_pwr(0);
 }

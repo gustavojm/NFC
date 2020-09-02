@@ -58,7 +58,7 @@ int32_t pole_tmr_set_freq(int32_t tick_rate_hz)
 {
 	uint32_t timerFreq;
 
-	if ((tick_rate_hz < 0) || (tick_rate_hz > COMPUMOTOR_MAX_FREQ)) {
+	if ((tick_rate_hz < 0) || (tick_rate_hz > MOT_PAP_COMPUMOTOR_MAX_FREQ)) {
 		lDebug(Error, "pole: invalid freq");
 		return -EINVAL;
 	}

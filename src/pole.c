@@ -43,48 +43,59 @@ static void pole_task(void *par)
 			lDebug(Info, "pole: command received \n");
 
 			if (msg_rcv->ctrlEn) {
+				status.stalled = 0;	// If a new command was received with ctrlEn=1 assume we are not stalled
 
 				//obtener posición del RDC
 				status.posAct = ad2s1210_read_position(&rdc);
 
-				if (status.posAct > CWLIMIT) {
+				if (status.posAct > MOT_PAP_CWLIMIT) {
 					status.cwLimit = 1;
 				}
 
-				if (status.posAct < CCWLIMIT) {
+				if (status.posAct < MOT_PAP_CCWLIMIT) {
 					status.ccwLimit = 1;
 				}
 
 				switch (msg_rcv->type) {
-				case MOT_PAP_MSG_TYPE_FREE_RUNNING:
+				case MOT_PAP_TYPE_FREE_RUNNING:
 					allowed = movement_allowed(msg_rcv->free_run_direction,
 							status.cwLimit, status.ccwLimit);
 					speed_ok = free_run_speed_ok(msg_rcv->free_run_speed);
 
 					if (allowed && speed_ok) {
+						if ((status.dir != msg_rcv->free_run_direction)
+								&& (status.type != MOT_PAP_TYPE_STOP)) {
+							pole_tmr_stop();
+							vTaskDelay(
+									pdMS_TO_TICKS(
+											MOT_PAP_DIRECTION_CHANGE_DELAY_MS));
+						}
+						status.type = MOT_PAP_TYPE_FREE_RUNNING;
 						status.dir = msg_rcv->free_run_direction;
 						dout_pole_dir(status.dir);
-						status.vel = msg_rcv->free_run_speed
+						status.freq = msg_rcv->free_run_speed
 								* MOT_PAP_FREE_RUN_FREQ_MULTIPLIER;
-						pole_tmr_set_freq(status.vel);
+						pole_tmr_set_freq(status.freq);
 						pole_tmr_start();
-						lDebug(Info, "pole: FREE RUN, speed: %i, direction: %s",
-								status.vel,
-								(enum mot_pap_direction) status.dir
-										== MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
+						lDebug(Info,
+								"pole: FREE RUN, speed: %i, direction: %s \n",
+								status.freq,
+								status.dir == MOT_PAP_DIRECTION_CW ?
+										"CW" : "CCW");
 					} else {
 						if (!allowed)
-							lDebug(Warn, "pole: movement out of bounds %s",
+							lDebug(Warn, "pole: movement out of bounds %s \n",
 									msg_rcv->free_run_direction
 											== MOT_PAP_DIRECTION_CW ?
 											"CW" : "CCW");
 						if (!speed_ok)
-							lDebug(Warn, "pole: chosen speed out of bounds %i",
+							lDebug(Warn,
+									"pole: chosen speed out of bounds %i \n",
 									msg_rcv->free_run_speed);
 					}
 					break;
 
-				case MOT_PAP_MSG_TYPE_CLOSED_LOOP:	//PID
+				case MOT_PAP_TYPE_CLOSED_LOOP:	//PID
 					status.posCmd = msg_rcv->closed_loop_setpoint;
 					//calcular error de posición
 					error = status.posCmd - status.posAct;
@@ -96,34 +107,44 @@ static void pole_task(void *par)
 						dir = direction_calculate(error);
 						if (movement_allowed(dir, status.cwLimit,
 								status.ccwLimit)) {
+							if ((status.dir != msg_rcv->free_run_direction)
+									&& (status.type != MOT_PAP_TYPE_STOP)) {
+								pole_tmr_stop();
+								vTaskDelay(
+										pdMS_TO_TICKS(
+												MOT_PAP_DIRECTION_CHANGE_DELAY_MS));
+							}
+							status.type = MOT_PAP_TYPE_CLOSED_LOOP;
 							status.dir = dir;
 							dout_pole_dir(status.dir);
 							//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
-							status.vel = freq_calculate(&pid, status.posCmd,
+							status.freq = freq_calculate(&pid, status.posCmd,
 									status.posAct);
-							pole_tmr_set_freq(status.vel);
-							lDebug(Info, "pole: CLOSED LOOP, speed: %i, direction: %s",
-									status.vel,
-									(enum mot_pap_direction) status.dir
-											== MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
-
+							pole_tmr_set_freq(status.freq);
+							lDebug(Info,
+									"pole: CLOSED LOOP, speed: %i, direction: %s \n",
+									status.freq,
+									status.dir == MOT_PAP_DIRECTION_CW ?
+											"CW" : "CCW");
 							if (!pole_tmr_started()) {
 								pole_tmr_start();
 							}
 						} else {
-							lDebug(Warn, "pole: movement out of bounds %s",
+							lDebug(Warn, "pole: movement out of bounds %s \n",
 									dir == MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
 						}
 					}
 					break;
 
 				default:			//STOP
+					status.type = MOT_PAP_TYPE_STOP;
 					pole_tmr_stop();
+					lDebug(Info, "pole: STOP \n");
 					break;
 				}
 
 			} else {
-				lDebug(Warn, "pole: command received with control disabled\n");
+				lDebug(Warn, "pole: command received with control disabled \n");
 			}
 
 			free(msg_rcv);
@@ -137,6 +158,7 @@ static void supervisor_task(void *par)
 	int32_t stall_threshold = 10;
 	int32_t error, threshold = 10;
 	bool already_there;
+	enum mot_pap_direction;
 
 	while (1) {
 		xSemaphoreTake(pole_supervisor_semaphore, portMAX_DELAY);
@@ -146,46 +168,55 @@ static void supervisor_task(void *par)
 		status.cwLimit = 0;
 		status.ccwLimit = 0;
 
-		if (((enum mot_pap_direction) status.dir == MOT_PAP_DIRECTION_CW)
-				&& (status.posAct > CWLIMIT)) {
+		if ((status.dir == MOT_PAP_DIRECTION_CW)
+				&& (status.posAct > MOT_PAP_CWLIMIT)) {
 			status.cwLimit = 1;
 			pole_tmr_stop();
-			lDebug(Warn, "pole: limit CW reached");
+			lDebug(Warn, "pole: limit CW reached \n");
 			continue;
 		}
 
-		if (((enum mot_pap_direction) status.dir == MOT_PAP_DIRECTION_CCW)
-				&& (status.posAct < CCWLIMIT)) {
+		if ((status.dir == MOT_PAP_DIRECTION_CCW)
+				&& (status.posAct < MOT_PAP_CCWLIMIT)) {
 			status.ccwLimit = 1;
 			pole_tmr_stop();
-			lDebug(Warn, "pole: limit CCW reached");
+			lDebug(Warn, "pole: limit CCW reached \n");
 			continue;
 		}
 
 		if (stall_detection) {
 			if (abs((abs(status.posAct) - abs(last_pos))) < stall_threshold) {
-				//Pole stalled
 				status.stalled = 1;
 				pole_tmr_stop();
 				relay_main_pwr(0);
-				lDebug(Warn, "pole: stalled");
+				lDebug(Warn, "pole: stalled \n");
 				continue;
 			}
 		}
 		last_pos = status.posAct;
 
-		error = status.posCmd - status.posAct;
-		already_there = (abs(error) < threshold);
+		if (status.type == MOT_PAP_TYPE_CLOSED_LOOP) {
+			error = status.posCmd - status.posAct;
+			already_there = (abs(error) < threshold);
 
-		if (already_there) {
-			pole_tmr_stop();
-			lDebug(Info, "pole: llegamos");
-		} else {
-			status.dir = direction_calculate(error);
-			dout_pole_dir(status.dir);
-			//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
-			status.vel = freq_calculate(&pid, status.posCmd, status.posAct);
-			pole_tmr_set_freq(status.vel);
+			if (already_there) {
+				status.type = MOT_PAP_TYPE_STOP;
+				pole_tmr_stop();
+				lDebug(Info, "pole: position reached \n");
+			} else {
+				dir = direction_calculate(error);
+				if (status.dir != dir) {
+					pole_tmr_stop();
+					vTaskDelay(
+							pdMS_TO_TICKS(MOT_PAP_DIRECTION_CHANGE_DELAY_MS));
+					status.dir = dir;
+					dout_pole_dir(status.dir);
+					pole_tmr_start();
+				}
+				status.freq = freq_calculate(&pid, status.posCmd,
+						status.posAct);
+				pole_tmr_set_freq(status.freq);
+			}
 		}
 	}
 }
@@ -196,25 +227,17 @@ void pole_init()
 
 	pid_controller_init(&pid, 1, 200, 1, 1, 100, 5);
 
-	status.dir = MOT_PAP_STATUS_STOP;
-	status.posCmd = 0;
-	status.posAct = 0;
-	status.vel = 0;
-	status.cwLimit = 0;
-	status.ccwLimit = 0;
+	status.type = MOT_PAP_TYPE_STOP;
 
 	rdc.gpios.reset = poncho_rdc_reset;
 	rdc.gpios.sample = poncho_rdc_sample;
 	rdc.gpios.wr_fsync = poncho_rdc_pole_wr_fsync;
 	rdc.lock = lock;
-	rdc.resolution = 12;
+	rdc.resolution = 16;
 
 	ad2s1210_init(&rdc);
 
 	pole_tmr_init();
-
-	xTaskCreate(pole_task, "Pole", configMINIMAL_STACK_SIZE, NULL,
-	POLE_TASK_PRIORITY, NULL);
 
 	pole_supervisor_semaphore = xSemaphoreCreateBinary();
 
@@ -223,7 +246,13 @@ void pole_init()
 		xTaskCreate(supervisor_task, "PoleSupervisor",
 		configMINIMAL_STACK_SIZE,
 		NULL, POLE_SUPERVISOR_TASK_PRIORITY, NULL);
+		lDebug(Info, "pole: supervisor task created \n");
 	}
+
+	xTaskCreate(pole_task, "Pole", configMINIMAL_STACK_SIZE, NULL,
+	POLE_TASK_PRIORITY, NULL);
+
+	lDebug(Info, "pole: task created \n");
 }
 
 struct mot_pap_status pole_get_status(void)

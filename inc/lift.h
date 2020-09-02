@@ -8,28 +8,28 @@
 extern "C" {
 #endif
 
+#define LIFT_DIRECTION_CHANGE_DELAY_MS	500
+
 enum lift_direction {
 	LIFT_DIRECTION_UP = 0, LIFT_DIRECTION_DOWN = 1,
 };
 
+enum lift_type {
+	LIFT_TYPE_UP = 0, LIFT_TYPE_DOWN = 1, LIFT_TYPE_STOP
+};
+
 struct lift_msg {
 	bool ctrlEn;
-	enum {
-		LIFT_MSG_TYPE_UP = 0, LIFT_MSG_TYPE_DOWN = 1, LIFT_MSG_TYPE_STOP
-	} type;
+	enum lift_type type;
 };
 
 struct lift_status {
-	enum {
-		LIFT_STATUS_UP, LIFT_STATUS_DOWN, LIFT_STATUS_STOP
-	} dir;
-	volatile bool limitUp;
-	volatile bool limitDown;
+	enum lift_type type;
+	volatile bool upLimit;
+	volatile bool downLimit;
 };
 
 void lift_init();
-
-void lift_stop();
 
 struct lift_status lift_status_get(void);
 
