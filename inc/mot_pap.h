@@ -12,6 +12,7 @@ extern "C" {
 #define MOT_PAP_CWLIMIT 					5000
 #define MOT_PAP_CCWLIMIT 					5
 #define MOT_PAP_MAX_FREQ					150000
+#define MOT_PAP_MIN_FREQ					100
 #define MOT_PAP_FREQ_MULTIPLIER  			( MOT_PAP_MAX_FREQ / 100 )							// Multiplier for closed loop operation
 #define MOT_PAP_MAX_SPEED_FREE_RUN			8
 #define MOT_PAP_FREE_RUN_FREQ_MULTIPLIER    ( MOT_PAP_MAX_FREQ / MOT_PAP_MAX_SPEED_FREE_RUN )	// Multiplier for free run operation =
@@ -66,7 +67,7 @@ bool cwLimitReached, bool ccwLimitReached)
 	return 0;
 }
 
-float freq_calculate(struct pid *pid, int32_t setpoint, int32_t pos);
+int32_t freq_calculate(struct pid *pid, int32_t setpoint, int32_t pos);
 
 #ifdef __cplusplus
 }

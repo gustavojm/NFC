@@ -1,7 +1,7 @@
 #ifndef BOARD_H_
 #define BOARD_H_
 
-#include <chip.h>
+#include "chip.h"
 
 #ifdef __cplusplus
 extern "C" {

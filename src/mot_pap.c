@@ -5,16 +5,20 @@
 #include "debug.h"
 
 
-float freq_calculate(struct pid *pid, int32_t setpoint, int32_t pos)
+int32_t freq_calculate(struct pid *pid, int32_t setpoint, int32_t pos)
 {
-	float cout;
-	float freq;
+	int32_t cout;
+	int32_t freq;
 
 	cout = pid_controller_calculate(pid, setpoint, pos);
-	lDebug(Warn, "----COUT---- %f \n", cout);
+	lDebug(Warn, "----COUT---- %i \n", cout);
 	freq = abs(cout) * MOT_PAP_FREQ_MULTIPLIER;
-	lDebug(Warn, "----FREQ---- %f \n", freq);
+	lDebug(Warn, "----FREQ---- %i \n", freq);
 	if (freq > MOT_PAP_MAX_FREQ)
 		return MOT_PAP_MAX_FREQ;
+
+	if (freq < MOT_PAP_MIN_FREQ)
+		return MOT_PAP_MIN_FREQ;
+
 	return freq;
 }

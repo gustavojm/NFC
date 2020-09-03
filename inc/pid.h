@@ -8,16 +8,16 @@ extern "C" {
 #endif
 
 struct pid {
-	float kp, ki, kd;
-	float errors[3];
-	float setpoint, actual, limit, rate;
-	float prop_out, int_out, der_out, out;
+	int32_t kp, ki, kd;
+	int32_t errors[3];
+	int32_t setpoint, input, limit, rate;
+	int32_t prop_out, int_out, der_out, output;
 };
 
-void pid_controller_init(struct pid *pid, float kp, float sample_time,
-		float ti, float td, float limit, float rate);
+void pid_controller_init(struct pid *pid, int32_t kp, int32_t sample_time,
+		int32_t ti, int32_t td, int32_t limit, int32_t rate);
 
-float pid_controller_calculate(struct pid *pid, float setpoint, float actual);
+int32_t pid_controller_calculate(struct pid *pid, int32_t setpoint, int32_t input);
 
 #ifdef __cplusplus
 }

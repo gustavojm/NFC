@@ -18,7 +18,7 @@
 #define COMM_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
 extern QueueHandle_t lift_queue;
-extern QueueHandle_t queue_pole;
+extern QueueHandle_t pole_queue;
 
 static void RTUcomHMI_task(void *par)
 {
@@ -57,7 +57,7 @@ static void RTUcomHMI_task(void *par)
 			pole_msg_snd->type = MOT_PAP_TYPE_FREE_RUNNING;
 			pole_msg_snd->free_run_direction = MOT_PAP_DIRECTION_CW;
 			pole_msg_snd->free_run_speed = 5;
-			if (xQueueSend(queue_pole, &pole_msg_snd,
+			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
 				lDebug(Warn, "comm: pole command sent \n");
 			} else {
@@ -78,7 +78,7 @@ static void RTUcomHMI_task(void *par)
 			pole_msg_snd->ctrlEn = 1;
 			pole_msg_snd->type = MOT_PAP_TYPE_CLOSED_LOOP;
 			pole_msg_snd->closed_loop_setpoint = random() % ((2 ^ 16) - 1);
-			if (xQueueSend(queue_pole, &pole_msg_snd,
+			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
 				lDebug(Warn, "comm: pole command sent \n");
 			} else {
@@ -95,7 +95,7 @@ static void RTUcomHMI_task(void *par)
 		if (pole_msg_snd) {
 			pole_msg_snd->ctrlEn = 1;
 			pole_msg_snd->type = MOT_PAP_TYPE_STOP;
-			if (xQueueSend(queue_pole, &pole_msg_snd,
+			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
 				lDebug(Warn, "comm: pole command sent \n");
 			} else {
