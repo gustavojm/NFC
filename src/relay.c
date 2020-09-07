@@ -2,6 +2,8 @@
 #include "stdlib.h"
 #include "stdbool.h"
 #include "board.h"
+#include "relay.h"
+#include "lift.h"
 
 void relay_init()
 {
@@ -10,9 +12,9 @@ void relay_init()
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 2, 6);		//DOUT2 P4_6 	PIN11	GPIO2[6]  LIFT_DIR
 }
 
-void relay_lift_dir(bool dir)
+void relay_lift_dir(enum lift_direction dir)
 {
-	if (dir) {
+	if (dir == LIFT_DIRECTION_UP) {
 		Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 2, 4);
 	} else {
 		Chip_GPIO_SetPinOutLow(LPC_GPIO_PORT, 2, 4);

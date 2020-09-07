@@ -96,42 +96,53 @@ static void pole_task(void *par)
 					break;
 
 				case MOT_PAP_TYPE_CLOSED_LOOP:	//PID
-					status.posCmd = msg_rcv->closed_loop_setpoint;
-					//calcular error de posición
-					error = status.posCmd - status.posAct;
-					already_there = (abs(error) < threshold);
-
-					if (already_there) {
-						pole_tmr_stop();
+					if ((msg_rcv->closed_loop_setpoint > MOT_PAP_CWLIMIT)
+							| (msg_rcv->closed_loop_setpoint < MOT_PAP_CCWLIMIT)) {
+						lDebug(Warn, "pole: movement out of bounds \n");
 					} else {
-						dir = direction_calculate(error);
-						if (movement_allowed(dir, status.cwLimit,
-								status.ccwLimit)) {
-							if ((status.dir != msg_rcv->free_run_direction)
-									&& (status.type != MOT_PAP_TYPE_STOP)) {
-								pole_tmr_stop();
-								vTaskDelay(
-										pdMS_TO_TICKS(
-												MOT_PAP_DIRECTION_CHANGE_DELAY_MS));
-							}
-							status.type = MOT_PAP_TYPE_CLOSED_LOOP;
-							status.dir = dir;
-							dout_pole_dir(status.dir);
-							//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
-							status.freq = freq_calculate(&pid, status.posCmd,
-									status.posAct);
-							pole_tmr_set_freq(status.freq);
-							lDebug(Info,
-									"pole: CLOSED LOOP, speed: %i, direction: %s \n",
-									status.freq,
-									status.dir == MOT_PAP_DIRECTION_CW ?
-											"CW" : "CCW");
-							if (!pole_tmr_started()) {
-								pole_tmr_start();
-							}
+						status.posCmd = msg_rcv->closed_loop_setpoint;
+						lDebug(Info, "pole: CLOSED_LOOP posCmd: %i posAct: %i",
+								status.posCmd, status.posAct);
+
+						//calcular error de posición
+						error = status.posCmd - status.posAct;
+						already_there = (abs(error) < threshold);
+
+						if (already_there) {
+							pole_tmr_stop();
+							lDebug(Info, "pole: already there \n");
 						} else {
-							lDebug(Warn, "pole: movement out of bounds %s \n",
-									dir == MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
+							dir = direction_calculate(error);
+							if (movement_allowed(dir, status.cwLimit,
+									status.ccwLimit)) {
+								if ((status.dir != msg_rcv->free_run_direction)
+										&& (status.type != MOT_PAP_TYPE_STOP)) {
+									pole_tmr_stop();
+									vTaskDelay(
+											pdMS_TO_TICKS(
+													MOT_PAP_DIRECTION_CHANGE_DELAY_MS));
+								}
+								status.type = MOT_PAP_TYPE_CLOSED_LOOP;
+								status.dir = dir;
+								dout_pole_dir(status.dir);
+								//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
+								status.freq = freq_calculate(&pid,
+										status.posCmd, status.posAct);
+								pole_tmr_set_freq(status.freq);
+								lDebug(Info,
+										"pole: CLOSED LOOP, speed: %i, direction: %s \n",
+										status.freq,
+										status.dir == MOT_PAP_DIRECTION_CW ?
+												"CW" : "CCW");
+								if (!pole_tmr_started()) {
+									pole_tmr_start();
+								}
+							} else {
+								lDebug(Warn,
+										"pole: movement out of bounds %s \n",
+										dir == MOT_PAP_DIRECTION_CW ?
+												"CW" : "CCW");
+							}
 						}
 					}
 					break;
@@ -225,7 +236,7 @@ void pole_init()
 {
 	pole_queue = xQueueCreate(5, sizeof(struct mot_pap_msg*));
 
-	pid_controller_init(&pid, 1, 200, 1, 1, 100, 5);
+	pid_controller_init(&pid, 10, 20, 20, 20, 100);
 
 	status.type = MOT_PAP_TYPE_STOP;
 

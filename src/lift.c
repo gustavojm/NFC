@@ -23,7 +23,7 @@ static struct lift_status status;
 static void lift_up()
 {
 	if (!status.upLimit) {
-		relay_lift_dir(1);
+		relay_lift_dir(LIFT_DIRECTION_UP);
 		relay_lift_pwr(1);
 	} else {
 		lDebug(Warn, "lift: limit switch reached, cannot go up \n");
@@ -33,7 +33,7 @@ static void lift_up()
 static void lift_down()
 {
 	if (!status.downLimit) {
-		relay_lift_dir(0);
+		relay_lift_dir(LIFT_DIRECTION_DOWN);
 		relay_lift_pwr(1);
 	} else {
 		lDebug(Warn, "lift: limit switch reached, cannot go down \n");

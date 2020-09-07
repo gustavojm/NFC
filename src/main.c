@@ -10,15 +10,24 @@
 #include "lift.h"
 #include "debug.h"
 
-#define DEBUG
-int debugLevel = Error;
+#ifdef TEST
+#include "gui.h"
+#endif
+
+int debugLevel = Info;
+FILE* debugFile = NULL;
 
 int main(void)
 {
 	pole_init();
 //	arm_init();
 	lift_init();
+
+#ifdef TEST
+	gui_init();
+#else
 	comm_init();
+#endif
 
 	/* Start the scheduler itself. */
 	vTaskStartScheduler();

@@ -59,6 +59,26 @@ enum debugLevels {
     Error,
 };
 
+static inline const char * levelText(enum debugLevels level) {
+	switch (level) {
+		case Debug:
+			return "Debug";
+			break;
+		case Info:
+			return "Info";
+			break;
+		case Warn:
+			return "Warn";
+			break;
+		case Error:
+			return "Error";
+			break;
+		default:
+			return "";
+			break;
+	}
+}
+
 void debugInit(int* argc, const char* argv[]);
 
 /** Send the debug output to a file
@@ -114,8 +134,8 @@ extern FILE* debugFile;
  */
 #define lDebug(level, fmt, ...) \
   do { \
-       if (DEBUG_ENABLED && (debugLevel >= level)) \
-         fprintf((debugFile ? debugFile : stderr), "DEBUG %s[%d] %s() " fmt "\n", __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+       if (DEBUG_ENABLED && (debugLevel <= level)) \
+         fprintf((debugFile ? debugFile : stderr), "%s %s[%d] %s() " fmt "\n", levelText(level), __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
   } while(0)
 
 #ifdef __cplusplus

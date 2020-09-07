@@ -20,6 +20,8 @@
 extern QueueHandle_t lift_queue;
 extern QueueHandle_t pole_queue;
 
+bool stall_detection = 1;
+
 static void RTUcomHMI_task(void *par)
 {
 	enum lift_type type = LIFT_TYPE_UP;
@@ -40,7 +42,7 @@ static void RTUcomHMI_task(void *par)
 			lift_msg_snd->type = type;
 			if (xQueueSend(lift_queue, &lift_msg_snd,
 					(TickType_t) 10) == pdPASS) {
-				lDebug(Warn, "comm: lift command sent \n");
+				lDebug(Info, "comm: lift command sent \n");
 			} else {
 				lDebug(Warn, "comm: unable to send lift command \n");
 			}
@@ -59,7 +61,7 @@ static void RTUcomHMI_task(void *par)
 			pole_msg_snd->free_run_speed = 5;
 			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
-				lDebug(Warn, "comm: pole command sent \n");
+				lDebug(Info, "comm: pole command sent \n");
 			} else {
 				lDebug(Warn, "comm: unable to send pole command \n");
 			}
@@ -77,10 +79,10 @@ static void RTUcomHMI_task(void *par)
 			srandom(times(&time));
 			pole_msg_snd->ctrlEn = 1;
 			pole_msg_snd->type = MOT_PAP_TYPE_CLOSED_LOOP;
-			pole_msg_snd->closed_loop_setpoint = random() % ((2 ^ 16) - 1);
+			pole_msg_snd->closed_loop_setpoint = random() % ((int32_t)pow(2, 16) - 1);
 			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
-				lDebug(Warn, "comm: pole command sent \n");
+				lDebug(Info, "comm: pole command sent \n");
 			} else {
 				lDebug(Warn, "comm: unable to send pole command \n");
 			}
@@ -97,7 +99,7 @@ static void RTUcomHMI_task(void *par)
 			pole_msg_snd->type = MOT_PAP_TYPE_STOP;
 			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
-				lDebug(Warn, "comm: pole command sent \n");
+				lDebug(Info, "comm: pole command sent \n");
 			} else {
 				lDebug(Warn, "comm: unable to send pole command \n");
 			}

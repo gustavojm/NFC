@@ -2,6 +2,7 @@
 #define RELAY_H_
 
 #include <stdint.h>
+#include "lift.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,7 +10,7 @@ extern "C" {
 
 void relay_init();
 
-void relay_lift_dir(bool dir);
+void relay_lift_dir(enum lift_direction dir);
 
 void relay_lift_pwr(bool state);
 

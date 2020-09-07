@@ -40,7 +40,7 @@ void TIMER0_IRQHandler(void)
 	}
 }
 
-void pole_tmr_init(void)
+__attribute__ ((weak)) void pole_tmr_init(void)
 {
 	/* Enable timer 0 clock and reset it */
 	Chip_TIMER_Init(LPC_TIMER0);
