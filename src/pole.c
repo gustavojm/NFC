@@ -40,7 +40,7 @@ static void pole_task(void *par)
 
 	while (1) {
 		if (xQueueReceive(pole_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
-			lDebug(Info, "pole: command received \n");
+			lDebug(Info, "pole: command received");
 
 			if (msg_rcv->ctrlEn) {
 				status.stalled = 0;	// If a new command was received with ctrlEn=1 assume we are not stalled
@@ -78,19 +78,19 @@ static void pole_task(void *par)
 						pole_tmr_set_freq(status.freq);
 						pole_tmr_start();
 						lDebug(Info,
-								"pole: FREE RUN, speed: %i, direction: %s \n",
+								"pole: FREE RUN, speed: %i, direction: %s",
 								status.freq,
 								status.dir == MOT_PAP_DIRECTION_CW ?
 										"CW" : "CCW");
 					} else {
 						if (!allowed)
-							lDebug(Warn, "pole: movement out of bounds %s \n",
+							lDebug(Warn, "pole: movement out of bounds %s",
 									msg_rcv->free_run_direction
 											== MOT_PAP_DIRECTION_CW ?
 											"CW" : "CCW");
 						if (!speed_ok)
 							lDebug(Warn,
-									"pole: chosen speed out of bounds %i \n",
+									"pole: chosen speed out of bounds %i",
 									msg_rcv->free_run_speed);
 					}
 					break;
@@ -98,7 +98,7 @@ static void pole_task(void *par)
 				case MOT_PAP_TYPE_CLOSED_LOOP:	//PID
 					if ((msg_rcv->closed_loop_setpoint > MOT_PAP_CWLIMIT)
 							| (msg_rcv->closed_loop_setpoint < MOT_PAP_CCWLIMIT)) {
-						lDebug(Warn, "pole: movement out of bounds \n");
+						lDebug(Warn, "pole: movement out of bounds");
 					} else {
 						status.posCmd = msg_rcv->closed_loop_setpoint;
 						lDebug(Info, "pole: CLOSED_LOOP posCmd: %i posAct: %i",
@@ -110,7 +110,7 @@ static void pole_task(void *par)
 
 						if (already_there) {
 							pole_tmr_stop();
-							lDebug(Info, "pole: already there \n");
+							lDebug(Info, "pole: already there");
 						} else {
 							dir = direction_calculate(error);
 							if (movement_allowed(dir, status.cwLimit,
@@ -130,7 +130,7 @@ static void pole_task(void *par)
 										status.posCmd, status.posAct);
 								pole_tmr_set_freq(status.freq);
 								lDebug(Info,
-										"pole: CLOSED LOOP, speed: %i, direction: %s \n",
+										"pole: CLOSED LOOP, speed: %i, direction: %s",
 										status.freq,
 										status.dir == MOT_PAP_DIRECTION_CW ?
 												"CW" : "CCW");
@@ -139,7 +139,7 @@ static void pole_task(void *par)
 								}
 							} else {
 								lDebug(Warn,
-										"pole: movement out of bounds %s \n",
+										"pole: movement out of bounds %s",
 										dir == MOT_PAP_DIRECTION_CW ?
 												"CW" : "CCW");
 							}
@@ -150,12 +150,12 @@ static void pole_task(void *par)
 				default:			//STOP
 					status.type = MOT_PAP_TYPE_STOP;
 					pole_tmr_stop();
-					lDebug(Info, "pole: STOP \n");
+					lDebug(Info, "pole: STOP");
 					break;
 				}
 
 			} else {
-				lDebug(Warn, "pole: command received with control disabled \n");
+				lDebug(Warn, "pole: command received with control disabled");
 			}
 
 			free(msg_rcv);
@@ -183,7 +183,7 @@ static void supervisor_task(void *par)
 				&& (status.posAct > MOT_PAP_CWLIMIT)) {
 			status.cwLimit = 1;
 			pole_tmr_stop();
-			lDebug(Warn, "pole: limit CW reached \n");
+			lDebug(Warn, "pole: limit CW reached");
 			continue;
 		}
 
@@ -191,7 +191,7 @@ static void supervisor_task(void *par)
 				&& (status.posAct < MOT_PAP_CCWLIMIT)) {
 			status.ccwLimit = 1;
 			pole_tmr_stop();
-			lDebug(Warn, "pole: limit CCW reached \n");
+			lDebug(Warn, "pole: limit CCW reached");
 			continue;
 		}
 
@@ -200,7 +200,7 @@ static void supervisor_task(void *par)
 				status.stalled = 1;
 				pole_tmr_stop();
 				relay_main_pwr(0);
-				lDebug(Warn, "pole: stalled \n");
+				lDebug(Warn, "pole: stalled");
 				continue;
 			}
 		}
@@ -213,7 +213,7 @@ static void supervisor_task(void *par)
 			if (already_there) {
 				status.type = MOT_PAP_TYPE_STOP;
 				pole_tmr_stop();
-				lDebug(Info, "pole: position reached \n");
+				lDebug(Info, "pole: position reached");
 			} else {
 				dir = direction_calculate(error);
 				if (status.dir != dir) {
@@ -257,13 +257,13 @@ void pole_init()
 		xTaskCreate(supervisor_task, "PoleSupervisor",
 		configMINIMAL_STACK_SIZE,
 		NULL, POLE_SUPERVISOR_TASK_PRIORITY, NULL);
-		lDebug(Info, "pole: supervisor task created \n");
+		lDebug(Info, "pole: supervisor task created");
 	}
 
 	xTaskCreate(pole_task, "Pole", configMINIMAL_STACK_SIZE, NULL,
 	POLE_TASK_PRIORITY, NULL);
 
-	lDebug(Info, "pole: task created \n");
+	lDebug(Info, "pole: task created");
 }
 
 struct mot_pap_status pole_get_status(void)

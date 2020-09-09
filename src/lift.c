@@ -26,7 +26,7 @@ static void lift_up()
 		relay_lift_dir(LIFT_DIRECTION_UP);
 		relay_lift_pwr(1);
 	} else {
-		lDebug(Warn, "lift: limit switch reached, cannot go up \n");
+		lDebug(Warn, "lift: limit switch reached, cannot go up");
 	}
 }
 
@@ -36,7 +36,7 @@ static void lift_down()
 		relay_lift_dir(LIFT_DIRECTION_DOWN);
 		relay_lift_pwr(1);
 	} else {
-		lDebug(Warn, "lift: limit switch reached, cannot go down \n");
+		lDebug(Warn, "lift: limit switch reached, cannot go down");
 	}
 }
 
@@ -52,7 +52,7 @@ static void lift_task(void *par)
 	while (1) {
 
 		if (xQueueReceive(lift_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
-			lDebug(Info, "lift: command received \n");
+			lDebug(Info, "lift: command received");
 
 			if (msg_rcv->ctrlEn) {
 				status.upLimit = din_zs1_lift_state();
@@ -67,7 +67,7 @@ static void lift_task(void *par)
 					}
 					status.type = LIFT_TYPE_UP;
 					lift_up();
-					lDebug(Info, "lift: UP \n");
+					lDebug(Info, "lift: UP");
 					break;
 				case LIFT_TYPE_DOWN:
 					if (status.type == LIFT_TYPE_UP) {
@@ -77,16 +77,16 @@ static void lift_task(void *par)
 					}
 					status.type = LIFT_TYPE_DOWN;
 					lift_down();
-					lDebug(Info, "lift: DOWN \n");
+					lDebug(Info, "lift: DOWN");
 					break;
 				default:
 					status.type = LIFT_TYPE_STOP;
 					lift_stop();
-					lDebug(Info, "lift: STOP \n");
+					lDebug(Info, "lift: STOP");
 					break;
 				}
 			} else {
-				lDebug(Warn, "lift: command received with control disabled \n");
+				lDebug(Warn, "lift: command received with control disabled");
 			}
 
 			free(msg_rcv);
@@ -111,11 +111,11 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 		//Determinar cual de los límites se accionó
 
 		if (status.upLimit) {
-			lDebug(Info, "lift: upper limit reached \n");
+			lDebug(Info, "lift: upper limit reached");
 		}
 
 		if (status.downLimit) {
-			lDebug(Info, "lift: lower limit reached \n");
+			lDebug(Info, "lift: lower limit reached");
 		}
 	}
 }
@@ -162,12 +162,12 @@ void lift_init()
 		// Create the 'handler' task, which is the task to which interrupt processing is deferred
 		xTaskCreate(lift_limit_switches_handler_task, "LSHandler",
 		configMINIMAL_STACK_SIZE, NULL, 3, NULL);
-		lDebug(Info, "lift: limit switches task created \n");
+		lDebug(Info, "lift: limit switches task created");
 	}
 
 	xTaskCreate(lift_task, "Lift", configMINIMAL_STACK_SIZE, NULL,
 	LIFT_TASK_PRIORITY, NULL);
-	lDebug(Info, "lift: task created \n");
+	lDebug(Info, "lift: task created");
 }
 
 struct lift_status lift_status_get(void)

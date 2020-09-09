@@ -57,7 +57,7 @@ int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
 
 	fcw = (uint8_t) (st->fexcit * (1 << 15) / st->fclkin);
 	if (fcw < AD2S1210_MIN_FCW || fcw > AD2S1210_MAX_FCW) {
-		lDebug(Error, "ad2s1210: FCW out of range\n");
+		lDebug(Error, "ad2s1210: FCW out of range");
 		return -ERANGE;
 	}
 
@@ -98,7 +98,7 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 	int32_t ret = 0;
 
 	if (fclkin < AD2S1210_MIN_CLKIN || fclkin > AD2S1210_MAX_CLKIN) {
-		lDebug(Error, "ad2s1210: fclkin out of range\n");
+		lDebug(Error, "ad2s1210: fclkin out of range");
 		return -EINVAL;
 	}
 
@@ -129,7 +129,7 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 	int32_t ret = 0;
 
 	if (fexcit < AD2S1210_MIN_EXCIT || fexcit > AD2S1210_MAX_EXCIT) {
-		lDebug(Error, "ad2s1210: excitation frequency out of range\n");
+		lDebug(Error, "ad2s1210: excitation frequency out of range");
 		return -EINVAL;
 	}
 	if (st->lock != NULL) {
@@ -181,7 +181,7 @@ int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
 				goto error_ret;
 			if (ret & AD2S1210_MSB_IS_HIGH) {
 				ret = -EIO;
-				lDebug(Error, "ad2s1210: write control register fail\n");
+				lDebug(Error, "ad2s1210: write control register fail");
 				goto error_ret;
 			}
 			st->resolution = ad2s1210_resolution_value[data
@@ -207,7 +207,7 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata)
 	int32_t ret = 0;
 
 	if (udata < 10 || udata > 16) {
-		lDebug(Error, "ad2s1210: resolution out of range\n");
+		lDebug(Error, "ad2s1210: resolution out of range");
 		return -EINVAL;
 	}
 
@@ -231,7 +231,7 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata)
 			data = ret;
 			if (data & AD2S1210_MSB_IS_HIGH) {
 				ret = -EIO;
-				lDebug(Error, "ad2s1210: setting resolution fail\n");
+				lDebug(Error, "ad2s1210: setting resolution fail");
 				goto error_ret;
 			}
 			st->resolution = ad2s1210_resolution_value[data

@@ -42,13 +42,13 @@ static void RTUcomHMI_task(void *par)
 			lift_msg_snd->type = type;
 			if (xQueueSend(lift_queue, &lift_msg_snd,
 					(TickType_t) 10) == pdPASS) {
-				lDebug(Info, "comm: lift command sent \n");
+				lDebug(Info, "comm: lift command sent");
 			} else {
-				lDebug(Warn, "comm: unable to send lift command \n");
+				lDebug(Warn, "comm: unable to send lift command");
 			}
 			vTaskDelay(pdMS_TO_TICKS(1000));
 		} else {
-			lDebug(Error, "comm: out of memory \n");
+			lDebug(Error, "comm: out of memory");
 		}
 
 		// Generar un mensaje para pole con movimiento FREERUN en sentido CW y velocidad 5
@@ -61,13 +61,13 @@ static void RTUcomHMI_task(void *par)
 			pole_msg_snd->free_run_speed = 5;
 			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
-				lDebug(Info, "comm: pole command sent \n");
+				lDebug(Info, "comm: pole command sent");
 			} else {
-				lDebug(Warn, "comm: unable to send pole command \n");
+				lDebug(Warn, "comm: unable to send pole command");
 			}
 			vTaskDelay(pdMS_TO_TICKS(1000));
 		} else {
-			lDebug(Error, "comm: out of memory \n");
+			lDebug(Error, "comm: out of memory");
 		}
 
 		// Generar un mensaje para pole con movimiento closed loop y set point aleatorio
@@ -82,13 +82,13 @@ static void RTUcomHMI_task(void *par)
 			pole_msg_snd->closed_loop_setpoint = random() % ((int32_t)pow(2, 16) - 1);
 			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
-				lDebug(Info, "comm: pole command sent \n");
+				lDebug(Info, "comm: pole command sent");
 			} else {
-				lDebug(Warn, "comm: unable to send pole command \n");
+				lDebug(Warn, "comm: unable to send pole command");
 			}
 			vTaskDelay(pdMS_TO_TICKS(1000));
 		} else {
-			lDebug(Error, "comm: out of memory \n");
+			lDebug(Error, "comm: out of memory");
 		}
 
 		// Generar un mensaje de detención para pole
@@ -99,13 +99,13 @@ static void RTUcomHMI_task(void *par)
 			pole_msg_snd->type = MOT_PAP_TYPE_STOP;
 			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
-				lDebug(Info, "comm: pole command sent \n");
+				lDebug(Info, "comm: pole command sent");
 			} else {
-				lDebug(Warn, "comm: unable to send pole command \n");
+				lDebug(Warn, "comm: unable to send pole command");
 			}
 			vTaskDelay(pdMS_TO_TICKS(1000));
 		} else {
-			lDebug(Error, "comm: out of memory \n");
+			lDebug(Error, "comm: out of memory");
 		}
 	}
 }
