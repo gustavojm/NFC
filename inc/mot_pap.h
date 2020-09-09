@@ -55,7 +55,7 @@ inline enum mot_pap_direction direction_calculate(int32_t error)
 
 inline bool free_run_speed_ok(int32_t speed)
 {
-	return ((speed >= 0) && (speed <= MOT_PAP_MAX_SPEED_FREE_RUN));
+	return ((speed > 0) && (speed <= MOT_PAP_MAX_SPEED_FREE_RUN));
 }
 
 static inline bool movement_allowed(enum mot_pap_direction dir,
