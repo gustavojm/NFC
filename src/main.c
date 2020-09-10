@@ -10,6 +10,11 @@
 #include "lift.h"
 #include "debug.h"
 
+#include <execinfo.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 #ifdef TEST
 #include "gui.h"
 #endif
@@ -17,9 +22,28 @@
 int debugLevel = Info;
 FILE* debugFile = NULL;
 
+#ifdef TEST
+void handler(int sig) {
+  void *array[10];
+  size_t size;
+
+  // get void*'s for all entries on the stack
+  size = backtrace(array, 10);
+
+  // print out all the frames to stderr
+  fprintf(stderr, "Error: signal %d:\n", sig);
+  backtrace_symbols_fd(array, size, STDERR_FILENO);
+  exit(1);
+}
+#endif
+
 int main(void)
 {
-	pole_init();
+#ifdef TEST
+    signal(SIGSEGV, handler);   // install our handler
+#endif
+
+    pole_init();
 //	arm_init();
 	lift_init();
 

@@ -1,4 +1,4 @@
-#include "pole_tmr.h"
+//#include "pole_tmr.h"
 #include "pole.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -19,7 +19,6 @@
 #define POLE_SUPERVISOR_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
 QueueHandle_t pole_queue = NULL;
-SemaphoreHandle_t lock;
 
 SemaphoreHandle_t pole_supervisor_semaphore;
 
@@ -37,6 +36,8 @@ static void pole_task(void *par)
 	int32_t error, threshold = 10;
 	bool already_there;
 	bool allowed, speed_ok;
+
+	ad2s1210_init(&rdc);
 
 	while (1) {
 		if (xQueueReceive(pole_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
@@ -77,8 +78,7 @@ static void pole_task(void *par)
 								* MOT_PAP_FREE_RUN_FREQ_MULTIPLIER;
 						pole_tmr_set_freq(status.freq);
 						pole_tmr_start();
-						lDebug(Info,
-								"pole: FREE RUN, speed: %i, direction: %s",
+						lDebug(Info, "pole: FREE RUN, speed: %i, direction: %s",
 								status.freq,
 								status.dir == MOT_PAP_DIRECTION_CW ?
 										"CW" : "CCW");
@@ -89,8 +89,7 @@ static void pole_task(void *par)
 											== MOT_PAP_DIRECTION_CW ?
 											"CW" : "CCW");
 						if (!speed_ok)
-							lDebug(Warn,
-									"pole: chosen speed out of bounds %i",
+							lDebug(Warn, "pole: chosen speed out of bounds %i",
 									msg_rcv->free_run_speed);
 					}
 					break;
@@ -138,8 +137,7 @@ static void pole_task(void *par)
 									pole_tmr_start();
 								}
 							} else {
-								lDebug(Warn,
-										"pole: movement out of bounds %s",
+								lDebug(Warn, "pole: movement out of bounds %s",
 										dir == MOT_PAP_DIRECTION_CW ?
 												"CW" : "CCW");
 							}
@@ -243,10 +241,8 @@ void pole_init()
 	rdc.gpios.reset = poncho_rdc_reset;
 	rdc.gpios.sample = poncho_rdc_sample;
 	rdc.gpios.wr_fsync = poncho_rdc_pole_wr_fsync;
-	rdc.lock = lock;
+	rdc.lock = xSemaphoreCreateMutex();
 	rdc.resolution = 16;
-
-	ad2s1210_init(&rdc);
 
 	pole_tmr_init();
 
