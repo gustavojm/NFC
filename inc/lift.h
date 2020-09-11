@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-#ifdef TEST
+#ifdef TEST_GUI
 //IRQHandler for ZS1_LIFT
 void GPIO0_IRQHandler(void);
 //IRQHandler for ZS1_LIFT

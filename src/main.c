@@ -15,14 +15,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifdef TEST
+#ifdef TEST_GUI
 #include "gui.h"
 #endif
 
 int debugLevel = Info;
 FILE* debugFile = NULL;
 
-#ifdef TEST
+#ifdef TEST_GUI
 void handler(int sig) {
   void *array[10];
   size_t size;
@@ -39,7 +39,7 @@ void handler(int sig) {
 
 int main(void)
 {
-#ifdef TEST
+#ifdef TEST_GUI
     signal(SIGSEGV, handler);   // install our handler
 #endif
 
@@ -47,7 +47,7 @@ int main(void)
 //	arm_init();
 	lift_init();
 
-#ifdef TEST
+#ifdef TEST_GUI
 	gui_init();
 #else
 	comm_init();
