@@ -13,8 +13,6 @@
 #include "pole.h"
 #include "debug.h"
 
-#define UP		0
-#define DOWN	1
 #define COMM_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
 extern QueueHandle_t lift_queue;
@@ -38,7 +36,7 @@ static void RTUcomHMI_task(void *par)
 		lift_msg_snd = (struct lift_msg*) malloc(sizeof(struct lift_msg));
 
 		if (lift_msg_snd != NULL) {
-			lift_msg_snd->ctrlEn = 1;
+			lift_msg_snd->ctrlEn = true;
 			lift_msg_snd->type = type;
 			if (xQueueSend(lift_queue, &lift_msg_snd,
 					(TickType_t) 10) == pdPASS) {
@@ -55,7 +53,7 @@ static void RTUcomHMI_task(void *par)
 		pole_msg_snd = (struct mot_pap_msg*) malloc(
 				sizeof(struct mot_pap_msg));
 		if (pole_msg_snd) {
-			pole_msg_snd->ctrlEn = 1;
+			pole_msg_snd->ctrlEn = true;
 			pole_msg_snd->type = MOT_PAP_TYPE_FREE_RUNNING;
 			pole_msg_snd->free_run_direction = MOT_PAP_DIRECTION_CW;
 			pole_msg_snd->free_run_speed = 5;
@@ -77,7 +75,7 @@ static void RTUcomHMI_task(void *par)
 		if (pole_msg_snd) {
 			struct tms time;
 			srandom(times(&time));
-			pole_msg_snd->ctrlEn = 1;
+			pole_msg_snd->ctrlEn = true;
 			pole_msg_snd->type = MOT_PAP_TYPE_CLOSED_LOOP;
 			pole_msg_snd->closed_loop_setpoint = random() % ((int32_t)pow(2, 16) - 1);
 			if (xQueueSend(pole_queue, &pole_msg_snd,
@@ -95,7 +93,7 @@ static void RTUcomHMI_task(void *par)
 		pole_msg_snd = (struct mot_pap_msg*) malloc(
 				sizeof(struct mot_pap_msg));
 		if (pole_msg_snd) {
-			pole_msg_snd->ctrlEn = 1;
+			pole_msg_snd->ctrlEn = true;
 			pole_msg_snd->type = MOT_PAP_TYPE_STOP;
 			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {

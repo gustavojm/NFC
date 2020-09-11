@@ -1,47 +1,23 @@
 #include "board.h"
 #include "stdio.h"
 #include "spi.h"
+#include "stdbool.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
 
 #define LPC_SSP           LPC_SSP1
-#define SSP_IRQ           SSP1_IRQn
-#define SSPIRQHANDLER SSP1_IRQHandler
 
-#define BUFFER_SIZE                         (0x100)
 #define SSP_DATA_BITS                       (SSP_BITS_8)
 
-/* Tx buffer */
-static uint8_t Tx_Buf[BUFFER_SIZE];
-
-/* Rx buffer */
-static uint8_t Rx_Buf[BUFFER_SIZE];
-
 static SSP_ConfigFormat ssp_format;
-static Chip_SSP_DATA_SETUP_T xf_setup;
 static volatile uint8_t isXferCompleted = 0;
 
-//xf_setup.length = BUFFER_SIZE;
-//xf_setup.tx_data = Tx_Buf;
-//xf_setup.rx_data = Rx_Buf;
-//
-//xf_setup.rx_cnt = xf_setup.tx_cnt = 0;
-
-int32_t spi_write(uint8_t *data, __attribute__((unused))   int32_t byte_count)
-{
-	printf("0x%x \n", (uint8_t) *data);
-	return 1;
-}
-//
-//int32_t spi_sync_transfer(struct spi_transfer *xfer,
-//		__attribute__((unused))    int32_t byte_count) {
-//	printf("0x%s \n", (char*) xfer);
-//	return 1;
-//}
-
-spi_sync_transfer(struct spi_transfer *xfers, uint32_t num_xfers)
+int32_t spi_sync_transfer(struct spi_transfer *xfers, uint32_t num_xfers,
+		void (*gpio_wr_fsync)(bool))
 {
 	uint32_t i;
 
@@ -50,15 +26,18 @@ spi_sync_transfer(struct spi_transfer *xfers, uint32_t num_xfers)
 
 		if (xfers[i].cs_change) {
 			if (i != num_xfers) {
-//				spi_set_cs(false);
-//				//algo de delay aqui?;
-//				spi_set_cs(true);
+				if (gpio_wr_fsync != NULL) {
+					gpio_wr_fsync(false);
+					vTaskDelay(100);
+					gpio_wr_fsync(true);
+				}
 			}
 		}
 	}
+	return 0;
 }
 
-int32_t spi_init(void)
+void spi_init(void)
 {
 	/* SSP initialization */
 	Board_SSP_Init(LPC_SSP);

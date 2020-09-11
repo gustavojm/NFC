@@ -8,17 +8,7 @@
 #include "spi.h"
 #include "debug.h"
 
-//xf_setup.length = BUFFER_SIZE;
-//xf_setup.tx_data = Tx_Buf;
-//xf_setup.rx_data = Rx_Buf;
-//
-//xf_setup.rx_cnt = xf_setup.tx_cnt = 0;
-
 const uint32_t ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
-
-int32_t spi_write(uint8_t *data, __attribute__((unused))     int32_t byte_count);
-int32_t spi_sync_transfer(struct spi_transfer *xfer,
-		__attribute__((unused))     int32_t byte_count);
 
 /* write 1 bytes (address or data) to the chip */
 int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
@@ -34,16 +24,33 @@ int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
 /* read value from one of the registers */
 int32_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address)
 {
-	struct spi_transfer xfers[] = { { .xf_setup = { .length = 1, .rx_data =
-			&st->rx[0], .tx_data = &st->tx[0], .rx_cnt = 0, .tx_cnt = 0 },
-			.cs_change = 1, }, { .xf_setup = { .length = 1, .rx_data =
-			&st->rx[1], .tx_data = &st->tx[1], .rx_cnt = 0, .tx_cnt = 0 }, }, };
+	/* @formatter:off */
+	struct spi_transfer xfers[] = {
+			{ 	.xf_setup = {
+					.length = 1,
+					.rx_data = &st->rx[0],
+					.tx_data = &st->tx[0],
+					.rx_cnt = 0,
+					.tx_cnt = 0
+							},
+				.cs_change = 1,
+			},
+			{ 	.xf_setup = {
+					.length = 1,
+					.rx_data = &st->rx[1],
+					.tx_data = &st->tx[1],
+					.rx_cnt = 0,
+					.tx_cnt = 0 },
+				.cs_change = 0
+			},
+	};
+
+	/* @formatter:on */
 
 	int32_t ret = 0;
-
 	st->tx[0] = address | AD2S1210_MSB_IS_HIGH;
 	st->tx[1] = AD2S1210_REG_FAULT;
-	ret = spi_sync_transfer(xfers, 2);
+	ret = spi_sync_transfer(xfers, 2, st->gpios.wr_fsync);
 	if (ret < 0)
 		return ret;
 
@@ -111,7 +118,7 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_soft_reset(st);
-error_ret:
+			error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
@@ -139,7 +146,7 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_soft_reset(st);
-error_ret:
+			error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
@@ -188,7 +195,7 @@ int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
 					& AD2S1210_SET_RESOLUTION];
 			st->hysteresis = !!(data & AD2S1210_ENABLE_HYSTERESIS);
 
-error_ret:
+			error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
@@ -236,7 +243,7 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata)
 			}
 			st->resolution = ad2s1210_resolution_value[data
 					& AD2S1210_SET_RESOLUTION];
-error_ret:
+			error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
@@ -275,7 +282,7 @@ int32_t ad2s1210_clear_fault(struct ad2s1210_state *st)
 			st->gpios.sample(0);
 			st->gpios.sample(1);
 
-error_ret:
+			error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
@@ -307,7 +314,7 @@ int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_config_write(st, data & AD2S1210_MSB_IS_LOW);
-error_ret:
+			error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
@@ -319,9 +326,11 @@ int32_t ad2s1210_init(struct ad2s1210_state *st)
 	uint8_t data;
 	int32_t ret = 0;
 
+
 	if (st->lock != NULL) {
 		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 
+			spi_init();
 			ret = ad2s1210_config_write(st, AD2S1210_REG_CONTROL);
 			if (ret < 0)
 				goto error_ret;
@@ -343,7 +352,7 @@ int32_t ad2s1210_init(struct ad2s1210_state *st)
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_soft_reset(st);
-error_ret:
+			error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
@@ -375,7 +384,6 @@ int32_t ad2s1210_read_velocity(struct ad2s1210_state *st)
 	}
 	return ret;
 }
-
 
 //Truncar a la resolución configurada
 //if (st->hysteresis)

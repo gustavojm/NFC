@@ -124,7 +124,7 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 void GPIO0_IRQHandler(void)
 {
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(0));
-	status.upLimit = 1;
+	status.upLimit = true;
 	BaseType_t xHigherPriorityTaskWoken;
 	xHigherPriorityTaskWoken = pdFALSE;
 	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
@@ -136,7 +136,7 @@ void GPIO0_IRQHandler(void)
 void GPIO1_IRQHandler(void)
 {
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(1));
-	status.downLimit = 1;
+	status.downLimit = true;
 	BaseType_t xHigherPriorityTaskWoken;
 	xHigherPriorityTaskWoken = pdFALSE;
 	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
@@ -149,8 +149,8 @@ void lift_init()
 	lift_queue = xQueueCreate(5, sizeof(struct lift_msg*));
 
 	status.type = LIFT_TYPE_STOP;
-	status.upLimit = 0;
-	status.downLimit = 0;
+	status.upLimit = false;
+	status.downLimit = false;
 
 	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales que generan interrupción por flanco descendiente;
 	//Install the handler for the software interrupt.

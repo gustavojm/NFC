@@ -44,17 +44,17 @@ static void pole_task(void *par)
 			lDebug(Info, "pole: command received");
 
 			if (msg_rcv->ctrlEn) {
-				status.stalled = 0;	// If a new command was received with ctrlEn=1 assume we are not stalled
+				status.stalled = false;	// If a new command was received with ctrlEn=1 assume we are not stalled
 
 				//obtener posición del RDC
 				status.posAct = ad2s1210_read_position(&rdc);
 
 				if (status.posAct > MOT_PAP_CWLIMIT) {
-					status.cwLimit = 1;
+					status.cwLimit = true;
 				}
 
 				if (status.posAct < MOT_PAP_CCWLIMIT) {
-					status.ccwLimit = 1;
+					status.ccwLimit = true;
 				}
 
 				switch (msg_rcv->type) {
@@ -174,12 +174,12 @@ static void supervisor_task(void *par)
 
 		status.posAct = ad2s1210_read_position(&rdc);
 
-		status.cwLimit = 0;
-		status.ccwLimit = 0;
+		status.cwLimit = false;
+		status.ccwLimit = false;
 
 		if ((status.dir == MOT_PAP_DIRECTION_CW)
 				&& (status.posAct > MOT_PAP_CWLIMIT)) {
-			status.cwLimit = 1;
+			status.cwLimit = true;
 			pole_tmr_stop();
 			lDebug(Warn, "pole: limit CW reached");
 			continue;
@@ -187,7 +187,7 @@ static void supervisor_task(void *par)
 
 		if ((status.dir == MOT_PAP_DIRECTION_CCW)
 				&& (status.posAct < MOT_PAP_CCWLIMIT)) {
-			status.ccwLimit = 1;
+			status.ccwLimit = true;
 			pole_tmr_stop();
 			lDebug(Warn, "pole: limit CCW reached");
 			continue;
@@ -195,7 +195,7 @@ static void supervisor_task(void *par)
 
 		if (stall_detection) {
 			if (abs((abs(status.posAct) - abs(last_pos))) < stall_threshold) {
-				status.stalled = 1;
+				status.stalled = true;
 				pole_tmr_stop();
 				relay_main_pwr(0);
 				lDebug(Warn, "pole: stalled");
