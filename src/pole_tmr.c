@@ -8,8 +8,6 @@
 #include "mot_pap.h"
 #include "debug.h"
 
-#define POLE_SUPERVISOR_RATE    10		//every 10 steps call supervisor task
-
 extern bool stall_detection;
 extern SemaphoreHandle_t pole_supervisor_semaphore;
 
@@ -30,7 +28,7 @@ void TIMER0_IRQHandler(void)
 		// Generate waveform
 		dout_pole_pulse(On);
 
-		if (++steps == POLE_SUPERVISOR_RATE) {
+		if (++steps == MOT_PAP_SUPERVISOR_RATE) {
 			steps = 0;
 			xHigherPriorityTaskWoken = pdFALSE;
 			xSemaphoreGiveFromISR(pole_supervisor_semaphore,

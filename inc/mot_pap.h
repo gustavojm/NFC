@@ -19,6 +19,11 @@ extern "C" {
 #define MOT_PAP_COMPUMOTOR_MAX_FREQ				300000
 #define MOT_PAP_DIRECTION_CHANGE_DELAY_MS		500
 
+#define MOT_PAP_SUPERVISOR_RATE    				2	//2 means one step
+#define MOT_PAP_POS_THRESHOLD 					1
+#define MOT_PAP_STALL_THRESHOLD 				1
+
+
 enum mot_pap_direction {
 	MOT_PAP_DIRECTION_CW, MOT_PAP_DIRECTION_CCW,
 };

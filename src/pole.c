@@ -164,8 +164,7 @@ static void pole_task(void *par)
 static void supervisor_task(void *par)
 {
 	static int32_t last_pos = 0;
-	int32_t stall_threshold = 10;
-	int32_t error, threshold = 10;
+	int32_t error;
 	bool already_there;
 	enum mot_pap_direction;
 
@@ -194,7 +193,7 @@ static void supervisor_task(void *par)
 		}
 
 		if (stall_detection) {
-			if (abs((abs(status.posAct) - abs(last_pos))) < stall_threshold) {
+			if (abs((abs(status.posAct) - abs(last_pos))) < MOT_PAP_STALL_THRESHOLD) {
 				status.stalled = true;
 				pole_tmr_stop();
 				relay_main_pwr(0);
@@ -206,7 +205,7 @@ static void supervisor_task(void *par)
 
 		if (status.type == MOT_PAP_TYPE_CLOSED_LOOP) {
 			error = status.posCmd - status.posAct;
-			already_there = (abs(error) < threshold);
+			already_there = (abs(error) < MOT_PAP_POS_THRESHOLD);
 
 			if (already_there) {
 				status.type = MOT_PAP_TYPE_STOP;
