@@ -3,6 +3,7 @@
 #include "spi.h"
 #include "stdbool.h"
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "task.h"
 
 /*****************************************************************************
@@ -14,24 +15,32 @@
 #define SSP_DATA_BITS                       (SSP_BITS_8)
 
 static SSP_ConfigFormat ssp_format;
-static volatile uint8_t isXferCompleted = 0;
+SemaphoreHandle_t spi_mutex;
 
-int32_t spi_sync_transfer(struct spi_transfer *xfers, uint32_t num_xfers,
+int32_t spi_sync_transfer(Chip_SSP_DATA_SETUP_T *xfers, uint32_t num_xfers,
 		void (*gpio_wr_fsync)(bool))
 {
 	uint32_t i;
-
-	for (i = 0; i < num_xfers; ++i) {
-		Chip_SSP_RWFrames_Blocking(LPC_SSP, &(xfers[i].xf_setup));
-
-		if (xfers[i].cs_change) {
-			if (i != num_xfers) {
+	if (spi_mutex != NULL) {
+		if (xSemaphoreTake(spi_mutex, portMAX_DELAY) == pdTRUE) {
+			for (i = 0; i < num_xfers; ++i) {
 				if (gpio_wr_fsync != NULL) {
-					gpio_wr_fsync(false);
-					vTaskDelay(100);
-					gpio_wr_fsync(true);
+					gpio_wr_fsync(0);
+				}
+				Chip_SSP_RWFrames_Blocking(LPC_SSP, &(xfers[i]));
+
+				if (gpio_wr_fsync != NULL) {
+					gpio_wr_fsync(1);
+				}
+
+				if (i != num_xfers) {
+					/* Delay WR/FSYNC falling edge to SCLK rising edge 3 ns min
+					 Delay WR/FSYNC falling edge to SDO release from high-Z
+					 VDRIVE = 4.5 V to 5.25 V 16 ns min */
+					__NOP();	// 83ns delay at 12MHz
 				}
 			}
+			xSemaphoreGive(spi_mutex);
 		}
 	}
 	return 0;
@@ -39,6 +48,7 @@ int32_t spi_sync_transfer(struct spi_transfer *xfers, uint32_t num_xfers,
 
 void spi_init(void)
 {
+	spi_mutex = xSemaphoreCreateMutex();
 	/* SSP initialization */
 	Board_SSP_Init(LPC_SSP);
 

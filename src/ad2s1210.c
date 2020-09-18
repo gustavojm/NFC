@@ -15,49 +15,79 @@ int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
 {
 	int32_t ret = 0;
 
-	st->tx[0] = data;
-	ret = spi_write(st->tx, 1);
+	uint8_t tx = data;
+	ret = spi_write(&tx, 1);
 
 	return ret;
 }
 
 /* read value from one of the registers */
-int32_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address)
+static uint8_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address)
 {
-	/* @formatter:off */
-	struct spi_transfer xfers[] = {
-			{ 	.xf_setup = {
-					.length = 1,
-					.rx_data = &st->rx[0],
-					.tx_data = &st->tx[0],
-					.rx_cnt = 0,
-					.tx_cnt = 0
-							},
-				.cs_change = 1,
-			},
-			{ 	.xf_setup = {
-					.length = 1,
-					.rx_data = &st->rx[1],
-					.tx_data = &st->tx[1],
-					.rx_cnt = 0,
-					.tx_cnt = 0 },
-				.cs_change = 0
-			},
-	};
+	uint32_t xfers_count = 2;
+	uint8_t rx[xfers_count];
+	uint8_t tx[xfers_count];
+	Chip_SSP_DATA_SETUP_T xfers[xfers_count];
 
+	tx[0] = address | AD2S1210_ADDRESS_MASK;
+	tx[1] = AD2S1210_REG_FAULT;	// Read some extra record to receive the data
+
+	for (int i = 0; i < xfers_count; i++) {
+		/* @formatter:off */
+		Chip_SSP_DATA_SETUP_T xfer = {
+			.length = 1,
+			.rx_data = &rx[i],
+			.tx_data = &tx[i],
+			.rx_cnt = 0,
+			.tx_cnt = 0
+		};
 	/* @formatter:on */
 
+		xfers[i] = xfer;
+	}
 	int32_t ret = 0;
-	st->tx[0] = address | AD2S1210_MSB_IS_HIGH;
-	st->tx[1] = AD2S1210_REG_FAULT;
-	ret = spi_sync_transfer(xfers, 2, st->gpios.wr_fsync);
+	ret = spi_sync_transfer(xfers, xfers_count, st->gpios.wr_fsync);
 	if (ret < 0)
 		return ret;
 
-	return st->rx[1];
+	return rx[1];
 }
 
-int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
+/* read value from two consecutive registers */
+static uint16_t ad2s1210_config_read_two(struct ad2s1210_state *st, uint8_t address)
+{
+	uint32_t xfers_count = 3;
+	uint8_t rx[xfers_count];
+	uint8_t tx[xfers_count];
+	Chip_SSP_DATA_SETUP_T xfers[xfers_count];
+
+	tx[0] = address | AD2S1210_ADDRESS_MASK;
+	tx[1] = address + 1 | AD2S1210_ADDRESS_MASK;
+	tx[2] = AD2S1210_REG_FAULT;	// Read some extra record to receive the data
+
+	for (int i = 0; i < xfers_count; i++) {
+		/* @formatter:off */
+		Chip_SSP_DATA_SETUP_T xfer = {
+			.length = 1,
+			.rx_data = &rx[i],
+			.tx_data = &tx[i],
+			.rx_cnt = 0,
+			.tx_cnt = 0
+		};
+		/* @formatter:on */
+
+		xfers[i] = xfer;
+	}
+
+	int32_t ret = 0;
+	ret = spi_sync_transfer(xfers, xfers_count, st->gpios.wr_fsync);
+	if (ret < 0)
+		return ret;
+
+	return rx[1] << 8 | rx[2];
+}
+
+static int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
 {
 	int32_t ret = 0;
 	uint8_t fcw;
@@ -68,11 +98,7 @@ int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
 		return -ERANGE;
 	}
 
-	ret = ad2s1210_config_write(st, AD2S1210_REG_EXCIT_FREQ);
-	if (ret < 0)
-		return ret;
-
-	return ad2s1210_config_write(st, fcw);
+	ret = ad2s1210_set_reg(st, AD2S1210_REG_EXCIT_FREQ, fcw);
 }
 
 int32_t ad2s1210_soft_reset(struct ad2s1210_state *st)
@@ -80,10 +106,7 @@ int32_t ad2s1210_soft_reset(struct ad2s1210_state *st)
 	int32_t ret;
 
 	ret = ad2s1210_config_write(st, AD2S1210_REG_SOFT_RESET);
-	if (ret < 0)
-		return ret;
-
-	return ad2s1210_config_write(st, 0x0);
+	return ret;
 }
 
 void ad2s1210_hard_reset(struct ad2s1210_state *st)
@@ -95,13 +118,11 @@ void ad2s1210_hard_reset(struct ad2s1210_state *st)
 
 uint32_t ad2s1210_get_fclkin(struct ad2s1210_state *st)
 {
-
 	return st->fclkin;
 }
 
 int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 {
-
 	int32_t ret = 0;
 
 	if (fclkin < AD2S1210_MIN_CLKIN || fclkin > AD2S1210_MAX_CLKIN) {
@@ -118,7 +139,7 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_soft_reset(st);
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
@@ -127,7 +148,6 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 
 uint32_t ad2s1210_get_fexcit(struct ad2s1210_state *st)
 {
-
 	return st->fexcit;
 }
 
@@ -139,6 +159,7 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 		lDebug(Error, "ad2s1210: excitation frequency out of range");
 		return -EINVAL;
 	}
+
 	if (st->lock != NULL) {
 		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
 			st->fexcit = fexcit;
@@ -146,178 +167,94 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_soft_reset(st);
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
 	return ret;
 }
 
-int32_t ad2s1210_get_control(struct ad2s1210_state *st)
+static uint8_t ad2s1210_get_control(struct ad2s1210_state *st)
 {
-	int32_t ret = 0;
+	uint8_t ret = 0;
 
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-			ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
-			xSemaphoreGive(st->lock);
-		}
-	}
+	ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
 	return ret;
 }
 
-int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
+static int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
 {
-
 	uint8_t data;
 	int32_t ret = 0;
 
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
+	data = udata & AD2S1210_DATA_MASK;
+	ret = ad2s1210_set_reg(st, AD2S1210_REG_CONTROL, data);
+	if (ret < 0)
+		return ret;
 
-			ret = ad2s1210_config_write(st, AD2S1210_REG_CONTROL);
-			if (ret < 0)
-				goto error_ret;
-			data = udata & AD2S1210_MSB_IS_LOW;
-			ret = ad2s1210_config_write(st, data);
-			if (ret < 0)
-				goto error_ret;
-
-			ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
-			if (ret < 0)
-				goto error_ret;
-			if (ret & AD2S1210_MSB_IS_HIGH) {
-				ret = -EIO;
-				lDebug(Error, "ad2s1210: write control register fail");
-				goto error_ret;
-			}
-			st->resolution = ad2s1210_resolution_value[data
-					& AD2S1210_SET_RESOLUTION];
-			st->hysteresis = !!(data & AD2S1210_ENABLE_HYSTERESIS);
-
-			error_ret:
-			xSemaphoreGive(st->lock);
-		}
+	ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
+	if (ret < 0)
+		return ret;
+	if (ret & AD2S1210_MSB_MASK) {
+		ret = -EIO;
+		lDebug(Error, "ad2s1210: write control register fail");
+		return ret;
 	}
+	st->resolution = ad2s1210_resolution_value[data & AD2S1210_RESOLUTION_MASK];
+	st->hysteresis = !!(data & AD2S1210_HYSTERESIS);
 	return ret;
 }
 
 uint8_t ad2s1210_get_resolution(struct ad2s1210_state *st)
 {
-
 	return st->resolution;
 }
 
-int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t udata)
+int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t res)
 {
 	uint8_t data;
 	int32_t ret = 0;
 
-	if (udata < 10 || udata > 16) {
+	if (res < 10 || res > 16) {
 		lDebug(Error, "ad2s1210: resolution out of range");
 		return -EINVAL;
 	}
 
 	if (st->lock != NULL) {
 		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-			ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
+
+			ret = ad2s1210_get_control(st);
 			if (ret < 0)
 				goto error_ret;
 			data = ret;
-			data &= ~AD2S1210_SET_RESOLUTION;
-			data |= (udata - 10) >> 1;
-			ret = ad2s1210_config_write(st, AD2S1210_REG_CONTROL);
-			if (ret < 0)
-				goto error_ret;
-			ret = ad2s1210_config_write(st, data & AD2S1210_MSB_IS_LOW);
-			if (ret < 0)
-				goto error_ret;
-			ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
-			if (ret < 0)
-				goto error_ret;
-			data = ret;
-			if (data & AD2S1210_MSB_IS_HIGH) {
-				ret = -EIO;
-				lDebug(Error, "ad2s1210: setting resolution fail");
-				goto error_ret;
-			}
-			st->resolution = ad2s1210_resolution_value[data
-					& AD2S1210_SET_RESOLUTION];
-			error_ret:
+			data &= ~AD2S1210_RESOLUTION_MASK;
+			data |= (res - 10) >> 1;
+			ret = ad2s1210_set_control(st, data);
+
+error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
 	return ret;
 }
 
-/* read the fault register since last sample */
-int32_t ad2s1210_get_fault(struct ad2s1210_state *st)
+uint8_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address)
 {
-	int32_t ret = 0;
+	uint8_t ret = 0;
 
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-
-			ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
-			xSemaphoreGive(st->lock);
-		}
-	}
-	return ret;
-}
-
-int32_t ad2s1210_clear_fault(struct ad2s1210_state *st)
-{
-	int32_t ret = 0;
-
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-			st->gpios.sample(0);
-			/* delay (2 * tck + 20) nano seconds */
-			vTaskDelay(pdMS_TO_TICKS(0.02));
-			st->gpios.sample(1);
-			ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
-			if (ret < 0)
-				goto error_ret;
-
-			st->gpios.sample(0);
-			st->gpios.sample(1);
-
-			error_ret:
-			xSemaphoreGive(st->lock);
-		}
-	}
-	return ret;
-}
-
-int32_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address)
-{
-	int32_t ret = 0;
-
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-			ret = ad2s1210_config_read(st, address);
-			xSemaphoreGive(st->lock);
-		}
-	}
+	ret = ad2s1210_config_read(st, address | AD2S1210_ADDRESS_MASK);
 	return ret;
 }
 
 int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 		uint8_t data)
 {
-
 	int32_t ret = 0;
 
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-			ret = ad2s1210_config_write(st, address);
-			if (ret < 0)
-				goto error_ret;
-			ret = ad2s1210_config_write(st, data & AD2S1210_MSB_IS_LOW);
-			error_ret:
-			xSemaphoreGive(st->lock);
-		}
-	}
+	ret = ad2s1210_config_write(st, address | AD2S1210_ADDRESS_MASK);
+	if (ret < 0)
+		return ret;
+	ret = ad2s1210_config_write(st, data & AD2S1210_DATA_MASK);
 	return ret;
 }
 
@@ -326,67 +263,128 @@ int32_t ad2s1210_init(struct ad2s1210_state *st)
 	uint8_t data;
 	int32_t ret = 0;
 
+	if (st->resolution < 10 || st->resolution > 16) {
+		lDebug(Error, "ad2s1210: resolution out of range");
+		return -EINVAL;
+	}
+
+	if (st->fclkin < AD2S1210_MIN_CLKIN || st->fclkin > AD2S1210_MAX_CLKIN) {
+		lDebug(Error, "ad2s1210: fclkin out of range");
+		return -EINVAL;
+	}
+
+	if (st->fexcit < AD2S1210_MIN_EXCIT || st->fexcit > AD2S1210_MAX_EXCIT) {
+		lDebug(Error, "ad2s1210: excitation frequency out of range");
+		return -EINVAL;
+	}
+
+	spi_init();
 
 	if (st->lock != NULL) {
 		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-
-			spi_init();
-			ret = ad2s1210_config_write(st, AD2S1210_REG_CONTROL);
-			if (ret < 0)
-				goto error_ret;
-			data = AD2S1210_DEF_CONTROL & ~(AD2S1210_SET_RESOLUTION);
+			data = AD2S1210_DEF_CONTROL & ~(AD2S1210_RESOLUTION_MASK);
 			data |= (st->resolution - 10) >> 1;
-			ret = ad2s1210_config_write(st, data);
+			ret = ad2s1210_set_control(st, data);
 			if (ret < 0)
 				goto error_ret;
-			ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
-			if (ret < 0)
-				goto error_ret;
-
-			if (ret & AD2S1210_MSB_IS_HIGH) {
-				ret = -EIO;
-				goto error_ret;
-			}
-
 			ret = ad2s1210_update_frequency_control_word(st);
 			if (ret < 0)
 				goto error_ret;
 			ret = ad2s1210_soft_reset(st);
-			error_ret:
+error_ret:
 			xSemaphoreGive(st->lock);
 		}
 	}
 	return ret;
 }
 
-int32_t ad2s1210_read_position(struct ad2s1210_state *st)
+int16_t ad2s1210_read_position(struct ad2s1210_state *st)
+{
+	int16_t pos = 0;
+
+	/* The position and velocity registers are updated with a high-to-low
+	 transition of the SAMPLE signal. This pin must be held low for at least t16 ns
+	 to guarantee correct latching of the data. */
+	st->gpios.sample(0);
+
+	//No creo que haga falta delay ya que hay varias instrucciones previas
+	//a leer el registro
+	pos = ad2s1210_config_read_two(st, AD2S1210_REG_POSITION);
+	if (st->hysteresis)
+		pos >>= 16 - st->resolution;
+
+	st->gpios.sample(1);
+	return pos;
+}
+
+int16_t ad2s1210_read_velocity(struct ad2s1210_state *st)
+{
+	int16_t vel = 0;
+
+	/* The position and velocity registers are updated with a high-to-low
+	 transition of the SAMPLE signal. This pin must be held low for at least t16 ns
+	 to guarantee correct latching of the data. */
+	st->gpios.sample(0);
+
+	//No creo que haga falta delay ya que hay varias instrucciones previas
+	//a leer el registro
+	vel = ad2s1210_config_read_two(st, AD2S1210_REG_VELOCITY);
+	vel >>= 16 - st->resolution;
+//	if (vel & 0x8000) {
+//		int16_t negative = (0xffff >> st->resolution) << st->resolution;
+//		vel |= negative;
+//	}
+
+	st->gpios.sample(1);
+	return vel;
+}
+
+/* read the fault register since last sample */
+uint8_t ad2s1210_get_fault_register(struct ad2s1210_state *st)
+{
+	uint8_t ret = 0;
+
+	ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
+	return ret;
+}
+
+void ad2s1210_print_fault_register(uint8_t fr)
+{
+	if (fr & (1 << 0))
+		lDebug(Info, "Configuration parity error");
+	if (fr & (1 << 1))
+		lDebug(Info, "Phase error exceeds phase lock range");
+	if (fr & (1 << 2))
+		lDebug(Info, "Velocity exceeds maximum tracking rate");
+	if (fr & (1 << 3))
+		lDebug(Info, "Tracking error exceeds LOT threshold");
+	if (fr & (1 << 4))
+		lDebug(Info, "Sine/cosine inputs exceed DOS mismatch threshold");
+	if (fr & (1 << 5))
+		lDebug(Info, "Sine/cosine inputs exceed DOS overrange threshold");
+	if (fr & (1 << 6))
+		lDebug(Info, "Sine/cosine inputs below LOS threshold");
+	if (fr & (1 << 7))
+		lDebug(Info, "Sine/cosine inputs clipped");
+}
+
+int32_t ad2s1210_clear_fault_register(struct ad2s1210_state *st)
 {
 	int32_t ret = 0;
 
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-			ret = ad2s1210_config_read(st, AD2S1210_REG_POSITION);
-			xSemaphoreGive(st->lock);
-		}
-	}
+	st->gpios.sample(0);
+	/* delay (2 * tck + 20) nano seconds */
+	udelay(1);
+	st->gpios.sample(1);
+
+	ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
+	if (ret < 0)
+		return ret;
+
+	st->gpios.sample(0);
+	udelay(1);
+	st->gpios.sample(1);
+
 	return ret;
 }
 
-int32_t ad2s1210_read_velocity(struct ad2s1210_state *st)
-{
-	int32_t ret = 0;
-
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-			ret = ad2s1210_config_read(st, AD2S1210_REG_VELOCITY);
-			xSemaphoreGive(st->lock);
-		}
-	}
-	return ret;
-}
-
-//Truncar a la resolución configurada
-//if (st->hysteresis)
-//	pos >>= 16 - st->resolution;
-//*val = pos;
-//
