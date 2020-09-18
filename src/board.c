@@ -1,5 +1,6 @@
 #include "board.h"
 #include "string.h"
+#include "stdint.h"
 #include "stdio.h"
 
 #if defined(DEBUG_ENABLE) && !defined(DEBUG_UART)
@@ -16,11 +17,23 @@ typedef struct {
 	uint8_t pin;
 } io_port_t;
 
-static const io_port_t gpioLEDBits[] = { { 3, 5 }, { 0, 14 }, { 3, 7 } };
-
-//Verificar los puertos y pines de gpio ya que estos pertenecen a la EDU
-static const io_port_t GpioPorts[] = { { 3, 0 }, { 3, 3 }, { 3, 4 }, { 5, 15 },
-		{ 5, 16 }, { 3, 5 }, { 3, 6 }, { 3, 7 }, { 2, 8 } };
+/* @formatter:off */
+static const io_port_t GpioPorts[] = {
+		{ 3, 0 }, 	// GPIO0	PIN74	P6_1	FUNCTION0	GPIO3[0]
+		{ 5, 5 }, 	// GPIO1	PIN91	P2_5	FUNCTION4	GPIO5[5]
+		{ 3, 8 }, 	// GPIO2	PIN102	P7_0	FUNCTION0	GPIO3[8]
+		{ 5, 15 },	// GPIO3	PIN85	P6_7	FUNCTION4	GPIO5[15]
+					// GPIO4	I2S0_RX_MCLK
+					// GPIO5	I2S0_RX_SCK
+					// GPIO6	I2S0_TX_SCK
+		{ 3, 2 }, 	// GPIO7	PIN79	P6_3	FUNCTION0	GPIO3[2]
+		{ 0, 5 } 	// GPIO8	PIN83	P6_6	FUNCTION0	GPIO0[5]
+					// GPIO9	AUX_CLK
+					// GPIO10	RTC_ALARM
+					// GPIO11	WAKEUP0
+					// GPIO12	RESET
+};
+/* @formatter:on */
 
 #define GPIO_PORTS_SIZE     (sizeof(GpioPorts) / sizeof(io_port_t))
 
@@ -42,7 +55,7 @@ static void Board_I2C_Init()
 void Board_SSP_Init(LPC_SSP_T *pSSP)
 {
 	if (pSSP == LPC_SSP1) {
-		Chip_SCU_PinMuxSet(0x1, 5, (SCU_PINIO_FAST | SCU_MODE_FUNC5)); /* P1.5 => SSEL1 */
+		//Chip_SCU_PinMuxSet(0x1, 5, (SCU_PINIO_FAST | SCU_MODE_FUNC5)); /* P1.5 => SSEL1 */
 		Chip_SCU_PinMuxSet(0xF, 4, (SCU_PINIO_FAST | SCU_MODE_FUNC0)); /* PF.4 => SCK1 */
 
 		Chip_SCU_PinMuxSet(0x1, 4,
@@ -53,8 +66,8 @@ void Board_SSP_Init(LPC_SSP_T *pSSP)
 						| SCU_MODE_FUNC5)); /* P1.3 => MISO1 */
 
 		//Chip_SCU_PinMuxSet(0x3, 1, (SCU_MODE_INACT | SCU_MODE_FUNC4));  /* P1.5 => SSEL1 */
-		Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 5, 8);
-		Chip_GPIO_SetPinState(LPC_GPIO_PORT, 5, 8, (bool) true);
+		//Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 5, 8);
+		//Chip_GPIO_SetPinState(LPC_GPIO_PORT, 5, 8, (bool) true);
 	} else {
 		return;
 	}
@@ -78,7 +91,7 @@ void Board_Debug_Init(void)
 	Chip_UART_Init(DEBUG_UART);
 	Chip_UART_SetBaudFDR(DEBUG_UART, 115200);
 	Chip_UART_ConfigData(DEBUG_UART,
-			UART_LCR_WLEN8 | UART_LCR_SBS_1BIT | UART_LCR_PARITY_DIS);
+	UART_LCR_WLEN8 | UART_LCR_SBS_1BIT | UART_LCR_PARITY_DIS);
 
 	/* Enable UART Transmit */
 	Chip_UART_TXEnable(DEBUG_UART);
