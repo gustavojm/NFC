@@ -11,7 +11,7 @@
 const uint32_t ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
 
 /* write 1 bytes (address or data) to the chip */
-int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
+static int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
 {
 	int32_t ret = 0;
 
@@ -62,7 +62,7 @@ static uint16_t ad2s1210_config_read_two(struct ad2s1210_state *st, uint8_t addr
 	Chip_SSP_DATA_SETUP_T xfers[xfers_count];
 
 	tx[0] = address | AD2S1210_ADDRESS_MASK;
-	tx[1] = address + 1 | AD2S1210_ADDRESS_MASK;
+	tx[1] = (address + 1) | AD2S1210_ADDRESS_MASK;
 	tx[2] = AD2S1210_REG_FAULT;	// Read some extra record to receive the data
 
 	for (int i = 0; i < xfers_count; i++) {
@@ -99,6 +99,7 @@ static int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
 	}
 
 	ret = ad2s1210_set_reg(st, AD2S1210_REG_EXCIT_FREQ, fcw);
+	return ret;
 }
 
 int32_t ad2s1210_soft_reset(struct ad2s1210_state *st)
@@ -298,9 +299,9 @@ error_ret:
 	return ret;
 }
 
-int16_t ad2s1210_read_position(struct ad2s1210_state *st)
+uint16_t ad2s1210_read_position(struct ad2s1210_state *st)
 {
-	int16_t pos = 0;
+	uint16_t pos = 0;
 
 	/* The position and velocity registers are updated with a high-to-low
 	 transition of the SAMPLE signal. This pin must be held low for at least t16 ns

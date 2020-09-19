@@ -39,14 +39,14 @@ struct mot_pap_msg {
 	enum mot_pap_type type;
 	enum mot_pap_direction free_run_direction;
 	uint32_t free_run_speed;
-	uint32_t closed_loop_setpoint;
+	uint16_t closed_loop_setpoint;
 };
 
 struct mot_pap_status {
 	enum mot_pap_type type;
 	enum mot_pap_direction dir;
-	int32_t posCmd;
-	int32_t posAct;
+	uint16_t posCmd;
+	uint16_t posAct;
 	uint32_t freq;
 	volatile bool cwLimit;
 	volatile bool ccwLimit;
@@ -70,7 +70,7 @@ bool cwLimitReached, bool ccwLimitReached)
 			|| (dir == MOT_PAP_DIRECTION_CCW && !ccwLimitReached));
 }
 
-int32_t freq_calculate(struct pid *pid, int32_t setpoint, int32_t pos);
+int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos);
 
 #ifdef __cplusplus
 }

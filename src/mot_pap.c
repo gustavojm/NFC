@@ -4,15 +4,15 @@
 #include "stdlib.h"
 #include "debug.h"
 
-int32_t freq_calculate(struct pid *pid, int32_t setpoint, int32_t pos)
+int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
 {
 	int32_t cout;
-	int32_t freq;
+	uint32_t freq;
 
 	cout = pid_controller_calculate(pid, setpoint, pos);
 	lDebug(Warn, "----COUT---- %i", cout);
 	freq = abs(cout) * MOT_PAP_CLOSED_LOOP_FREQ_MULTIPLIER;
-	lDebug(Warn, "----FREQ---- %i", freq);
+	lDebug(Warn, "----FREQ---- %u", freq);
 	if (freq > MOT_PAP_MAX_FREQ)
 		return MOT_PAP_MAX_FREQ;
 

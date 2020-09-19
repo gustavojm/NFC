@@ -7,6 +7,8 @@
 #include "errno.h"
 #include "mot_pap.h"
 #include "debug.h"
+#include "pole.h"
+
 
 extern bool stall_detection;
 extern SemaphoreHandle_t pole_supervisor_semaphore;
@@ -22,11 +24,20 @@ void TIMER0_IRQHandler(void)
 	static bool On = false;
 	BaseType_t xHigherPriorityTaskWoken;
 
+	static enum mot_pap_direction last_dir = MOT_PAP_DIRECTION_CW;
+
 	if (Chip_TIMER_MatchPending(LPC_TIMER0, 1)) {
 		Chip_TIMER_ClearMatch(LPC_TIMER0, 1);
+
+		if (pole_get_status().dir != last_dir) {
+			steps = 0;
+			last_dir = pole_get_status().dir;
+		}
+
 		On = (bool) !On;
 		// Generate waveform
 		dout_pole_pulse(On);
+
 
 		if (++steps == MOT_PAP_SUPERVISOR_RATE) {
 			steps = 0;

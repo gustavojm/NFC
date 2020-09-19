@@ -87,6 +87,8 @@ struct ad2s1210_state {
 	uint8_t resolution;
 };
 
+int32_t ad2s1210_init(struct ad2s1210_state *st);
+
 int32_t ad2s1210_soft_reset(struct ad2s1210_state *st);
 
 void ad2s1210_hard_reset(struct ad2s1210_state *st);
@@ -108,9 +110,7 @@ uint8_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address);
 int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 		uint8_t data);
 
-int32_t ad2s1210_init(struct ad2s1210_state *st);
-
-int16_t ad2s1210_read_position(struct ad2s1210_state *st);
+uint16_t ad2s1210_read_position(struct ad2s1210_state *st);
 
 int16_t ad2s1210_read_velocity(struct ad2s1210_state *st);
 

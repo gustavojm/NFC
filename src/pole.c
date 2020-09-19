@@ -78,7 +78,7 @@ static void pole_task(void *par)
 								* MOT_PAP_FREE_RUN_FREQ_MULTIPLIER;
 						pole_tmr_set_freq(status.freq);
 						pole_tmr_start();
-						lDebug(Info, "pole: FREE RUN, speed: %i, direction: %s",
+						lDebug(Info, "pole: FREE RUN, speed: %u, direction: %s",
 								status.freq,
 								status.dir == MOT_PAP_DIRECTION_CW ?
 										"CW" : "CCW");
@@ -89,7 +89,7 @@ static void pole_task(void *par)
 											== MOT_PAP_DIRECTION_CW ?
 											"CW" : "CCW");
 						if (!speed_ok)
-							lDebug(Warn, "pole: chosen speed out of bounds %i",
+							lDebug(Warn, "pole: chosen speed out of bounds %u",
 									msg_rcv->free_run_speed);
 					}
 					break;
@@ -100,7 +100,7 @@ static void pole_task(void *par)
 						lDebug(Warn, "pole: movement out of bounds");
 					} else {
 						status.posCmd = msg_rcv->closed_loop_setpoint;
-						lDebug(Info, "pole: CLOSED_LOOP posCmd: %i posAct: %i",
+						lDebug(Info, "pole: CLOSED_LOOP posCmd: %u posAct: %u",
 								status.posCmd, status.posAct);
 
 						//calcular error de posición
@@ -129,7 +129,7 @@ static void pole_task(void *par)
 										status.posCmd, status.posAct);
 								pole_tmr_set_freq(status.freq);
 								lDebug(Info,
-										"pole: CLOSED LOOP, speed: %i, direction: %s",
+										"pole: CLOSED LOOP, speed: %u, direction: %s",
 										status.freq,
 										status.dir == MOT_PAP_DIRECTION_CW ?
 												"CW" : "CCW");
@@ -163,7 +163,7 @@ static void pole_task(void *par)
 
 static void supervisor_task(void *par)
 {
-	static int32_t last_pos = 0;
+	static uint16_t last_pos = 0;
 	int32_t error;
 	bool already_there;
 	enum mot_pap_direction;
@@ -181,7 +181,7 @@ static void supervisor_task(void *par)
 			status.cwLimit = true;
 			pole_tmr_stop();
 			lDebug(Warn, "pole: limit CW reached");
-			continue;
+			goto cont;
 		}
 
 		if ((status.dir == MOT_PAP_DIRECTION_CCW)
@@ -189,19 +189,20 @@ static void supervisor_task(void *par)
 			status.ccwLimit = true;
 			pole_tmr_stop();
 			lDebug(Warn, "pole: limit CCW reached");
-			continue;
+			goto cont;
 		}
 
 		if (stall_detection) {
-			if (abs((abs(status.posAct) - abs(last_pos))) < MOT_PAP_STALL_THRESHOLD) {
+			lDebug(Info, "STALL DETECTION posAct: %u, last_pos: %u",
+					status.posAct, last_pos);
+			if (abs(status.posAct - last_pos) < MOT_PAP_STALL_THRESHOLD) {
 				status.stalled = true;
 				pole_tmr_stop();
 				relay_main_pwr(0);
 				lDebug(Warn, "pole: stalled");
-				continue;
+				goto cont;
 			}
 		}
-		last_pos = status.posAct;
 
 		if (status.type == MOT_PAP_TYPE_CLOSED_LOOP) {
 			error = status.posCmd - status.posAct;
@@ -226,6 +227,8 @@ static void supervisor_task(void *par)
 				pole_tmr_set_freq(status.freq);
 			}
 		}
+cont:
+		last_pos = status.posAct;
 	}
 }
 
