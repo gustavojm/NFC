@@ -6,14 +6,25 @@
 /**
  * @brief 	initializes GPIOs for Poncho RDC card
  * @return 	nothing
+ * @note	outputs are set to high
  */
 void poncho_rdc_init()
 {
-	///@todo ver si falta ejecutar PinMuxSet... casi seguro
-	Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 3, 0);	//GPIO0	P6_1	PIN74	GPIO3[0]  RESET (BOTH)
-	Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 5, 5);	//GPIO1 P2_5 	PIN91	GPIO5[5]  SAMPLE (BOTH)
-	Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 3, 8);	//GPIO2 P7_0 	PIN110	GPIO3[8]  WR/FSYNC (ARM)
-	Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 5, 15);//GPIO3 P6_7	PIN85	GPIO5[15] WR/FSYNC (POLE)
+	Chip_SCU_PinMuxSet( 6, 1, SCU_MODE_FUNC0 );			//GPIO0	P6_1	PIN74	GPIO3[0]  RESET (SHARED)
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 3, 0);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 3, 0);
+
+	Chip_SCU_PinMuxSet( 2, 5, SCU_MODE_FUNC4 );			//GPIO1 P2_5 	PIN91	GPIO5[5]  SAMPLE (SHARED)
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 5, 5);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 5, 5);
+
+	Chip_SCU_PinMuxSet( 7, 0, SCU_MODE_FUNC0 );			//GPIO2 P7_0 	PIN110	GPIO3[8]  WR/FSYNC (ARM)
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 3, 8);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 3, 8);
+
+	Chip_SCU_PinMuxSet( 6, 7, SCU_MODE_FUNC4 );			//GPIO3 P6_7	PIN85	GPIO5[15] WR/FSYNC (POLE)
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 5, 15);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 5, 15);
 }
 
 /**
