@@ -20,6 +20,10 @@ SemaphoreHandle_t lift_interrupt_counting_semaphore;
 
 static struct lift_status status;
 
+/**
+ * @brief 	commands lift to go up if upLimit is not active.
+ * @return	nothing
+ */
 static void lift_up()
 {
 	if (!status.upLimit) {
@@ -30,6 +34,10 @@ static void lift_up()
 	}
 }
 
+/**
+ * @brief 	commands lift to go down if downLimit is not active.
+ * @return	nothing
+ */
 static void lift_down()
 {
 	if (!status.downLimit) {
@@ -40,11 +48,21 @@ static void lift_down()
 	}
 }
 
+/**
+ * @brief 	commands lift stop
+ * @return	nothing
+ */
 static void lift_stop()
 {
 	relay_lift_pwr(0);
 }
 
+/**
+ * @brief 	handles the Lift movement.
+ * @param 	par		: unused
+ * @return	never
+ * @note	Receives commands from lift_queue
+ */
 static void lift_task(void *par)
 {
 	struct lift_msg *msg_rcv;
@@ -94,7 +112,13 @@ static void lift_task(void *par)
 	}
 }
 
-static void lift_limit_switches_handler_task(void *pvParameters)
+/**
+ * @brief 	ZS1_LIFT and ZS2_LIFT interrupt handlers defer execution to this task.
+ * @param 	par	: unused
+ * @return	never
+ * @note	stops lift movement and prints which limit was reached
+ */
+static void lift_limit_switches_handler_task(void *par)
 {
 	/* As per most tasks, this task is implemented within an infinite loop. */
 	while (1) {
@@ -120,7 +144,9 @@ static void lift_limit_switches_handler_task(void *pvParameters)
 	}
 }
 
-//IRQHandler for ZS1_LIFT
+/**
+ * @brief	IRQHandler for ZS1_LIFT.
+ */
 void GPIO0_IRQHandler(void)
 {
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(0));
@@ -132,7 +158,9 @@ void GPIO0_IRQHandler(void)
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-//IRQHandler for ZS2_LIFT
+/**
+ * @brief	IRQHandler for ZS2_LIFT.
+ */
 void GPIO1_IRQHandler(void)
 {
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(1));
@@ -144,6 +172,10 @@ void GPIO1_IRQHandler(void)
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
+/**
+ * @brief 	creates the queues, semaphores and endless tasks to handle lift movements.
+ * @return	nothing
+ */
 void lift_init()
 {
 	lift_queue = xQueueCreate(5, sizeof(struct lift_msg*));
@@ -152,7 +184,7 @@ void lift_init()
 	status.upLimit = false;
 	status.downLimit = false;
 
-	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales que generan interrupción por flanco descendiente;
+	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales que generan interrupción por flanco ascendente;
 	//Install the handler for the software interrupt.
 	din_init();
 
@@ -170,6 +202,10 @@ void lift_init()
 	lDebug(Info, "lift: task created");
 }
 
+/**
+ * @brief	returns status of the lift task.
+ * @return 	copy of status structure of the task
+ */
 struct lift_status lift_status_get(void)
 {
 	return status;

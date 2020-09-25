@@ -34,6 +34,10 @@ enum mot_pap_type {
 	MOT_PAP_TYPE_STOP
 };
 
+/**
+ * @struct 	mot_pap_msg
+ * @brief	messages to POLE or ARM tasks.
+ */
 struct mot_pap_msg {
 	bool ctrlEn;
 	enum mot_pap_type type;
@@ -42,6 +46,10 @@ struct mot_pap_msg {
 	uint16_t closed_loop_setpoint;
 };
 
+/**
+ * @struct 	mot_pap_status
+ * @brief	POLE or ARM task status.
+ */
 struct mot_pap_status {
 	enum mot_pap_type type;
 	enum mot_pap_direction dir;

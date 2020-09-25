@@ -8,6 +8,10 @@
 extern "C" {
 #endif
 
+/**
+ * @struct 	pid
+ * @brief	PID instance structure.
+ */
 struct pid {
 	double kp, ki, kd;
 	int32_t sample_time_in_ticks;

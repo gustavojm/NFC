@@ -1,4 +1,4 @@
-#include <RTUcomHMI.h>
+#include "RTUcomHMI.h"
 #include "board.h"
 #include "stdio.h"
 #include "stdint.h"
@@ -60,6 +60,11 @@ int main(void)
 }
 
 /*-----------------------------------------------------------*/
+/**
+ * @brief	configASSERT callback function
+ * @param 	ulLine		: line where configASSERT was called
+ * @param 	pcFileName	: file where configASSERT was called
+ */
 void vAssertCalled(unsigned long ulLine, const char *const pcFileName)
 {
 	//volatile uint32_t ulSetToNonZeroInDebuggerToContinue = 0;

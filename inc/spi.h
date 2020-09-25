@@ -14,14 +14,11 @@ int32_t spi_sync_transfer(Chip_SSP_DATA_SETUP_T *xfers, uint32_t num_xfers,
 		void (*gpio_wr_fsync)(bool));
 
 /**
- * spi_write - SPI synchronous write
- * @spi: device to which data will be written
- * @buf: data buffer
- * @len: data buffer size
- *
- * This function writes the buffer @buf.
- *
- * Return: zero on success, else a negative error code.
+ * \brief 	SPI synchronous write
+ * @param 	buf		: data buffer
+ * @param 	len		: data buffer size
+ * @return	0 on success
+ * @note 	This function writes the buffer buf.
  */
 static inline int spi_write(void *buf, size_t len)
 {
@@ -37,14 +34,11 @@ static inline int spi_write(void *buf, size_t len)
 }
 
 /**
- * spi_read - SPI synchronous read
- * @spi: device from which data will be read
- * @buf: data buffer
- * @len: data buffer size
- *
- * This function reads from SPI to the buffer @buf.
- *
- * Return: zero on success, else a negative error code.
+ * \brief 	SPI synchronous read
+ * @param 	buf		: data buffer
+ * @param 	len		: data buffer size
+ * @return 	0 on success
+ * @note 	This function reads from SPI to the buffer buf.
  */
 static inline int spi_read(void *buf, size_t len)
 {

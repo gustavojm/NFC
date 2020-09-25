@@ -11,10 +11,10 @@
 const uint32_t ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
 
 /**
- * \brief write 1 byte (address or data) to the chip
- * @param st		: struct ad2s1210_state
- * @param data		: address or data to write through SPI
- * @return			: 0 on success
+ * @brief 	writes 1 byte (address or data) to the chip
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @param 	data	: address or data to write through SPI
+ * @return	0 on success
  */
 static int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
 {
@@ -27,12 +27,12 @@ static int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
 }
 
 /**
- * \brief read value from one of the registers of the chip in config mode (A0=1, A1=1)
- * one extra register should be read because values come one transfer after the
- * address was put on the bus
- * @param st		: struct ad2s1210_state
- * @param data		: data to write through SPI
- * @return			: the value of the addressed record
+ * @brief 	reads value from one of the registers of the chip in config mode (A0=1, A1=1)
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @param 	address	: address to read through SPI
+ * @return	the value of the addressed record
+ * @note	one extra register should be read because values come one transfer after the
+ * 			address was put on the bus
  */
 static uint8_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address)
 {
@@ -57,19 +57,18 @@ static uint8_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address)
 
 		xfers[i] = xfer;
 	}
-	int32_t ret = 0;
-	ret = spi_sync_transfer(xfers, xfers_count, st->gpios.wr_fsync);
+	spi_sync_transfer(xfers, xfers_count, st->gpios.wr_fsync);
 
 	return rx[1];
 }
 
 /**
- * \brief read value from two consecutive registers, used to read position and velocity.
- * one extra register should be read because values come one transfer after the
- * address was put on the bus.
- * @param st 		: struct ad2s1210_state
- * @param address	: address of the first register to read
- * @return 			: rx[1] << 8 | rx[2]
+ * @brief 	reads value from two consecutive registers, used to read position and velocity.
+ * @param 	st 		: struct ad2s1210_state
+ * @param 	address	: address of the first register to read
+ * @return 	rx[1] << 8 | rx[2]
+ * @note	one extra register should be read because values come one transfer after the
+ * 			address was put on the bus.
  */
 static uint16_t ad2s1210_config_read_two(struct ad2s1210_state *st,
 		uint8_t address)
@@ -106,10 +105,11 @@ static uint16_t ad2s1210_config_read_two(struct ad2s1210_state *st,
 }
 
 /**
- * \brief updates frequency control word register.
- * fcw = (fexcit * (2 exp 15)) / fclkin
- * @param st		: struct ad2s1210_state
- * @return 			: -ERANGE if fcw < 0x4 or fcw > 0x50
+ * @brief 	updates frequency control word register.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return 	0 on success
+ * @return 	-ERANGE if fcw < 0x4 or fcw > 0x50
+ * @note	fcw = (fexcit * (2 exp 15)) / fclkin
  */
 static int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
 {
@@ -127,10 +127,10 @@ static int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
 }
 
 /**
- * \brief soft resets the chip.
- * soft reset does not erase the configured values on the chip.
- * @param st		: struct ad2s1210_state
- * @return			: 0 on success
+ * @brief 	soft resets the chip.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return	0 on success
+ * @note	soft reset does not erase the configured values on the chip.
  */
 int32_t ad2s1210_soft_reset(struct ad2s1210_state *st)
 {
@@ -138,15 +138,14 @@ int32_t ad2s1210_soft_reset(struct ad2s1210_state *st)
 
 	ret = ad2s1210_config_write(st, AD2S1210_REG_SOFT_RESET);
 
-	/// \todo see if something must be written on the register for soft reset
+	///\todo see if something must be written on the register for soft reset
 	return ret;
 }
 
 /**
- * \brief hard resets the chip by lowering the RESET line.
- * soft reset does not erase the configured values on the chip.
- * @param st		: struct ad2s1210_state
- * @return 			: nothing
+ * @brief 	hard resets the chip by lowering the RESET line.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return 	nothing
  */
 void ad2s1210_hard_reset(struct ad2s1210_state *st)
 {
@@ -156,9 +155,9 @@ void ad2s1210_hard_reset(struct ad2s1210_state *st)
 }
 
 /**
- * \brief returns cached value of fclkin
- * @param st		: struct ad2s1210_state
- * @return 			: fclkin
+ * @brief 	returns cached value of fclkin
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return 	fclkin
  */
 uint32_t ad2s1210_get_fclkin(struct ad2s1210_state *st)
 {
@@ -166,10 +165,11 @@ uint32_t ad2s1210_get_fclkin(struct ad2s1210_state *st)
 }
 
 /**
- * \brief updates fclkin
- * @param st		: struct ad2s1210_state
- * @param fclkin	: XTAL frequency
- * @return			: -EINVAL if fclkin < 6144000 or fclkin > 10240000
+ * @brief 	updates fclkin
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @param 	fclkin	: XTAL frequency
+ * @return 	0 on success
+ * @return	-EINVAL if fclkin < 6144000 or fclkin > 10240000
  */
 int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 {
@@ -190,9 +190,9 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 }
 
 /**
- * \brief returns cached value of fexcit
- * @param st		: struct ad2s1210_state
- * @return 			: fexcit
+ * @brief 	returns cached value of fexcit
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return 	fexcit
  */
 uint32_t ad2s1210_get_fexcit(struct ad2s1210_state *st)
 {
@@ -200,10 +200,11 @@ uint32_t ad2s1210_get_fexcit(struct ad2s1210_state *st)
 }
 
 /**
- *
- * @param st		: struct ad2s1210_state
- * @param fexcit	: excitation frequency
- * @return			: -EINVAL if fexcit < 2000 or fexcit > 20000
+ * @brief 	sets excitation frequency of the resolvers
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @param 	fexcit	: excitation frequency
+ * @return 	0 on success
+ * @return	-EINVAL if fexcit < 2000 or fexcit > 20000
  */
 int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 {
@@ -223,9 +224,9 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 }
 
 /**
- * \brief get control register.
- * @param st		: struct ad2s1210_state
- * @return			: 0 on success
+ * @brief 	gets control register.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return	0 on success
  */
 static uint8_t ad2s1210_get_control(struct ad2s1210_state *st)
 {
@@ -236,9 +237,10 @@ static uint8_t ad2s1210_get_control(struct ad2s1210_state *st)
 }
 
 /**
- * \brief set control register.
- * @param st		: struct ad2s1210_state
- * @return			: 0 on success
+ * @brief 	sets control register.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @param 	data	: value to set on the register
+ * @return	0 on success
  */
 static int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t data)
 {
@@ -262,9 +264,9 @@ static int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t data)
 }
 
 /**
- * \brief returns cached value of resolution.
- * @param st		: struct ad2s1210_state
- * @return 			: resolution
+ * @brief 	returns cached value of resolution.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return 	resolution
  */
 uint8_t ad2s1210_get_resolution(struct ad2s1210_state *st)
 {
@@ -272,9 +274,11 @@ uint8_t ad2s1210_get_resolution(struct ad2s1210_state *st)
 }
 
 /**
- * \brief sets value of resolution on the chip.
- * @param st		: struct ad2s1210_state
- * @return 			: -EINVAL if res < 10 or res > 16
+ * @brief 	sets value of resolution on the chip.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @param	res		: the desired resolution value. Possible values: 10, 12, 14, 16
+ * @return 	0 on success
+ * @return 	-EINVAL if res < 10 or res > 16
  */
 int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t res)
 {
@@ -297,10 +301,10 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t res)
 }
 
 /**
- * \brief reads one register of the chip.
- * @param st		: struct ad2s1210_state
- * @param address	: register address to be read
- * @return			: the value of the addressed register
+ * @brief 	reads one register of the chip.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @param 	address	: register address to be read
+ * @return	the value of the addressed register
  */
 uint8_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address)
 {
@@ -311,10 +315,11 @@ uint8_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address)
 }
 
 /**
- * \brief reads one register of the chip.
- * @param st		: struct ad2s1210_state
- * @param address	: register address to be read
- * @return			: the value of the addressed register
+ * @brief 	reads one register of the chip.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @param 	address	: register address to be read
+ * @param	data	: the value to store in the register
+ * @return	the value of the addressed register
  */
 int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 		uint8_t data)
@@ -328,6 +333,13 @@ int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 	return ret;
 }
 
+
+/**
+ * @brief	initializes the chip with the values specified in st
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return 	0 on success
+ * @return 	< 0 error
+ */
 int32_t ad2s1210_init(struct ad2s1210_state *st)
 {
 	uint8_t data;
@@ -362,6 +374,11 @@ int32_t ad2s1210_init(struct ad2s1210_state *st)
 	return ret;
 }
 
+/**
+ * @brief	reads position registers
+ * @param 	st 		: struct ad2s1210_state
+ * @return  position register value
+ */
 uint16_t ad2s1210_read_position(struct ad2s1210_state *st)
 {
 	uint16_t pos = 0;
@@ -381,6 +398,11 @@ uint16_t ad2s1210_read_position(struct ad2s1210_state *st)
 	return pos;
 }
 
+/**
+ * @brief	reads velocity registers
+ * @param 	st 		: struct ad2s1210_state
+ * @return  velocity register value
+ */
 int16_t ad2s1210_read_velocity(struct ad2s1210_state *st)
 {
 	int16_t vel = 0;
@@ -403,12 +425,10 @@ int16_t ad2s1210_read_velocity(struct ad2s1210_state *st)
 	return vel;
 }
 
-
-/*  */
 /**
- * \brief read the fault register since last sample.
- * @param st		: struct ad2s1210_state
- * @return
+ * @brief 	reads the fault register since last sample.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return	the value of the fault register
  */
 uint8_t ad2s1210_get_fault_register(struct ad2s1210_state *st)
 {
@@ -418,8 +438,15 @@ uint8_t ad2s1210_get_fault_register(struct ad2s1210_state *st)
 	return ret;
 }
 
-void ad2s1210_print_fault_register(uint8_t fr)
+/**
+ * @brief	prints a human readable version of the fault register content.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return 	nothing
+ */
+void ad2s1210_print_fault_register(struct ad2s1210_state *st)
 {
+	uint8_t fr = ad2s1210_get_fault_register(st);
+
 	if (fr & (1 << 0))
 		lDebug(Info, "Configuration parity error");
 	if (fr & (1 << 1))
@@ -438,23 +465,22 @@ void ad2s1210_print_fault_register(uint8_t fr)
 		lDebug(Info, "Sine/cosine inputs clipped");
 }
 
-int32_t ad2s1210_clear_fault_register(struct ad2s1210_state *st)
+/**
+ * @brief	clears the fault register.
+ * @param 	st		: pointer to struct ad2s1210_state
+ * @return 	nothing
+ */
+void ad2s1210_clear_fault_register(struct ad2s1210_state *st)
 {
-	int32_t ret = 0;
-
 	st->gpios.sample(0);
 	/* delay (2 * tck + 20) nano seconds */
 	udelay(1);
 	st->gpios.sample(1);
 
-	ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
-	if (ret < 0)
-		return ret;
+	ad2s1210_config_read(st, AD2S1210_REG_FAULT);
 
 	st->gpios.sample(0);
 	udelay(1);
 	st->gpios.sample(1);
-
-	return ret;
 }
 

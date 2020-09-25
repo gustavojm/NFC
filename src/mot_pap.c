@@ -4,15 +4,22 @@
 #include "stdlib.h"
 #include "debug.h"
 
+/**
+ * @brief 	calculates the frequency to drive the stepper motors based on a PID algorithm.
+ * @param 	pid		 : pointer to pid structure
+ * @param 	setpoint : desired resolver value to reach
+ * @param 	pos		 : current resolver value
+ * @return	the calculated frequency or the limited value to MAX and MIN frequency.
+ */
 int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
 {
 	int32_t cout;
 	uint32_t freq;
 
 	cout = pid_controller_calculate(pid, setpoint, pos);
-	lDebug(Warn, "----COUT---- %i", cout);
+	lDebug(Info, "----COUT---- %i", cout);
 	freq = abs(cout) * MOT_PAP_CLOSED_LOOP_FREQ_MULTIPLIER;
-	lDebug(Warn, "----FREQ---- %u", freq);
+	lDebug(Info, "----FREQ---- %u", freq);
 	if (freq > MOT_PAP_MAX_FREQ)
 		return MOT_PAP_MAX_FREQ;
 

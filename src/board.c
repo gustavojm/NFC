@@ -8,10 +8,13 @@
 #endif
 
 /* System configuration variables used by chip driver */
-// CHIP module configuration. CIAA-NXP clock is based on a 12 Mhz crystal.
 const uint32_t ExtRateIn = 0;
-const uint32_t OscRateIn = 12000000;
+const uint32_t OscRateIn = 12000000;	///< CHIP module configuration. CIAA-NXP clock is based on a 12 Mhz crystal.
 
+/**
+ * @struct io_port_t
+ * @brief  GPIO port/pin pairs
+ */
 typedef struct {
 	uint8_t port;
 	uint8_t pin;
@@ -55,7 +58,6 @@ static void Board_I2C_Init()
 void Board_SSP_Init(LPC_SSP_T *pSSP)
 {
 	if (pSSP == LPC_SSP1) {
-		//Chip_SCU_PinMuxSet(0x1, 5, (SCU_PINIO_FAST | SCU_MODE_FUNC5)); /* P1.5 => SSEL1 */
 		Chip_SCU_PinMuxSet(0xF, 4, (SCU_PINIO_FAST | SCU_MODE_FUNC0)); /* PF.4 => SCK1 */
 
 		Chip_SCU_PinMuxSet(0x1, 4,
@@ -64,10 +66,6 @@ void Board_SSP_Init(LPC_SSP_T *pSSP)
 		Chip_SCU_PinMuxSet(0x1, 3,
 				(SCU_MODE_INACT | SCU_MODE_INBUFF_EN | SCU_MODE_ZIF_DIS
 						| SCU_MODE_FUNC5)); /* P1.3 => MISO1 */
-
-		//Chip_SCU_PinMuxSet(0x3, 1, (SCU_MODE_INACT | SCU_MODE_FUNC4));  /* P1.5 => SSEL1 */
-		//Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 5, 8);
-		//Chip_GPIO_SetPinState(LPC_GPIO_PORT, 5, 8, (bool) true);
 	} else {
 		return;
 	}
@@ -82,7 +80,9 @@ static void Board_ADC_Init()
 	Chip_ADC_SetResolution(LPC_ADC0, &cs, BOARD_ADC_RESOLUTION);
 }
 
-/* Initialize debug output via UART for board */
+/**
+ * @brief 	initializes debug output via UART for board
+ */
 void Board_Debug_Init(void)
 {
 #if defined(DEBUG_UART)
@@ -98,7 +98,9 @@ void Board_Debug_Init(void)
 #endif
 }
 
-/* Sends a character on the UART */
+/**
+ * @brief sends a character on the UART
+ */
 void Board_UARTPutChar(char ch)
 {
 #if defined(DEBUG_UART)
@@ -109,7 +111,10 @@ void Board_UARTPutChar(char ch)
 #endif
 }
 
-/* Gets a character from the UART, returns EOF if no character is ready */
+/**
+ * @brief	gets a character from the UART.
+ * @return	EOF if no character is ready
+ */
 int32_t Board_UARTGetChar(void)
 {
 #if defined(DEBUG_UART)
@@ -128,7 +133,10 @@ void Board_UART_Init(LPC_USART_T *pUART)
 					| SCU_MODE_FUNC1));/* P2.1 : UART0_RXD */
 }
 
-/* Outputs a string on the debug UART */
+/**
+ * @brief	outputs a string on the debug UART
+ * @param 	str	: pointer to the string to output
+ */
 void Board_UARTPutSTR(const char *str)
 {
 #if defined(DEBUG_UART)
@@ -138,7 +146,11 @@ void Board_UARTPutSTR(const char *str)
 #endif
 }
 
-/* Returns the MAC address assigned to this board */
+/**
+ * @brief	returns the MAC address assigned to this board
+ * @param	mcaddr : Pointer to 6-byte character array to populate with MAC address
+ * @return	nothing
+ */
 void Board_ENET_GetMacADDR(uint8_t *mcaddr)
 {
 	uint8_t boardmac[] = { 0x00, 0x60, 0x37, 0x12, 0x34, 0x56 };
@@ -146,8 +158,11 @@ void Board_ENET_GetMacADDR(uint8_t *mcaddr)
 	memcpy(mcaddr, boardmac, 6);
 }
 
-/* Set up and initialize all required blocks and functions related to the
- board hardware */
+/**
+ * @brief 	sets up and initialize all required blocks and functions related to the
+ * 			board hardware
+ * @return	nothing
+ */
 void Board_Init(void)
 {
 //   DEBUGINIT();
@@ -170,6 +185,3 @@ void __stdio_init()
 	Board_Debug_Init();
 }
 
-/**
- * @}
- */

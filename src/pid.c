@@ -6,6 +6,14 @@
 #include "task.h"
 #include "debug.h"
 
+/**
+ * @brief	constrains the out value to limit
+ * @param 	out
+ * @param 	limit
+ * @return	out value
+ * @return	limit if out > limit
+ * @return	-limit if out < limit
+ */
 static double abs_limit(const double out, const int32_t limit)
 {
 	if (out > limit)
@@ -15,6 +23,15 @@ static double abs_limit(const double out, const int32_t limit)
 	return out;
 }
 
+/**
+ * @brief				: initializes the PID structure.
+ * @param 	pid			: pointer to struct pid
+ * @param 	kp			: proportional constant
+ * @param 	sample_time	: sample time
+ * @param 	ti			: integrative time
+ * @param 	td			: derivative time
+ * @param 	limit		: output limiter value
+ */
 void pid_controller_init(struct pid *pid, float kp, int32_t sample_time,
 		float ti, float td, int32_t limit)
 {
@@ -33,6 +50,15 @@ void pid_controller_init(struct pid *pid, float kp, int32_t sample_time,
 	pid->output = 0;
 }
 
+/**
+ * @brief	calculates the incremental PID algorithm.
+ * @param 	pid			: pointer to struct pid
+ * @param 	setpoint	: the position to reach
+ * @param 	input		: the current position
+ * @return	the calculated PID output or the specified limits for output
+ * @note 	if this function was called before the sample time has elapsed will return the
+ * 			previously calculated value, unless a setpoint change is detected.
+ */
 int32_t pid_controller_calculate(struct pid *pid, int32_t setpoint,
 		int32_t input)
 {

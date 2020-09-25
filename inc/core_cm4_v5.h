@@ -8,13 +8,13 @@ extern "C" {
 #endif
 
 /**
-  \brief   Get Interrupt Enable status
-  \details Returns a device specific interrupt enable status from the NVIC interrupt controller.
-  \param [in]      IRQn  Device specific interrupt number.
-  \return             0  Interrupt is not enabled.
-  \return             1  Interrupt is enabled.
-  \note    IRQn must not be negative.
- */
+* @brief   		Get Interrupt Enable status.
+* @details 		Returns a device specific interrupt enable status from the NVIC interrupt controller.
+* @param [in]      IRQn  Device specific interrupt number.
+* @return             0  Interrupt is not enabled.
+* @return             1  Interrupt is enabled.
+* @note    IRQn must not be negative.
+*/
 __STATIC_INLINE uint32_t NVIC_GetEnableIRQ(IRQn_Type IRQn)
 {
   if ((int32_t)(IRQn) >= 0)

@@ -10,7 +10,7 @@ extern "C" {
 
 void dout_init();
 
-void dout_arm_dir(bool dir);
+void dout_arm_dir(enum mot_pap_direction dir);
 
 void dout_arm_pulse(bool state);
 

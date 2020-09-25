@@ -25,11 +25,19 @@ enum lift_type {
 	LIFT_TYPE_UP = 0, LIFT_TYPE_DOWN = 1, LIFT_TYPE_STOP
 };
 
+/**
+ * @struct 	lift_msg
+ * @brief	messages to lift_task.
+ */
 struct lift_msg {
 	bool ctrlEn;
 	enum lift_type type;
 };
 
+/**
+ * @struct 	lift_status
+ * @brief	lift task status.
+ */
 struct lift_status {
 	enum lift_type type;
 	volatile bool upLimit;

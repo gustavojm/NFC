@@ -14,10 +14,10 @@ extern bool stall_detection;
 extern SemaphoreHandle_t pole_supervisor_semaphore;
 
 /**
- * @brief	Handle interrupt from 32-bit timer
- * @return	Nothing
+ * @brief	handle interrupt from 32-bit timer to generate pulses for the stepper motor drivers
+ * @return	nothing
+ * @note 	calls the supervisor task every x number of generated steps
  */
-
 void TIMER0_IRQHandler(void)
 {
 	uint32_t static steps = 0;
@@ -49,9 +49,12 @@ void TIMER0_IRQHandler(void)
 	}
 }
 
-__attribute__ ((weak)) void pole_tmr_init(void)
+/**
+ * @brief	enables timer 0 clock and resets it
+ * @return	nothing
+ */
+void pole_tmr_init(void)
 {
-	/* Enable timer 0 clock and reset it */
 	Chip_TIMER_Init(LPC_TIMER0);
 	Chip_RGU_TriggerReset(RGU_TIMER0_RST);
 
@@ -63,6 +66,13 @@ __attribute__ ((weak)) void pole_tmr_init(void)
 	Chip_TIMER_ResetOnMatchEnable(LPC_TIMER0, 1);
 }
 
+
+/**
+ * @brief	sets TIMER0 frequency
+ * @param 	tick_rate_hz 	: desired frequency
+ * @return	0 on success
+ * @return	-EINVAL if tick_rate_hz > 300000
+ */
 int32_t pole_tmr_set_freq(int32_t tick_rate_hz)
 {
 	uint32_t timerFreq;
@@ -80,21 +90,34 @@ int32_t pole_tmr_set_freq(int32_t tick_rate_hz)
 	return 0;
 }
 
+
+/**
+ * @brief 	enables timer interrupt and starts it
+ * @return 	nothing
+ */
 void pole_tmr_start(void)
 {
-	/* Enable timer interrupt */
 	Chip_TIMER_Enable(LPC_TIMER0);
 	NVIC_EnableIRQ(TIMER0_IRQn);
 	NVIC_ClearPendingIRQ(TIMER0_IRQn);
 }
 
+/**
+ * @brief 	disables timer interrupt and stops it
+ * @return 	nothing
+ */
 void pole_tmr_stop(void)
 {
-	/* Disable timer interrupt */
+	Chip_TIMER_Disable(LPC_TIMER0);
 	NVIC_DisableIRQ(TIMER0_IRQn);
 	NVIC_ClearPendingIRQ(TIMER0_IRQn);
 }
 
+/**
+ * @brief	returns if timer is started by querying if the interrupt is enabled
+ * @return  0 timer is not started.
+ * @return  1 timer is started.
+ */
 uint32_t pole_tmr_started(void)
 {
 	return NVIC_GetEnableIRQ(TIMER0_IRQn);

@@ -16,6 +16,12 @@
 #define ZS2_LIFT_PIN_NUM	1
 #define ZS2_LIFT_INT_CH		1
 
+
+/**
+ * @brief	initializes DIN0 and DIN1 to detect lift hardware limits
+ * @note	configures DIN0 to generate PIN_INT0_IRQn on rising edge
+ * 			configures DIN1 to generate PIN_INT1_IRQn on rising edge
+ */
 void din_init()
 {
 	// Configure ZS1_LIFT to generate interrupts on falling edge
@@ -34,7 +40,7 @@ void din_init()
 	/* Configure channel interrupt as edge sensitive and falling edge interrupt */
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(ZS1_LIFT_INT_CH));
 	Chip_PININT_SetPinModeEdge(LPC_GPIO_PIN_INT, PININTCH(ZS1_LIFT_INT_CH));
-	Chip_PININT_EnableIntLow(LPC_GPIO_PIN_INT, PININTCH(ZS1_LIFT_INT_CH));
+	Chip_PININT_EnableIntHigh(LPC_GPIO_PIN_INT, PININTCH(ZS1_LIFT_INT_CH));
 
 	/* Enable interrupt in the NVIC */
 	NVIC_ClearPendingIRQ(PIN_INT0_IRQn);
@@ -56,7 +62,7 @@ void din_init()
 	/* Configure channel interrupt as edge sensitive and falling edge interrupt */
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(ZS2_LIFT_INT_CH));
 	Chip_PININT_SetPinModeEdge(LPC_GPIO_PIN_INT, PININTCH(ZS2_LIFT_INT_CH));
-	Chip_PININT_EnableIntLow(LPC_GPIO_PIN_INT, PININTCH(ZS2_LIFT_INT_CH));
+	Chip_PININT_EnableIntHigh(LPC_GPIO_PIN_INT, PININTCH(ZS2_LIFT_INT_CH));
 
 	/* Enable interrupt in the NVIC */
 	NVIC_ClearPendingIRQ(PIN_INT1_IRQn);
@@ -64,12 +70,20 @@ void din_init()
 
 }
 
+/**
+ * @brief 	reads GPIO corresponding to DIN0 where zs1_lift is connected
+ * @return	1 if limit reached
+ */
 bool din_zs1_lift_state()
 {
 	return Chip_GPIO_GetPinState(LPC_GPIO_PORT, ZS1_LIFT_GPIO_PORT,
 			ZS1_LIFT_GPIO_BIT);
 }
 
+/**
+ * @brief 	reads GPIO corresponding to DIN1 where zs2_lift is connected
+ * @return	1 if limit reached
+ */
 bool din_zs2_lift_state()
 {
 	return Chip_GPIO_GetPinState(LPC_GPIO_PORT, ZS2_LIFT_GPIO_PORT,

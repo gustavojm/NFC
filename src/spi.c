@@ -6,18 +6,21 @@
 #include "semphr.h"
 #include "task.h"
 
-/*****************************************************************************
- * Private types/enumerations/variables
- ****************************************************************************/
-
-#define LPC_SSP           LPC_SSP1
-
+#define LPC_SSP           					LPC_SSP1
 #define SSP_DATA_BITS                       (SSP_BITS_8)
 
 static SSP_ConfigFormat ssp_format;
 SemaphoreHandle_t spi_mutex;
 
-
+/**
+ * \brief 	executes SPI transfers synchronized by WR/FSYNC.
+ * @param 	xfers			: pointer to array of transfers Chip_SSP_DATA_SETUP_T
+ * @param 	num_xfers		: transfers count
+ * @param 	gpio_wr_fsync	: pointer to WR/FSYNC line function handler
+ * @return	0 on success
+ * @note 	this function takes a mutex to avoid interleaving transfers to both RDCs.
+ * 			could work without mutex but debugging with a logic analyzer would be more confusing.
+ */
 int32_t spi_sync_transfer(Chip_SSP_DATA_SETUP_T *xfers, uint32_t num_xfers,
 		void (*gpio_wr_fsync)(bool))
 {
@@ -47,12 +50,16 @@ int32_t spi_sync_transfer(Chip_SSP_DATA_SETUP_T *xfers, uint32_t num_xfers,
 	return 0;
 }
 
+/**
+ * \brief 	initializes SSP bus to transfer SPI frames as a MASTER.
+ * @return	noting
+ * @note 	sets SPI bitrate to 1Mhz SEE IF WE CAN IMPROVE THAT.
+ */
 void spi_init(void)
 {
 	spi_mutex = xSemaphoreCreateMutex();
-	/* SSP initialization */
-	Board_SSP_Init(LPC_SSP);
 
+	Board_SSP_Init(LPC_SSP);
 	Chip_SSP_Init(LPC_SSP);
 
 	ssp_format.frameFormat = SSP_FRAMEFORMAT_SPI;
@@ -60,8 +67,10 @@ void spi_init(void)
 	ssp_format.clockMode = SSP_CLOCK_MODE3;
 	Chip_SSP_SetFormat(LPC_SSP, ssp_format.bits, ssp_format.frameFormat,
 			ssp_format.clockMode);
+
+	Chip_SSP_SetBitRate(LPC_SSP1, 1000000);
+
 	Chip_SSP_Enable(LPC_SSP);
 
 	Chip_SSP_SetMaster(LPC_SSP, 1);
-
 }

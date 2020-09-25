@@ -31,10 +31,10 @@ struct ad2s1210_state rdc;
 struct pid pid;
 
 /**
- * \brief handles the Pole movement.
- * Receives commands from pole_queue
- *
- * @param par
+ * @brief 	handles the Pole movement.
+ * @param 	par		: unused
+ * @return	never
+ * @note	Receives commands from pole_queue
  */
 static void pole_task(void *par)
 {
@@ -167,6 +167,11 @@ static void pole_task(void *par)
 	}
 }
 
+/**
+ * @brief	checks if soft limits are reached, if stalled and if position reached in closed loop.
+ * @param 	par	: unused
+ * @return	never
+ */
 static void supervisor_task(void *par)
 {
 	static uint16_t last_pos = 0;
@@ -238,6 +243,10 @@ cont:
 	}
 }
 
+/**
+ * @brief 	creates the queues, semaphores and endless tasks to handle pole movements.
+ * @return	nothing
+ */
 void pole_init()
 {
 	pole_queue = xQueueCreate(5, sizeof(struct mot_pap_msg*));
@@ -269,6 +278,10 @@ void pole_init()
 	lDebug(Info, "pole: task created");
 }
 
+/**
+ * @brief	returns status of the pole task.
+ * @return 	copy of status structure of the task
+ */
 struct mot_pap_status pole_get_status(void)
 {
 	return status;

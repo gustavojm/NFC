@@ -61,22 +61,24 @@ extern "C" {
 #define AD2S1210_DEF_EXCIT	10000
 
 /**
- * Pointers to functions to handle GPIO lines
- * */
+ * @struct 	ad2s1210_gpios
+ * @brief	pointers to functions to handle GPIO lines of AD2S121.
+ */
 struct ad2s1210_gpios {
-	void (*reset)(bool);			///< pointer to RESET line function handler
-	void (*sample)(bool);			///< pointer to SAMPLE line function handler
+	void (*reset)(bool);		///< pointer to RESET line function handler
+	void (*sample)(bool);		///< pointer to SAMPLE line function handler
 	void (*wr_fsync)(bool);		///< pointer to WR_FSYNC line function handler
 };
 
 /**
- * struct ad2s1210_state - device instance specific state.
+ * @struct 	ad2s1210_state
+ * @brief	RDC device instance specific state.
  */
 struct ad2s1210_state {
 	struct ad2s1210_gpios gpios;///< specific gpio function pointers for this instance
-	uint32_t fclkin;				///< frequency of clock input
-	uint32_t fexcit;				///< excitation frequency
-	bool hysteresis;				///< cache of whether hysteresis is enabled
+	uint32_t fclkin;			///< frequency of clock input
+	uint32_t fexcit;			///< excitation frequency
+	bool hysteresis;			///< cache of whether hysteresis is enabled
 	uint8_t resolution;			///< chip resolution could be 10/12/14/16-bit
 };
 
@@ -109,9 +111,9 @@ int16_t ad2s1210_read_velocity(struct ad2s1210_state *st);
 
 uint8_t ad2s1210_get_fault_register(struct ad2s1210_state *st);
 
-void ad2s1210_print_fault_register(uint8_t fr);
+void ad2s1210_print_fault_register(struct ad2s1210_state *st);
 
-int32_t ad2s1210_clear_fault_register(struct ad2s1210_state *st);
+void ad2s1210_clear_fault_register(struct ad2s1210_state *st);
 
 #ifdef __cplusplus
 }

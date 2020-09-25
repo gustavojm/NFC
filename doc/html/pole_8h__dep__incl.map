@@ -1,7 +1,0 @@
-<map id="inc/pole.h" name="inc/pole.h">
-<area shape="rect" id="node1" title=" " alt="" coords="170,5,249,32"/>
-<area shape="rect" id="node2" href="$main_8c.html" title=" " alt="" coords="5,80,88,107"/>
-<area shape="rect" id="node3" href="$pole_8c.html" title=" " alt="" coords="113,80,191,107"/>
-<area shape="rect" id="node4" href="$pole__tmr_8c.html" title=" " alt="" coords="215,80,321,107"/>
-<area shape="rect" id="node5" href="$RTUcomHMI_8c.html" title=" " alt="" coords="345,80,479,107"/>
-</map>
