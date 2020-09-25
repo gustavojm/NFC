@@ -1,0 +1,128 @@
+\hypertarget{din_8c}{}\doxysection{src/din.c File Reference}
+\label{din_8c}\index{src/din.c@{src/din.c}}
+{\ttfamily \#include \char`\"{}stdio.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdbool.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}board.\+h\char`\"{}}\newline
+Include dependency graph for din.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=268pt]{din_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{din_8c_af8bb895c29969a09786367a7ba23b98a}{Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+G\+P\+I\+O\+\_\+\+P\+O\+RT}}~2
+\item 
+\#define \mbox{\hyperlink{din_8c_a8d71b2f478fcb06756697b211a4d2f34}{Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+G\+P\+I\+O\+\_\+\+B\+IT}}~0
+\item 
+\#define \mbox{\hyperlink{din_8c_af4fbc60528d69ebccd1c6e519f4d8c42}{Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+P\+I\+N\+\_\+\+P\+O\+RT}}~4
+\item 
+\#define \mbox{\hyperlink{din_8c_a5155671e2531f10412cdd66b20f5c714}{Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+P\+I\+N\+\_\+\+N\+UM}}~0
+\item 
+\#define \mbox{\hyperlink{din_8c_a8cb45ae6a39e1797c9f5a3d51badce1b}{Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+I\+N\+T\+\_\+\+CH}}~0
+\item 
+\#define \mbox{\hyperlink{din_8c_a785a0d20dedad0668e4f178e48bdf3e2}{Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+G\+P\+I\+O\+\_\+\+P\+O\+RT}}~2
+\item 
+\#define \mbox{\hyperlink{din_8c_a71b870597ad3772c7b795c314625fc45}{Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+G\+P\+I\+O\+\_\+\+B\+IT}}~1
+\item 
+\#define \mbox{\hyperlink{din_8c_a99318ba5292237aee3487e43551bd592}{Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+P\+I\+N\+\_\+\+P\+O\+RT}}~4
+\item 
+\#define \mbox{\hyperlink{din_8c_a3874cdd8fc7dedf4fe66a7365c83a071}{Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+P\+I\+N\+\_\+\+N\+UM}}~1
+\item 
+\#define \mbox{\hyperlink{din_8c_a2a7f575865519d7007f45972c1b495e7}{Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+I\+N\+T\+\_\+\+CH}}~1
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{din_8c_ae8ca8514f921683f20aa49c099f7dc2b}{din\+\_\+init}} ()
+\item 
+bool \mbox{\hyperlink{din_8c_a20814f0f28c277f53762ed979eae93a2}{din\+\_\+zs1\+\_\+lift\+\_\+state}} ()
+\item 
+bool \mbox{\hyperlink{din_8c_aad86196363be3bb8f522e14c526bcc56}{din\+\_\+zs2\+\_\+lift\+\_\+state}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{din_8c_a8d71b2f478fcb06756697b211a4d2f34}\label{din_8c_a8d71b2f478fcb06756697b211a4d2f34}} 
+\index{din.c@{din.c}!ZS1\_LIFT\_GPIO\_BIT@{ZS1\_LIFT\_GPIO\_BIT}}
+\index{ZS1\_LIFT\_GPIO\_BIT@{ZS1\_LIFT\_GPIO\_BIT}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS1\_LIFT\_GPIO\_BIT}{ZS1\_LIFT\_GPIO\_BIT}}
+{\footnotesize\ttfamily \#define Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+G\+P\+I\+O\+\_\+\+B\+IT~0}
+
+\mbox{\Hypertarget{din_8c_af8bb895c29969a09786367a7ba23b98a}\label{din_8c_af8bb895c29969a09786367a7ba23b98a}} 
+\index{din.c@{din.c}!ZS1\_LIFT\_GPIO\_PORT@{ZS1\_LIFT\_GPIO\_PORT}}
+\index{ZS1\_LIFT\_GPIO\_PORT@{ZS1\_LIFT\_GPIO\_PORT}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS1\_LIFT\_GPIO\_PORT}{ZS1\_LIFT\_GPIO\_PORT}}
+{\footnotesize\ttfamily \#define Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+G\+P\+I\+O\+\_\+\+P\+O\+RT~2}
+
+\mbox{\Hypertarget{din_8c_a8cb45ae6a39e1797c9f5a3d51badce1b}\label{din_8c_a8cb45ae6a39e1797c9f5a3d51badce1b}} 
+\index{din.c@{din.c}!ZS1\_LIFT\_INT\_CH@{ZS1\_LIFT\_INT\_CH}}
+\index{ZS1\_LIFT\_INT\_CH@{ZS1\_LIFT\_INT\_CH}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS1\_LIFT\_INT\_CH}{ZS1\_LIFT\_INT\_CH}}
+{\footnotesize\ttfamily \#define Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+I\+N\+T\+\_\+\+CH~0}
+
+\mbox{\Hypertarget{din_8c_a5155671e2531f10412cdd66b20f5c714}\label{din_8c_a5155671e2531f10412cdd66b20f5c714}} 
+\index{din.c@{din.c}!ZS1\_LIFT\_PIN\_NUM@{ZS1\_LIFT\_PIN\_NUM}}
+\index{ZS1\_LIFT\_PIN\_NUM@{ZS1\_LIFT\_PIN\_NUM}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS1\_LIFT\_PIN\_NUM}{ZS1\_LIFT\_PIN\_NUM}}
+{\footnotesize\ttfamily \#define Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+P\+I\+N\+\_\+\+N\+UM~0}
+
+\mbox{\Hypertarget{din_8c_af4fbc60528d69ebccd1c6e519f4d8c42}\label{din_8c_af4fbc60528d69ebccd1c6e519f4d8c42}} 
+\index{din.c@{din.c}!ZS1\_LIFT\_PIN\_PORT@{ZS1\_LIFT\_PIN\_PORT}}
+\index{ZS1\_LIFT\_PIN\_PORT@{ZS1\_LIFT\_PIN\_PORT}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS1\_LIFT\_PIN\_PORT}{ZS1\_LIFT\_PIN\_PORT}}
+{\footnotesize\ttfamily \#define Z\+S1\+\_\+\+L\+I\+F\+T\+\_\+\+P\+I\+N\+\_\+\+P\+O\+RT~4}
+
+\mbox{\Hypertarget{din_8c_a71b870597ad3772c7b795c314625fc45}\label{din_8c_a71b870597ad3772c7b795c314625fc45}} 
+\index{din.c@{din.c}!ZS2\_LIFT\_GPIO\_BIT@{ZS2\_LIFT\_GPIO\_BIT}}
+\index{ZS2\_LIFT\_GPIO\_BIT@{ZS2\_LIFT\_GPIO\_BIT}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS2\_LIFT\_GPIO\_BIT}{ZS2\_LIFT\_GPIO\_BIT}}
+{\footnotesize\ttfamily \#define Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+G\+P\+I\+O\+\_\+\+B\+IT~1}
+
+\mbox{\Hypertarget{din_8c_a785a0d20dedad0668e4f178e48bdf3e2}\label{din_8c_a785a0d20dedad0668e4f178e48bdf3e2}} 
+\index{din.c@{din.c}!ZS2\_LIFT\_GPIO\_PORT@{ZS2\_LIFT\_GPIO\_PORT}}
+\index{ZS2\_LIFT\_GPIO\_PORT@{ZS2\_LIFT\_GPIO\_PORT}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS2\_LIFT\_GPIO\_PORT}{ZS2\_LIFT\_GPIO\_PORT}}
+{\footnotesize\ttfamily \#define Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+G\+P\+I\+O\+\_\+\+P\+O\+RT~2}
+
+\mbox{\Hypertarget{din_8c_a2a7f575865519d7007f45972c1b495e7}\label{din_8c_a2a7f575865519d7007f45972c1b495e7}} 
+\index{din.c@{din.c}!ZS2\_LIFT\_INT\_CH@{ZS2\_LIFT\_INT\_CH}}
+\index{ZS2\_LIFT\_INT\_CH@{ZS2\_LIFT\_INT\_CH}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS2\_LIFT\_INT\_CH}{ZS2\_LIFT\_INT\_CH}}
+{\footnotesize\ttfamily \#define Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+I\+N\+T\+\_\+\+CH~1}
+
+\mbox{\Hypertarget{din_8c_a3874cdd8fc7dedf4fe66a7365c83a071}\label{din_8c_a3874cdd8fc7dedf4fe66a7365c83a071}} 
+\index{din.c@{din.c}!ZS2\_LIFT\_PIN\_NUM@{ZS2\_LIFT\_PIN\_NUM}}
+\index{ZS2\_LIFT\_PIN\_NUM@{ZS2\_LIFT\_PIN\_NUM}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS2\_LIFT\_PIN\_NUM}{ZS2\_LIFT\_PIN\_NUM}}
+{\footnotesize\ttfamily \#define Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+P\+I\+N\+\_\+\+N\+UM~1}
+
+\mbox{\Hypertarget{din_8c_a99318ba5292237aee3487e43551bd592}\label{din_8c_a99318ba5292237aee3487e43551bd592}} 
+\index{din.c@{din.c}!ZS2\_LIFT\_PIN\_PORT@{ZS2\_LIFT\_PIN\_PORT}}
+\index{ZS2\_LIFT\_PIN\_PORT@{ZS2\_LIFT\_PIN\_PORT}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{ZS2\_LIFT\_PIN\_PORT}{ZS2\_LIFT\_PIN\_PORT}}
+{\footnotesize\ttfamily \#define Z\+S2\+\_\+\+L\+I\+F\+T\+\_\+\+P\+I\+N\+\_\+\+P\+O\+RT~4}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{din_8c_ae8ca8514f921683f20aa49c099f7dc2b}\label{din_8c_ae8ca8514f921683f20aa49c099f7dc2b}} 
+\index{din.c@{din.c}!din\_init@{din\_init}}
+\index{din\_init@{din\_init}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{din\_init()}{din\_init()}}
+{\footnotesize\ttfamily void din\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{din_8c_a20814f0f28c277f53762ed979eae93a2}\label{din_8c_a20814f0f28c277f53762ed979eae93a2}} 
+\index{din.c@{din.c}!din\_zs1\_lift\_state@{din\_zs1\_lift\_state}}
+\index{din\_zs1\_lift\_state@{din\_zs1\_lift\_state}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{din\_zs1\_lift\_state()}{din\_zs1\_lift\_state()}}
+{\footnotesize\ttfamily bool din\+\_\+zs1\+\_\+lift\+\_\+state (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{din_8c_aad86196363be3bb8f522e14c526bcc56}\label{din_8c_aad86196363be3bb8f522e14c526bcc56}} 
+\index{din.c@{din.c}!din\_zs2\_lift\_state@{din\_zs2\_lift\_state}}
+\index{din\_zs2\_lift\_state@{din\_zs2\_lift\_state}!din.c@{din.c}}
+\doxysubsubsection{\texorpdfstring{din\_zs2\_lift\_state()}{din\_zs2\_lift\_state()}}
+{\footnotesize\ttfamily bool din\+\_\+zs2\+\_\+lift\+\_\+state (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+

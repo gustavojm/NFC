@@ -1,0 +1,97 @@
+\hypertarget{RTUcomHMI_8c}{}\doxysection{src/\+R\+T\+Ucom\+H\+MI.c File Reference}
+\label{RTUcomHMI_8c}\index{src/RTUcomHMI.c@{src/RTUcomHMI.c}}
+{\ttfamily \#include $<$sys/times.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}lift.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdio.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdlib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}math.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Free\+R\+T\+O\+S.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}timers.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}queue.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}semphr.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}task.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdbool.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}pid.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}pole.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debug.\+h\char`\"{}}\newline
+Include dependency graph for R\+T\+Ucom\+H\+M\+I.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{RTUcomHMI_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{RTUcomHMI_8c_a0c770415fffb98036f85d01a76008a6c}{C\+O\+M\+M\+\_\+\+T\+A\+S\+K\+\_\+\+P\+R\+I\+O\+R\+I\+TY}}~( \mbox{\hyperlink{FreeRTOSConfig_8h_a9a78f5ac61e6cb172dadf2a51f11db38}{config\+M\+A\+X\+\_\+\+P\+R\+I\+O\+R\+I\+T\+I\+ES}} -\/ 2 )
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{RTUcomHMI_8c_a0be7cb41aaf83d798e7147b74c8c80e4}{R\+T\+Ucom\+H\+M\+I\+\_\+task}} (void $\ast$par)
+\item 
+void \mbox{\hyperlink{RTUcomHMI_8c_ab2d2bcb7314dc4ab3839b02daf45ab9c}{comm\+\_\+init}} ()
+\item 
+void \mbox{\hyperlink{RTUcomHMI_8c_ad75c0b37217c5bc10d99273d8010f715}{task\+\_\+status\+\_\+get\+\_\+all}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Queue\+Handle\+\_\+t \mbox{\hyperlink{RTUcomHMI_8c_a0c3ca977ee4457c74b5287463654f69d}{lift\+\_\+queue}}
+\item 
+Queue\+Handle\+\_\+t \mbox{\hyperlink{RTUcomHMI_8c_afff9c930edf4a56d491f3f435f94aa18}{pole\+\_\+queue}}
+\item 
+bool \mbox{\hyperlink{RTUcomHMI_8c_afd57c48cdff97c0f387e33e7c3f310a0}{stall\+\_\+detection}} = 1
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{RTUcomHMI_8c_a0c770415fffb98036f85d01a76008a6c}\label{RTUcomHMI_8c_a0c770415fffb98036f85d01a76008a6c}} 
+\index{RTUcomHMI.c@{RTUcomHMI.c}!COMM\_TASK\_PRIORITY@{COMM\_TASK\_PRIORITY}}
+\index{COMM\_TASK\_PRIORITY@{COMM\_TASK\_PRIORITY}!RTUcomHMI.c@{RTUcomHMI.c}}
+\doxysubsubsection{\texorpdfstring{COMM\_TASK\_PRIORITY}{COMM\_TASK\_PRIORITY}}
+{\footnotesize\ttfamily \#define C\+O\+M\+M\+\_\+\+T\+A\+S\+K\+\_\+\+P\+R\+I\+O\+R\+I\+TY~( \mbox{\hyperlink{FreeRTOSConfig_8h_a9a78f5ac61e6cb172dadf2a51f11db38}{config\+M\+A\+X\+\_\+\+P\+R\+I\+O\+R\+I\+T\+I\+ES}} -\/ 2 )}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{RTUcomHMI_8c_ab2d2bcb7314dc4ab3839b02daf45ab9c}\label{RTUcomHMI_8c_ab2d2bcb7314dc4ab3839b02daf45ab9c}} 
+\index{RTUcomHMI.c@{RTUcomHMI.c}!comm\_init@{comm\_init}}
+\index{comm\_init@{comm\_init}!RTUcomHMI.c@{RTUcomHMI.c}}
+\doxysubsubsection{\texorpdfstring{comm\_init()}{comm\_init()}}
+{\footnotesize\ttfamily void comm\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{RTUcomHMI_8c_a0be7cb41aaf83d798e7147b74c8c80e4}\label{RTUcomHMI_8c_a0be7cb41aaf83d798e7147b74c8c80e4}} 
+\index{RTUcomHMI.c@{RTUcomHMI.c}!RTUcomHMI\_task@{RTUcomHMI\_task}}
+\index{RTUcomHMI\_task@{RTUcomHMI\_task}!RTUcomHMI.c@{RTUcomHMI.c}}
+\doxysubsubsection{\texorpdfstring{RTUcomHMI\_task()}{RTUcomHMI\_task()}}
+{\footnotesize\ttfamily static void R\+T\+Ucom\+H\+M\+I\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{par }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{RTUcomHMI_8c_ad75c0b37217c5bc10d99273d8010f715}\label{RTUcomHMI_8c_ad75c0b37217c5bc10d99273d8010f715}} 
+\index{RTUcomHMI.c@{RTUcomHMI.c}!task\_status\_get\_all@{task\_status\_get\_all}}
+\index{task\_status\_get\_all@{task\_status\_get\_all}!RTUcomHMI.c@{RTUcomHMI.c}}
+\doxysubsubsection{\texorpdfstring{task\_status\_get\_all()}{task\_status\_get\_all()}}
+{\footnotesize\ttfamily void task\+\_\+status\+\_\+get\+\_\+all (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{RTUcomHMI_8c_a0c3ca977ee4457c74b5287463654f69d}\label{RTUcomHMI_8c_a0c3ca977ee4457c74b5287463654f69d}} 
+\index{RTUcomHMI.c@{RTUcomHMI.c}!lift\_queue@{lift\_queue}}
+\index{lift\_queue@{lift\_queue}!RTUcomHMI.c@{RTUcomHMI.c}}
+\doxysubsubsection{\texorpdfstring{lift\_queue}{lift\_queue}}
+{\footnotesize\ttfamily Queue\+Handle\+\_\+t lift\+\_\+queue}
+
+\mbox{\Hypertarget{RTUcomHMI_8c_afff9c930edf4a56d491f3f435f94aa18}\label{RTUcomHMI_8c_afff9c930edf4a56d491f3f435f94aa18}} 
+\index{RTUcomHMI.c@{RTUcomHMI.c}!pole\_queue@{pole\_queue}}
+\index{pole\_queue@{pole\_queue}!RTUcomHMI.c@{RTUcomHMI.c}}
+\doxysubsubsection{\texorpdfstring{pole\_queue}{pole\_queue}}
+{\footnotesize\ttfamily Queue\+Handle\+\_\+t pole\+\_\+queue}
+
+\mbox{\Hypertarget{RTUcomHMI_8c_afd57c48cdff97c0f387e33e7c3f310a0}\label{RTUcomHMI_8c_afd57c48cdff97c0f387e33e7c3f310a0}} 
+\index{RTUcomHMI.c@{RTUcomHMI.c}!stall\_detection@{stall\_detection}}
+\index{stall\_detection@{stall\_detection}!RTUcomHMI.c@{RTUcomHMI.c}}
+\doxysubsubsection{\texorpdfstring{stall\_detection}{stall\_detection}}
+{\footnotesize\ttfamily bool stall\+\_\+detection = 1}
+

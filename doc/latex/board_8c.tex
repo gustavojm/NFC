@@ -1,0 +1,211 @@
+\hypertarget{board_8c}{}\doxysection{src/board.c File Reference}
+\label{board_8c}\index{src/board.c@{src/board.c}}
+{\ttfamily \#include \char`\"{}board.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}string.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdint.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdio.\+h\char`\"{}}\newline
+Include dependency graph for board.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=328pt]{board_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structio__port__t}{io\+\_\+port\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{board_8c_a8dfd02b6cfa8595d9a77f8805e962cfc}{G\+P\+I\+O\+\_\+\+P\+O\+R\+T\+S\+\_\+\+S\+I\+ZE}}~(sizeof(\mbox{\hyperlink{board_8c_af0d0adb4424037251e057d865f3e0357}{Gpio\+Ports}}) / sizeof(\mbox{\hyperlink{structio__port__t}{io\+\_\+port\+\_\+t}}))
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{board_8c_ae7b965adcc6edd67278dc8137da2092a}{Board\+\_\+\+G\+P\+I\+O\+\_\+\+Init}} ()
+\item 
+static void \mbox{\hyperlink{board_8c_ac81e9df7df5223ebd43cf13060bd3a99}{Board\+\_\+\+I2\+C\+\_\+\+Init}} ()
+\item 
+void \mbox{\hyperlink{board_8c_afdf2ff29bb90173de0449d0b80dbf407}{Board\+\_\+\+S\+S\+P\+\_\+\+Init}} (L\+P\+C\+\_\+\+S\+S\+P\+\_\+T $\ast$p\+S\+SP)
+\item 
+static void \mbox{\hyperlink{board_8c_ae4ede6f6c0e1805b90bb2b872645308f}{Board\+\_\+\+A\+D\+C\+\_\+\+Init}} ()
+\item 
+void \mbox{\hyperlink{board_8c_abcba073f50ad637ee6bc852f64ea2ce6}{Board\+\_\+\+Debug\+\_\+\+Init}} (void)
+\item 
+void \mbox{\hyperlink{board_8c_ada2a79f4fcd7cd730317fc34291bf08e}{Board\+\_\+\+U\+A\+R\+T\+Put\+Char}} (char ch)
+\item 
+int32\+\_\+t \mbox{\hyperlink{board_8c_a7c9561120ee75eae2e0174ff407a76ca}{Board\+\_\+\+U\+A\+R\+T\+Get\+Char}} (void)
+\item 
+void \mbox{\hyperlink{board_8c_ad9a7067de5694c1615c4814bcec03b34}{Board\+\_\+\+U\+A\+R\+T\+\_\+\+Init}} (L\+P\+C\+\_\+\+U\+S\+A\+R\+T\+\_\+T $\ast$p\+U\+A\+RT)
+\item 
+void \mbox{\hyperlink{board_8c_adaf1c6682fad416564e3113b628bb327}{Board\+\_\+\+U\+A\+R\+T\+Put\+S\+TR}} (const char $\ast$str)
+\item 
+void \mbox{\hyperlink{board_8c_a4e21ba86f42bc4dd53b704a81d923e1d}{Board\+\_\+\+E\+N\+E\+T\+\_\+\+Get\+Mac\+A\+D\+DR}} (uint8\+\_\+t $\ast$mcaddr)
+\begin{DoxyCompactList}\small\item\em Returns the M\+AC address assigned to this board. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{board_8c_ae8d2d761b984f48c3dbb27dd32a8c119}{Board\+\_\+\+Init}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{board_8c_a5a8576e42914a7a04843cbbc02eeb56b}{\+\_\+\+\_\+stdio\+\_\+getchar}} ()
+\item 
+void \mbox{\hyperlink{board_8c_ace3cecd207fe69a092fd6739d7c6fe26}{\+\_\+\+\_\+stdio\+\_\+init}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const uint32\+\_\+t \mbox{\hyperlink{board_8c_a74ceed751e84a920be263a7fe3da67f0}{Ext\+Rate\+In}} = 0
+\item 
+const uint32\+\_\+t \mbox{\hyperlink{board_8c_a2e84f0502f9a7fdd271b97c588696e6f}{Osc\+Rate\+In}} = 12000000
+\item 
+static const \mbox{\hyperlink{structio__port__t}{io\+\_\+port\+\_\+t}} \mbox{\hyperlink{board_8c_af0d0adb4424037251e057d865f3e0357}{Gpio\+Ports}} \mbox{[}$\,$\mbox{]}
+\item 
+static A\+D\+C\+\_\+\+C\+H\+A\+N\+N\+E\+L\+\_\+T \mbox{\hyperlink{board_8c_af07e1d519f6b236ae0486262072dcce5}{cur\+A\+D\+C\+Channel}} = 0x\+FF
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{board_8c_a8dfd02b6cfa8595d9a77f8805e962cfc}\label{board_8c_a8dfd02b6cfa8595d9a77f8805e962cfc}} 
+\index{board.c@{board.c}!GPIO\_PORTS\_SIZE@{GPIO\_PORTS\_SIZE}}
+\index{GPIO\_PORTS\_SIZE@{GPIO\_PORTS\_SIZE}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{GPIO\_PORTS\_SIZE}{GPIO\_PORTS\_SIZE}}
+{\footnotesize\ttfamily \#define G\+P\+I\+O\+\_\+\+P\+O\+R\+T\+S\+\_\+\+S\+I\+ZE~(sizeof(\mbox{\hyperlink{board_8c_af0d0adb4424037251e057d865f3e0357}{Gpio\+Ports}}) / sizeof(\mbox{\hyperlink{structio__port__t}{io\+\_\+port\+\_\+t}}))}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{board_8c_a5a8576e42914a7a04843cbbc02eeb56b}\label{board_8c_a5a8576e42914a7a04843cbbc02eeb56b}} 
+\index{board.c@{board.c}!\_\_stdio\_getchar@{\_\_stdio\_getchar}}
+\index{\_\_stdio\_getchar@{\_\_stdio\_getchar}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{\_\_stdio\_getchar()}{\_\_stdio\_getchar()}}
+{\footnotesize\ttfamily int32\+\_\+t \+\_\+\+\_\+stdio\+\_\+getchar (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{board_8c_ace3cecd207fe69a092fd6739d7c6fe26}\label{board_8c_ace3cecd207fe69a092fd6739d7c6fe26}} 
+\index{board.c@{board.c}!\_\_stdio\_init@{\_\_stdio\_init}}
+\index{\_\_stdio\_init@{\_\_stdio\_init}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{\_\_stdio\_init()}{\_\_stdio\_init()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+stdio\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{board_8c_ae4ede6f6c0e1805b90bb2b872645308f}\label{board_8c_ae4ede6f6c0e1805b90bb2b872645308f}} 
+\index{board.c@{board.c}!Board\_ADC\_Init@{Board\_ADC\_Init}}
+\index{Board\_ADC\_Init@{Board\_ADC\_Init}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_ADC\_Init()}{Board\_ADC\_Init()}}
+{\footnotesize\ttfamily static void Board\+\_\+\+A\+D\+C\+\_\+\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{board_8c_abcba073f50ad637ee6bc852f64ea2ce6}\label{board_8c_abcba073f50ad637ee6bc852f64ea2ce6}} 
+\index{board.c@{board.c}!Board\_Debug\_Init@{Board\_Debug\_Init}}
+\index{Board\_Debug\_Init@{Board\_Debug\_Init}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_Debug\_Init()}{Board\_Debug\_Init()}}
+{\footnotesize\ttfamily void Board\+\_\+\+Debug\+\_\+\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{board_8c_a4e21ba86f42bc4dd53b704a81d923e1d}\label{board_8c_a4e21ba86f42bc4dd53b704a81d923e1d}} 
+\index{board.c@{board.c}!Board\_ENET\_GetMacADDR@{Board\_ENET\_GetMacADDR}}
+\index{Board\_ENET\_GetMacADDR@{Board\_ENET\_GetMacADDR}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_ENET\_GetMacADDR()}{Board\_ENET\_GetMacADDR()}}
+{\footnotesize\ttfamily void Board\+\_\+\+E\+N\+E\+T\+\_\+\+Get\+Mac\+A\+D\+DR (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{mcaddr }\end{DoxyParamCaption})}
+
+
+
+Returns the M\+AC address assigned to this board. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mcaddr} & \+: Pointer to 6-\/byte character array to populate with M\+AC address \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Nothing 
+\end{DoxyReturn}
+\mbox{\Hypertarget{board_8c_ae7b965adcc6edd67278dc8137da2092a}\label{board_8c_ae7b965adcc6edd67278dc8137da2092a}} 
+\index{board.c@{board.c}!Board\_GPIO\_Init@{Board\_GPIO\_Init}}
+\index{Board\_GPIO\_Init@{Board\_GPIO\_Init}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_GPIO\_Init()}{Board\_GPIO\_Init()}}
+{\footnotesize\ttfamily static void Board\+\_\+\+G\+P\+I\+O\+\_\+\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{board_8c_ac81e9df7df5223ebd43cf13060bd3a99}\label{board_8c_ac81e9df7df5223ebd43cf13060bd3a99}} 
+\index{board.c@{board.c}!Board\_I2C\_Init@{Board\_I2C\_Init}}
+\index{Board\_I2C\_Init@{Board\_I2C\_Init}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_I2C\_Init()}{Board\_I2C\_Init()}}
+{\footnotesize\ttfamily static void Board\+\_\+\+I2\+C\+\_\+\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{board_8c_ae8d2d761b984f48c3dbb27dd32a8c119}\label{board_8c_ae8d2d761b984f48c3dbb27dd32a8c119}} 
+\index{board.c@{board.c}!Board\_Init@{Board\_Init}}
+\index{Board\_Init@{Board\_Init}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_Init()}{Board\_Init()}}
+{\footnotesize\ttfamily void Board\+\_\+\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{board_8c_afdf2ff29bb90173de0449d0b80dbf407}\label{board_8c_afdf2ff29bb90173de0449d0b80dbf407}} 
+\index{board.c@{board.c}!Board\_SSP\_Init@{Board\_SSP\_Init}}
+\index{Board\_SSP\_Init@{Board\_SSP\_Init}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_SSP\_Init()}{Board\_SSP\_Init()}}
+{\footnotesize\ttfamily void Board\+\_\+\+S\+S\+P\+\_\+\+Init (\begin{DoxyParamCaption}\item[{L\+P\+C\+\_\+\+S\+S\+P\+\_\+T $\ast$}]{p\+S\+SP }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{board_8c_ad9a7067de5694c1615c4814bcec03b34}\label{board_8c_ad9a7067de5694c1615c4814bcec03b34}} 
+\index{board.c@{board.c}!Board\_UART\_Init@{Board\_UART\_Init}}
+\index{Board\_UART\_Init@{Board\_UART\_Init}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_UART\_Init()}{Board\_UART\_Init()}}
+{\footnotesize\ttfamily void Board\+\_\+\+U\+A\+R\+T\+\_\+\+Init (\begin{DoxyParamCaption}\item[{L\+P\+C\+\_\+\+U\+S\+A\+R\+T\+\_\+T $\ast$}]{p\+U\+A\+RT }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{board_8c_a7c9561120ee75eae2e0174ff407a76ca}\label{board_8c_a7c9561120ee75eae2e0174ff407a76ca}} 
+\index{board.c@{board.c}!Board\_UARTGetChar@{Board\_UARTGetChar}}
+\index{Board\_UARTGetChar@{Board\_UARTGetChar}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_UARTGetChar()}{Board\_UARTGetChar()}}
+{\footnotesize\ttfamily int32\+\_\+t Board\+\_\+\+U\+A\+R\+T\+Get\+Char (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{board_8c_ada2a79f4fcd7cd730317fc34291bf08e}\label{board_8c_ada2a79f4fcd7cd730317fc34291bf08e}} 
+\index{board.c@{board.c}!Board\_UARTPutChar@{Board\_UARTPutChar}}
+\index{Board\_UARTPutChar@{Board\_UARTPutChar}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_UARTPutChar()}{Board\_UARTPutChar()}}
+{\footnotesize\ttfamily void Board\+\_\+\+U\+A\+R\+T\+Put\+Char (\begin{DoxyParamCaption}\item[{char}]{ch }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{board_8c_adaf1c6682fad416564e3113b628bb327}\label{board_8c_adaf1c6682fad416564e3113b628bb327}} 
+\index{board.c@{board.c}!Board\_UARTPutSTR@{Board\_UARTPutSTR}}
+\index{Board\_UARTPutSTR@{Board\_UARTPutSTR}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{Board\_UARTPutSTR()}{Board\_UARTPutSTR()}}
+{\footnotesize\ttfamily void Board\+\_\+\+U\+A\+R\+T\+Put\+S\+TR (\begin{DoxyParamCaption}\item[{const char $\ast$}]{str }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{board_8c_af07e1d519f6b236ae0486262072dcce5}\label{board_8c_af07e1d519f6b236ae0486262072dcce5}} 
+\index{board.c@{board.c}!curADCChannel@{curADCChannel}}
+\index{curADCChannel@{curADCChannel}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{curADCChannel}{curADCChannel}}
+{\footnotesize\ttfamily A\+D\+C\+\_\+\+C\+H\+A\+N\+N\+E\+L\+\_\+T cur\+A\+D\+C\+Channel = 0x\+FF\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{board_8c_a74ceed751e84a920be263a7fe3da67f0}\label{board_8c_a74ceed751e84a920be263a7fe3da67f0}} 
+\index{board.c@{board.c}!ExtRateIn@{ExtRateIn}}
+\index{ExtRateIn@{ExtRateIn}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{ExtRateIn}{ExtRateIn}}
+{\footnotesize\ttfamily const uint32\+\_\+t Ext\+Rate\+In = 0}
+
+\mbox{\Hypertarget{board_8c_af0d0adb4424037251e057d865f3e0357}\label{board_8c_af0d0adb4424037251e057d865f3e0357}} 
+\index{board.c@{board.c}!GpioPorts@{GpioPorts}}
+\index{GpioPorts@{GpioPorts}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{GpioPorts}{GpioPorts}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{structio__port__t}{io\+\_\+port\+\_\+t}} Gpio\+Ports\mbox{[}$\,$\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        \{ 3, 0 \},   }
+\DoxyCodeLine{        \{ 5, 5 \},   }
+\DoxyCodeLine{        \{ 3, 8 \},   }
+\DoxyCodeLine{        \{ 5, 15 \},  }
+\DoxyCodeLine{                    }
+\DoxyCodeLine{                    }
+\DoxyCodeLine{                    }
+\DoxyCodeLine{        \{ 3, 2 \},   }
+\DoxyCodeLine{        \{ 0, 5 \}    }
+\DoxyCodeLine{                    }
+\DoxyCodeLine{                    }
+\DoxyCodeLine{                    }
+\DoxyCodeLine{                    }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{board_8c_a2e84f0502f9a7fdd271b97c588696e6f}\label{board_8c_a2e84f0502f9a7fdd271b97c588696e6f}} 
+\index{board.c@{board.c}!OscRateIn@{OscRateIn}}
+\index{OscRateIn@{OscRateIn}!board.c@{board.c}}
+\doxysubsubsection{\texorpdfstring{OscRateIn}{OscRateIn}}
+{\footnotesize\ttfamily const uint32\+\_\+t Osc\+Rate\+In = 12000000}
+

@@ -1,0 +1,9 @@
+<map id="inc/lift.h" name="inc/lift.h">
+<area shape="rect" id="node1" title=" " alt="" coords="183,5,251,32"/>
+<area shape="rect" id="node2" href="$relay_8h.html" title=" " alt="" coords="97,80,180,107"/>
+<area shape="rect" id="node3" href="$lift_8c.html" title=" " alt="" coords="5,155,75,181"/>
+<area shape="rect" id="node5" href="$relay_8c.html" title=" " alt="" coords="203,155,285,181"/>
+<area shape="rect" id="node6" href="$main_8c.html" title=" " alt="" coords="255,80,337,107"/>
+<area shape="rect" id="node7" href="$RTUcomHMI_8c.html" title=" " alt="" coords="361,80,495,107"/>
+<area shape="rect" id="node4" href="$pole_8c.html" title=" " alt="" coords="99,155,178,181"/>
+</map>

@@ -13,9 +13,6 @@ extern "C" {
 #define BOARD_GPIO_1                1
 #define BOARD_GPIO_2                2
 #define BOARD_GPIO_3                3
-#define BOARD_GPIO_4                4
-#define BOARD_GPIO_5                5
-#define BOARD_GPIO_6                6
 #define BOARD_GPIO_7                7
 #define BOARD_GPIO_8                8
 

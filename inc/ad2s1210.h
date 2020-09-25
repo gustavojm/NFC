@@ -17,12 +17,12 @@ extern "C" {
 #define AD2S1210_DATA_MASK				~(1 << 7)
 
 /* Control register bits description */
-#define AD2S1210_PHASE_LOCK_RANGE_44	1 << 5		// 0=360º, 1=44º
-#define AD2S1210_HYSTERESIS				1 << 4		// 0=disabled, 1=enabled
-#define AD2S1210_ENCODER_RES1			1 << 3		// Encoder output resolution (not used)
-#define AD2S1210_ENCODER_RES0			1 << 2		// Encoder output resolution (not used)
-#define AD2S1210_RES1					1 << 1      // Pos and Vel resolution
-#define AD2S1210_RES0					1 << 0		// Pos and Vel resolution
+#define AD2S1210_PHASE_LOCK_RANGE_44	1 << 5		///< 0=360º, 1=44º
+#define AD2S1210_HYSTERESIS				1 << 4		///< 0=disabled, 1=enabled
+#define AD2S1210_ENCODER_RES1			1 << 3		///< Encoder output resolution (not used)
+#define AD2S1210_ENCODER_RES0			1 << 2		///< Encoder output resolution (not used)
+#define AD2S1210_RES1					1 << 1      ///< Pos and Vel resolution
+#define AD2S1210_RES0					1 << 0		///< Pos and Vel resolution
 
 #define AD2S1210_RESOLUTION_MASK		(AD2S1210_RES1 | AD2S1210_RES0)
 
@@ -60,31 +60,24 @@ extern "C" {
 
 #define AD2S1210_DEF_EXCIT	10000
 
-/* Pointers to functions to handle GPIO lines */
+/**
+ * Pointers to functions to handle GPIO lines
+ * */
 struct ad2s1210_gpios {
-	void (*sample)(bool);
-	void (*wr_fsync)(bool);
-	void (*reset)(bool);
+	void (*reset)(bool);			///< pointer to RESET line function handler
+	void (*sample)(bool);			///< pointer to SAMPLE line function handler
+	void (*wr_fsync)(bool);		///< pointer to WR_FSYNC line function handler
 };
 
 /**
  * struct ad2s1210_state - device instance specific state.
- * @lock:		lock to ensure state is consistent
- * @gpios:		specific gpio function pointers for this instance
- * @fclkin:		frequency of clock input
- * @fexcit:		excitation frequency
- * @hysteresis:		cache of whether hysteresis is enabled
- * @resolution:		chip resolution could be 10/12/14/16-bit
- * @rx:			receive buffer
- * @tx:			transmit buffer
  */
 struct ad2s1210_state {
-	SemaphoreHandle_t lock;
-	struct ad2s1210_gpios gpios;
-	uint32_t fclkin;
-	uint32_t fexcit;
-	uint8_t hysteresis;
-	uint8_t resolution;
+	struct ad2s1210_gpios gpios;///< specific gpio function pointers for this instance
+	uint32_t fclkin;				///< frequency of clock input
+	uint32_t fexcit;				///< excitation frequency
+	bool hysteresis;				///< cache of whether hysteresis is enabled
+	uint8_t resolution;			///< chip resolution could be 10/12/14/16-bit
 };
 
 int32_t ad2s1210_init(struct ad2s1210_state *st);
@@ -114,7 +107,6 @@ uint16_t ad2s1210_read_position(struct ad2s1210_state *st);
 
 int16_t ad2s1210_read_velocity(struct ad2s1210_state *st);
 
-/* read the fault register since last sample */
 uint8_t ad2s1210_get_fault_register(struct ad2s1210_state *st);
 
 void ad2s1210_print_fault_register(uint8_t fr);

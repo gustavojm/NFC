@@ -1,0 +1,156 @@
+\hypertarget{pole_8c}{}\doxysection{src/pole.c File Reference}
+\label{pole_8c}\index{src/pole.c@{src/pole.c}}
+{\ttfamily \#include \char`\"{}pole\+\_\+tmr.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}pole.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdio.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdlib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}math.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdbool.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Free\+R\+T\+O\+S.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}task.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}queue.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}semphr.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdint.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ad2s1210.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}pid.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dout.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}relay.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debug.\+h\char`\"{}}\newline
+Include dependency graph for pole.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pole_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{pole_8c_a5b977fa7f94febb0c11c47e2a90dfc3c}{P\+O\+L\+E\+\_\+\+T\+A\+S\+K\+\_\+\+P\+R\+I\+O\+R\+I\+TY}}~( \mbox{\hyperlink{FreeRTOSConfig_8h_a9a78f5ac61e6cb172dadf2a51f11db38}{config\+M\+A\+X\+\_\+\+P\+R\+I\+O\+R\+I\+T\+I\+ES}} -\/ 2 )
+\item 
+\#define \mbox{\hyperlink{pole_8c_abb5da8f52a0ede09c69d501f35a0e70a}{P\+O\+L\+E\+\_\+\+S\+U\+P\+E\+R\+V\+I\+S\+O\+R\+\_\+\+T\+A\+S\+K\+\_\+\+P\+R\+I\+O\+R\+I\+TY}}~( \mbox{\hyperlink{FreeRTOSConfig_8h_a9a78f5ac61e6cb172dadf2a51f11db38}{config\+M\+A\+X\+\_\+\+P\+R\+I\+O\+R\+I\+T\+I\+ES}} -\/ 2 )
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{pole_8c_ad66ac319edfc7856aa68fa3340562eb8}{pole\+\_\+task}} (void $\ast$par)
+\begin{DoxyCompactList}\small\item\em handles the Pole movement. Receives commands from pole\+\_\+queue \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{pole_8c_ace26b1307d229e4ec1578e9ea62d77a7}{supervisor\+\_\+task}} (void $\ast$par)
+\item 
+void \mbox{\hyperlink{pole_8c_a0586b3351d9acb07165a96bf145ef708}{pole\+\_\+init}} ()
+\item 
+struct \mbox{\hyperlink{structmot__pap__status}{mot\+\_\+pap\+\_\+status}} \mbox{\hyperlink{pole_8c_ac695c448cb89a3b32c51234e120427b3}{pole\+\_\+get\+\_\+status}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Queue\+Handle\+\_\+t \mbox{\hyperlink{pole_8c_afff9c930edf4a56d491f3f435f94aa18}{pole\+\_\+queue}} = N\+U\+LL
+\item 
+Semaphore\+Handle\+\_\+t \mbox{\hyperlink{pole_8c_a928076a0d73f66a7dea988dbc8dfad1d}{pole\+\_\+supervisor\+\_\+semaphore}}
+\item 
+static struct \mbox{\hyperlink{structmot__pap__status}{mot\+\_\+pap\+\_\+status}} \mbox{\hyperlink{pole_8c_a52e8d422b3c8ae44f604e6db12d1be63}{status}}
+\item 
+enum \mbox{\hyperlink{mot__pap_8h_a4b6346b98895c9b7f6533028521a8389}{mot\+\_\+pap\+\_\+direction}} \mbox{\hyperlink{pole_8c_a5a20a667d984b9a19747ec23d8f12988}{dir}}
+\item 
+bool \mbox{\hyperlink{pole_8c_afd57c48cdff97c0f387e33e7c3f310a0}{stall\+\_\+detection}}
+\item 
+struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} \mbox{\hyperlink{pole_8c_a4e0e01b743e4c66e9d608831e47f71a8}{rdc}}
+\item 
+struct \mbox{\hyperlink{structpid}{pid}} \mbox{\hyperlink{pole_8c_a4c4787408c8cb1e531acacbb316b742e}{pid}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{pole_8c_abb5da8f52a0ede09c69d501f35a0e70a}\label{pole_8c_abb5da8f52a0ede09c69d501f35a0e70a}} 
+\index{pole.c@{pole.c}!POLE\_SUPERVISOR\_TASK\_PRIORITY@{POLE\_SUPERVISOR\_TASK\_PRIORITY}}
+\index{POLE\_SUPERVISOR\_TASK\_PRIORITY@{POLE\_SUPERVISOR\_TASK\_PRIORITY}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{POLE\_SUPERVISOR\_TASK\_PRIORITY}{POLE\_SUPERVISOR\_TASK\_PRIORITY}}
+{\footnotesize\ttfamily \#define P\+O\+L\+E\+\_\+\+S\+U\+P\+E\+R\+V\+I\+S\+O\+R\+\_\+\+T\+A\+S\+K\+\_\+\+P\+R\+I\+O\+R\+I\+TY~( \mbox{\hyperlink{FreeRTOSConfig_8h_a9a78f5ac61e6cb172dadf2a51f11db38}{config\+M\+A\+X\+\_\+\+P\+R\+I\+O\+R\+I\+T\+I\+ES}} -\/ 2 )}
+
+\mbox{\Hypertarget{pole_8c_a5b977fa7f94febb0c11c47e2a90dfc3c}\label{pole_8c_a5b977fa7f94febb0c11c47e2a90dfc3c}} 
+\index{pole.c@{pole.c}!POLE\_TASK\_PRIORITY@{POLE\_TASK\_PRIORITY}}
+\index{POLE\_TASK\_PRIORITY@{POLE\_TASK\_PRIORITY}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{POLE\_TASK\_PRIORITY}{POLE\_TASK\_PRIORITY}}
+{\footnotesize\ttfamily \#define P\+O\+L\+E\+\_\+\+T\+A\+S\+K\+\_\+\+P\+R\+I\+O\+R\+I\+TY~( \mbox{\hyperlink{FreeRTOSConfig_8h_a9a78f5ac61e6cb172dadf2a51f11db38}{config\+M\+A\+X\+\_\+\+P\+R\+I\+O\+R\+I\+T\+I\+ES}} -\/ 2 )}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{pole_8c_ac695c448cb89a3b32c51234e120427b3}\label{pole_8c_ac695c448cb89a3b32c51234e120427b3}} 
+\index{pole.c@{pole.c}!pole\_get\_status@{pole\_get\_status}}
+\index{pole\_get\_status@{pole\_get\_status}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{pole\_get\_status()}{pole\_get\_status()}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structmot__pap__status}{mot\+\_\+pap\+\_\+status}} pole\+\_\+get\+\_\+status (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pole_8c_a0586b3351d9acb07165a96bf145ef708}\label{pole_8c_a0586b3351d9acb07165a96bf145ef708}} 
+\index{pole.c@{pole.c}!pole\_init@{pole\_init}}
+\index{pole\_init@{pole\_init}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{pole\_init()}{pole\_init()}}
+{\footnotesize\ttfamily void pole\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pole_8c_ad66ac319edfc7856aa68fa3340562eb8}\label{pole_8c_ad66ac319edfc7856aa68fa3340562eb8}} 
+\index{pole.c@{pole.c}!pole\_task@{pole\_task}}
+\index{pole\_task@{pole\_task}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{pole\_task()}{pole\_task()}}
+{\footnotesize\ttfamily static void pole\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{par }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+handles the Pole movement. Receives commands from pole\+\_\+queue 
+
+
+\begin{DoxyParams}{Parameters}
+{\em par} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{pole_8c_ace26b1307d229e4ec1578e9ea62d77a7}\label{pole_8c_ace26b1307d229e4ec1578e9ea62d77a7}} 
+\index{pole.c@{pole.c}!supervisor\_task@{supervisor\_task}}
+\index{supervisor\_task@{supervisor\_task}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{supervisor\_task()}{supervisor\_task()}}
+{\footnotesize\ttfamily static void supervisor\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{par }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{pole_8c_a5a20a667d984b9a19747ec23d8f12988}\label{pole_8c_a5a20a667d984b9a19747ec23d8f12988}} 
+\index{pole.c@{pole.c}!dir@{dir}}
+\index{dir@{dir}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{dir}{dir}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{mot__pap_8h_a4b6346b98895c9b7f6533028521a8389}{mot\+\_\+pap\+\_\+direction}} dir}
+
+\mbox{\Hypertarget{pole_8c_a4c4787408c8cb1e531acacbb316b742e}\label{pole_8c_a4c4787408c8cb1e531acacbb316b742e}} 
+\index{pole.c@{pole.c}!pid@{pid}}
+\index{pid@{pid}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{pid}{pid}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structpid}{pid}} \mbox{\hyperlink{structpid}{pid}}}
+
+\mbox{\Hypertarget{pole_8c_afff9c930edf4a56d491f3f435f94aa18}\label{pole_8c_afff9c930edf4a56d491f3f435f94aa18}} 
+\index{pole.c@{pole.c}!pole\_queue@{pole\_queue}}
+\index{pole\_queue@{pole\_queue}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{pole\_queue}{pole\_queue}}
+{\footnotesize\ttfamily Queue\+Handle\+\_\+t pole\+\_\+queue = N\+U\+LL}
+
+\mbox{\Hypertarget{pole_8c_a928076a0d73f66a7dea988dbc8dfad1d}\label{pole_8c_a928076a0d73f66a7dea988dbc8dfad1d}} 
+\index{pole.c@{pole.c}!pole\_supervisor\_semaphore@{pole\_supervisor\_semaphore}}
+\index{pole\_supervisor\_semaphore@{pole\_supervisor\_semaphore}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{pole\_supervisor\_semaphore}{pole\_supervisor\_semaphore}}
+{\footnotesize\ttfamily Semaphore\+Handle\+\_\+t pole\+\_\+supervisor\+\_\+semaphore}
+
+\mbox{\Hypertarget{pole_8c_a4e0e01b743e4c66e9d608831e47f71a8}\label{pole_8c_a4e0e01b743e4c66e9d608831e47f71a8}} 
+\index{pole.c@{pole.c}!rdc@{rdc}}
+\index{rdc@{rdc}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{rdc}{rdc}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} rdc}
+
+\mbox{\Hypertarget{pole_8c_afd57c48cdff97c0f387e33e7c3f310a0}\label{pole_8c_afd57c48cdff97c0f387e33e7c3f310a0}} 
+\index{pole.c@{pole.c}!stall\_detection@{stall\_detection}}
+\index{stall\_detection@{stall\_detection}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{stall\_detection}{stall\_detection}}
+{\footnotesize\ttfamily bool stall\+\_\+detection}
+
+\mbox{\Hypertarget{pole_8c_a52e8d422b3c8ae44f604e6db12d1be63}\label{pole_8c_a52e8d422b3c8ae44f604e6db12d1be63}} 
+\index{pole.c@{pole.c}!status@{status}}
+\index{status@{status}!pole.c@{pole.c}}
+\doxysubsubsection{\texorpdfstring{status}{status}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structmot__pap__status}{mot\+\_\+pap\+\_\+status}} status\hspace{0.3cm}{\ttfamily [static]}}
+

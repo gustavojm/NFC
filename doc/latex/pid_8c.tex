@@ -1,0 +1,46 @@
+\hypertarget{pid_8c}{}\doxysection{src/pid.c File Reference}
+\label{pid_8c}\index{src/pid.c@{src/pid.c}}
+{\ttfamily \#include \char`\"{}pid.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}Free\+R\+T\+O\+S.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}task.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debug.\+h\char`\"{}}\newline
+Include dependency graph for pid.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pid_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \mbox{\hyperlink{pid_8c_acd0c47b6467e23459394b40f5e5435c5}{abs\+\_\+limit}} (const double out, const int32\+\_\+t limit)
+\item 
+void \mbox{\hyperlink{pid_8c_ab373030d27800bd908d9d341306623d4}{pid\+\_\+controller\+\_\+init}} (struct \mbox{\hyperlink{structpid}{pid}} $\ast$\mbox{\hyperlink{structpid}{pid}}, float kp, int32\+\_\+t sample\+\_\+time, float ti, float td, int32\+\_\+t limit)
+\item 
+int32\+\_\+t \mbox{\hyperlink{pid_8c_ab18951785823513fcfe6e84ddd5eaed6}{pid\+\_\+controller\+\_\+calculate}} (struct \mbox{\hyperlink{structpid}{pid}} $\ast$\mbox{\hyperlink{structpid}{pid}}, int32\+\_\+t setpoint, int32\+\_\+t input)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{pid_8c_acd0c47b6467e23459394b40f5e5435c5}\label{pid_8c_acd0c47b6467e23459394b40f5e5435c5}} 
+\index{pid.c@{pid.c}!abs\_limit@{abs\_limit}}
+\index{abs\_limit@{abs\_limit}!pid.c@{pid.c}}
+\doxysubsubsection{\texorpdfstring{abs\_limit()}{abs\_limit()}}
+{\footnotesize\ttfamily static double abs\+\_\+limit (\begin{DoxyParamCaption}\item[{const double}]{out,  }\item[{const int32\+\_\+t}]{limit }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{pid_8c_ab18951785823513fcfe6e84ddd5eaed6}\label{pid_8c_ab18951785823513fcfe6e84ddd5eaed6}} 
+\index{pid.c@{pid.c}!pid\_controller\_calculate@{pid\_controller\_calculate}}
+\index{pid\_controller\_calculate@{pid\_controller\_calculate}!pid.c@{pid.c}}
+\doxysubsubsection{\texorpdfstring{pid\_controller\_calculate()}{pid\_controller\_calculate()}}
+{\footnotesize\ttfamily int32\+\_\+t pid\+\_\+controller\+\_\+calculate (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structpid}{pid}} $\ast$}]{pid,  }\item[{int32\+\_\+t}]{setpoint,  }\item[{int32\+\_\+t}]{input }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pid_8c_ab373030d27800bd908d9d341306623d4}\label{pid_8c_ab373030d27800bd908d9d341306623d4}} 
+\index{pid.c@{pid.c}!pid\_controller\_init@{pid\_controller\_init}}
+\index{pid\_controller\_init@{pid\_controller\_init}!pid.c@{pid.c}}
+\doxysubsubsection{\texorpdfstring{pid\_controller\_init()}{pid\_controller\_init()}}
+{\footnotesize\ttfamily void pid\+\_\+controller\+\_\+init (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structpid}{pid}} $\ast$}]{pid,  }\item[{float}]{kp,  }\item[{int32\+\_\+t}]{sample\+\_\+time,  }\item[{float}]{ti,  }\item[{float}]{td,  }\item[{int32\+\_\+t}]{limit }\end{DoxyParamCaption})}
+

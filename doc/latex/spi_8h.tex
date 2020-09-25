@@ -1,0 +1,65 @@
+\hypertarget{spi_8h}{}\doxysection{inc/spi.h File Reference}
+\label{spi_8h}\index{inc/spi.h@{inc/spi.h}}
+{\ttfamily \#include \char`\"{}board.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdint.\+h\char`\"{}}\newline
+Include dependency graph for spi.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{spi_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{spi_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{spi_8h_ae909944aa85ae98323073c628be541aa}{spi\+\_\+init}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{spi_8h_a651cf116d041cefd37e16e8558cc5d7e}{spi\+\_\+sync\+\_\+transfer}} (Chip\+\_\+\+S\+S\+P\+\_\+\+D\+A\+T\+A\+\_\+\+S\+E\+T\+U\+P\+\_\+T $\ast$xfers, uint32\+\_\+t num\+\_\+xfers, void($\ast$gpio\+\_\+wr\+\_\+fsync)(bool))
+\item 
+static int \mbox{\hyperlink{spi_8h_a2c9d5db55435828cc1df0af6ccc18a1a}{spi\+\_\+write}} (void $\ast$buf, size\+\_\+t len)
+\item 
+static int \mbox{\hyperlink{spi_8h_ade02fb06adae2f34a5b2442ac982b36f}{spi\+\_\+read}} (void $\ast$buf, size\+\_\+t len)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{spi_8h_ae909944aa85ae98323073c628be541aa}\label{spi_8h_ae909944aa85ae98323073c628be541aa}} 
+\index{spi.h@{spi.h}!spi\_init@{spi\_init}}
+\index{spi\_init@{spi\_init}!spi.h@{spi.h}}
+\doxysubsubsection{\texorpdfstring{spi\_init()}{spi\_init()}}
+{\footnotesize\ttfamily void spi\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{spi_8h_ade02fb06adae2f34a5b2442ac982b36f}\label{spi_8h_ade02fb06adae2f34a5b2442ac982b36f}} 
+\index{spi.h@{spi.h}!spi\_read@{spi\_read}}
+\index{spi\_read@{spi\_read}!spi.h@{spi.h}}
+\doxysubsubsection{\texorpdfstring{spi\_read()}{spi\_read()}}
+{\footnotesize\ttfamily static int spi\+\_\+read (\begin{DoxyParamCaption}\item[{void $\ast$}]{buf,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+spi\+\_\+read -\/ S\+PI synchronous read @spi\+: device from which data will be read @buf\+: data buffer @len\+: data buffer size
+
+This function reads from S\+PI to the buffer @buf.
+
+Return\+: zero on success, else a negative error code. \mbox{\Hypertarget{spi_8h_a651cf116d041cefd37e16e8558cc5d7e}\label{spi_8h_a651cf116d041cefd37e16e8558cc5d7e}} 
+\index{spi.h@{spi.h}!spi\_sync\_transfer@{spi\_sync\_transfer}}
+\index{spi\_sync\_transfer@{spi\_sync\_transfer}!spi.h@{spi.h}}
+\doxysubsubsection{\texorpdfstring{spi\_sync\_transfer()}{spi\_sync\_transfer()}}
+{\footnotesize\ttfamily int32\+\_\+t spi\+\_\+sync\+\_\+transfer (\begin{DoxyParamCaption}\item[{Chip\+\_\+\+S\+S\+P\+\_\+\+D\+A\+T\+A\+\_\+\+S\+E\+T\+U\+P\+\_\+T $\ast$}]{xfers,  }\item[{uint32\+\_\+t}]{num\+\_\+xfers,  }\item[{void($\ast$)(bool)}]{gpio\+\_\+wr\+\_\+fsync }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{spi_8h_a2c9d5db55435828cc1df0af6ccc18a1a}\label{spi_8h_a2c9d5db55435828cc1df0af6ccc18a1a}} 
+\index{spi.h@{spi.h}!spi\_write@{spi\_write}}
+\index{spi\_write@{spi\_write}!spi.h@{spi.h}}
+\doxysubsubsection{\texorpdfstring{spi\_write()}{spi\_write()}}
+{\footnotesize\ttfamily static int spi\+\_\+write (\begin{DoxyParamCaption}\item[{void $\ast$}]{buf,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+spi\+\_\+write -\/ S\+PI synchronous write @spi\+: device to which data will be written @buf\+: data buffer @len\+: data buffer size
+
+This function writes the buffer @buf.
+
+Return\+: zero on success, else a negative error code. 

@@ -1,0 +1,145 @@
+\hypertarget{lift_8c}{}\doxysection{src/lift.c File Reference}
+\label{lift_8c}\index{src/lift.c@{src/lift.c}}
+{\ttfamily \#include \char`\"{}board.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}din.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lift.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdio.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdlib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}math.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Free\+R\+T\+O\+S.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}timers.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}queue.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}semphr.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}task.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdbool.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}relay.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debug.\+h\char`\"{}}\newline
+Include dependency graph for lift.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lift_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{lift_8c_abacfe9502a414cb79fbce3cc921ace98}{L\+I\+F\+T\+\_\+\+T\+A\+S\+K\+\_\+\+P\+R\+I\+O\+R\+I\+TY}}~( \mbox{\hyperlink{FreeRTOSConfig_8h_a9a78f5ac61e6cb172dadf2a51f11db38}{config\+M\+A\+X\+\_\+\+P\+R\+I\+O\+R\+I\+T\+I\+ES}} -\/ 2 )
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{lift_8c_a32aed1f93f24f0cbc78d2e1e4ada9919}{lift\+\_\+up}} ()
+\item 
+static void \mbox{\hyperlink{lift_8c_aae2e517505f4aa0455b5b88e312e08d1}{lift\+\_\+down}} ()
+\item 
+static void \mbox{\hyperlink{lift_8c_aa84153692236f4245d5c87a521c365ba}{lift\+\_\+stop}} ()
+\item 
+static void \mbox{\hyperlink{lift_8c_a9a3f7931da561af57980c708251292a3}{lift\+\_\+task}} (void $\ast$par)
+\item 
+static void \mbox{\hyperlink{lift_8c_a73ea98980c6fcf72cd66ff5572d21f98}{lift\+\_\+limit\+\_\+switches\+\_\+handler\+\_\+task}} (void $\ast$pv\+Parameters)
+\item 
+void \mbox{\hyperlink{lift_8c_aa32175f2e875afc79e5e2df8fe065593}{G\+P\+I\+O0\+\_\+\+I\+R\+Q\+Handler}} (void)
+\item 
+void \mbox{\hyperlink{lift_8c_a0c2ac16c0534feaab295ac82446374a6}{G\+P\+I\+O1\+\_\+\+I\+R\+Q\+Handler}} (void)
+\item 
+void \mbox{\hyperlink{lift_8c_ac38ea382906ca75ef58e47a5c0c815cc}{lift\+\_\+init}} ()
+\item 
+struct \mbox{\hyperlink{structlift__status}{lift\+\_\+status}} \mbox{\hyperlink{lift_8c_a29a74ac90c123ba3fbb1a716e4125b04}{lift\+\_\+status\+\_\+get}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Queue\+Handle\+\_\+t \mbox{\hyperlink{lift_8c_a0c3ca977ee4457c74b5287463654f69d}{lift\+\_\+queue}} = N\+U\+LL
+\item 
+Semaphore\+Handle\+\_\+t \mbox{\hyperlink{lift_8c_a18e0e595a7138f0782d603ac76ec485d}{lift\+\_\+interrupt\+\_\+counting\+\_\+semaphore}}
+\item 
+static struct \mbox{\hyperlink{structlift__status}{lift\+\_\+status}} \mbox{\hyperlink{lift_8c_a0c53544a5512863bfb3d7a6c082e7e59}{status}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{lift_8c_abacfe9502a414cb79fbce3cc921ace98}\label{lift_8c_abacfe9502a414cb79fbce3cc921ace98}} 
+\index{lift.c@{lift.c}!LIFT\_TASK\_PRIORITY@{LIFT\_TASK\_PRIORITY}}
+\index{LIFT\_TASK\_PRIORITY@{LIFT\_TASK\_PRIORITY}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{LIFT\_TASK\_PRIORITY}{LIFT\_TASK\_PRIORITY}}
+{\footnotesize\ttfamily \#define L\+I\+F\+T\+\_\+\+T\+A\+S\+K\+\_\+\+P\+R\+I\+O\+R\+I\+TY~( \mbox{\hyperlink{FreeRTOSConfig_8h_a9a78f5ac61e6cb172dadf2a51f11db38}{config\+M\+A\+X\+\_\+\+P\+R\+I\+O\+R\+I\+T\+I\+ES}} -\/ 2 )}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{lift_8c_aa32175f2e875afc79e5e2df8fe065593}\label{lift_8c_aa32175f2e875afc79e5e2df8fe065593}} 
+\index{lift.c@{lift.c}!GPIO0\_IRQHandler@{GPIO0\_IRQHandler}}
+\index{GPIO0\_IRQHandler@{GPIO0\_IRQHandler}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{GPIO0\_IRQHandler()}{GPIO0\_IRQHandler()}}
+{\footnotesize\ttfamily void G\+P\+I\+O0\+\_\+\+I\+R\+Q\+Handler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{lift_8c_a0c2ac16c0534feaab295ac82446374a6}\label{lift_8c_a0c2ac16c0534feaab295ac82446374a6}} 
+\index{lift.c@{lift.c}!GPIO1\_IRQHandler@{GPIO1\_IRQHandler}}
+\index{GPIO1\_IRQHandler@{GPIO1\_IRQHandler}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{GPIO1\_IRQHandler()}{GPIO1\_IRQHandler()}}
+{\footnotesize\ttfamily void G\+P\+I\+O1\+\_\+\+I\+R\+Q\+Handler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{lift_8c_aae2e517505f4aa0455b5b88e312e08d1}\label{lift_8c_aae2e517505f4aa0455b5b88e312e08d1}} 
+\index{lift.c@{lift.c}!lift\_down@{lift\_down}}
+\index{lift\_down@{lift\_down}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{lift\_down()}{lift\_down()}}
+{\footnotesize\ttfamily static void lift\+\_\+down (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{lift_8c_ac38ea382906ca75ef58e47a5c0c815cc}\label{lift_8c_ac38ea382906ca75ef58e47a5c0c815cc}} 
+\index{lift.c@{lift.c}!lift\_init@{lift\_init}}
+\index{lift\_init@{lift\_init}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{lift\_init()}{lift\_init()}}
+{\footnotesize\ttfamily void lift\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{lift_8c_a73ea98980c6fcf72cd66ff5572d21f98}\label{lift_8c_a73ea98980c6fcf72cd66ff5572d21f98}} 
+\index{lift.c@{lift.c}!lift\_limit\_switches\_handler\_task@{lift\_limit\_switches\_handler\_task}}
+\index{lift\_limit\_switches\_handler\_task@{lift\_limit\_switches\_handler\_task}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{lift\_limit\_switches\_handler\_task()}{lift\_limit\_switches\_handler\_task()}}
+{\footnotesize\ttfamily static void lift\+\_\+limit\+\_\+switches\+\_\+handler\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{lift_8c_a29a74ac90c123ba3fbb1a716e4125b04}\label{lift_8c_a29a74ac90c123ba3fbb1a716e4125b04}} 
+\index{lift.c@{lift.c}!lift\_status\_get@{lift\_status\_get}}
+\index{lift\_status\_get@{lift\_status\_get}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{lift\_status\_get()}{lift\_status\_get()}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structlift__status}{lift\+\_\+status}} lift\+\_\+status\+\_\+get (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{lift_8c_aa84153692236f4245d5c87a521c365ba}\label{lift_8c_aa84153692236f4245d5c87a521c365ba}} 
+\index{lift.c@{lift.c}!lift\_stop@{lift\_stop}}
+\index{lift\_stop@{lift\_stop}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{lift\_stop()}{lift\_stop()}}
+{\footnotesize\ttfamily static void lift\+\_\+stop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{lift_8c_a9a3f7931da561af57980c708251292a3}\label{lift_8c_a9a3f7931da561af57980c708251292a3}} 
+\index{lift.c@{lift.c}!lift\_task@{lift\_task}}
+\index{lift\_task@{lift\_task}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{lift\_task()}{lift\_task()}}
+{\footnotesize\ttfamily static void lift\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{par }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{lift_8c_a32aed1f93f24f0cbc78d2e1e4ada9919}\label{lift_8c_a32aed1f93f24f0cbc78d2e1e4ada9919}} 
+\index{lift.c@{lift.c}!lift\_up@{lift\_up}}
+\index{lift\_up@{lift\_up}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{lift\_up()}{lift\_up()}}
+{\footnotesize\ttfamily static void lift\+\_\+up (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{lift_8c_a18e0e595a7138f0782d603ac76ec485d}\label{lift_8c_a18e0e595a7138f0782d603ac76ec485d}} 
+\index{lift.c@{lift.c}!lift\_interrupt\_counting\_semaphore@{lift\_interrupt\_counting\_semaphore}}
+\index{lift\_interrupt\_counting\_semaphore@{lift\_interrupt\_counting\_semaphore}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{lift\_interrupt\_counting\_semaphore}{lift\_interrupt\_counting\_semaphore}}
+{\footnotesize\ttfamily Semaphore\+Handle\+\_\+t lift\+\_\+interrupt\+\_\+counting\+\_\+semaphore}
+
+\mbox{\Hypertarget{lift_8c_a0c3ca977ee4457c74b5287463654f69d}\label{lift_8c_a0c3ca977ee4457c74b5287463654f69d}} 
+\index{lift.c@{lift.c}!lift\_queue@{lift\_queue}}
+\index{lift\_queue@{lift\_queue}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{lift\_queue}{lift\_queue}}
+{\footnotesize\ttfamily Queue\+Handle\+\_\+t lift\+\_\+queue = N\+U\+LL}
+
+\mbox{\Hypertarget{lift_8c_a0c53544a5512863bfb3d7a6c082e7e59}\label{lift_8c_a0c53544a5512863bfb3d7a6c082e7e59}} 
+\index{lift.c@{lift.c}!status@{status}}
+\index{status@{status}!lift.c@{lift.c}}
+\doxysubsubsection{\texorpdfstring{status}{status}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structlift__status}{lift\+\_\+status}} status\hspace{0.3cm}{\ttfamily [static]}}
+

@@ -10,7 +10,12 @@
 
 const uint32_t ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
 
-/* write 1 bytes (address or data) to the chip */
+/**
+ * \brief write 1 byte (address or data) to the chip
+ * @param st		: struct ad2s1210_state
+ * @param data		: address or data to write through SPI
+ * @return			: 0 on success
+ */
 static int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
 {
 	int32_t ret = 0;
@@ -21,7 +26,14 @@ static int32_t ad2s1210_config_write(struct ad2s1210_state *st, uint8_t data)
 	return ret;
 }
 
-/* read value from one of the registers */
+/**
+ * \brief read value from one of the registers of the chip in config mode (A0=1, A1=1)
+ * one extra register should be read because values come one transfer after the
+ * address was put on the bus
+ * @param st		: struct ad2s1210_state
+ * @param data		: data to write through SPI
+ * @return			: the value of the addressed record
+ */
 static uint8_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address)
 {
 	uint32_t xfers_count = 2;
@@ -47,14 +59,20 @@ static uint8_t ad2s1210_config_read(struct ad2s1210_state *st, uint8_t address)
 	}
 	int32_t ret = 0;
 	ret = spi_sync_transfer(xfers, xfers_count, st->gpios.wr_fsync);
-	if (ret < 0)
-		return ret;
 
 	return rx[1];
 }
 
-/* read value from two consecutive registers */
-static uint16_t ad2s1210_config_read_two(struct ad2s1210_state *st, uint8_t address)
+/**
+ * \brief read value from two consecutive registers, used to read position and velocity.
+ * one extra register should be read because values come one transfer after the
+ * address was put on the bus.
+ * @param st 		: struct ad2s1210_state
+ * @param address	: address of the first register to read
+ * @return 			: rx[1] << 8 | rx[2]
+ */
+static uint16_t ad2s1210_config_read_two(struct ad2s1210_state *st,
+		uint8_t address)
 {
 	uint32_t xfers_count = 3;
 	uint8_t rx[xfers_count];
@@ -87,6 +105,12 @@ static uint16_t ad2s1210_config_read_two(struct ad2s1210_state *st, uint8_t addr
 	return rx[1] << 8 | rx[2];
 }
 
+/**
+ * \brief updates frequency control word register.
+ * fcw = (fexcit * (2 exp 15)) / fclkin
+ * @param st		: struct ad2s1210_state
+ * @return 			: -ERANGE if fcw < 0x4 or fcw > 0x50
+ */
 static int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
 {
 	int32_t ret = 0;
@@ -102,14 +126,28 @@ static int32_t ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
 	return ret;
 }
 
+/**
+ * \brief soft resets the chip.
+ * soft reset does not erase the configured values on the chip.
+ * @param st		: struct ad2s1210_state
+ * @return			: 0 on success
+ */
 int32_t ad2s1210_soft_reset(struct ad2s1210_state *st)
 {
 	int32_t ret;
 
 	ret = ad2s1210_config_write(st, AD2S1210_REG_SOFT_RESET);
+
+	/// \todo see if something must be written on the register for soft reset
 	return ret;
 }
 
+/**
+ * \brief hard resets the chip by lowering the RESET line.
+ * soft reset does not erase the configured values on the chip.
+ * @param st		: struct ad2s1210_state
+ * @return 			: nothing
+ */
 void ad2s1210_hard_reset(struct ad2s1210_state *st)
 {
 	st->gpios.reset(0);
@@ -117,11 +155,22 @@ void ad2s1210_hard_reset(struct ad2s1210_state *st)
 	st->gpios.reset(1);
 }
 
+/**
+ * \brief returns cached value of fclkin
+ * @param st		: struct ad2s1210_state
+ * @return 			: fclkin
+ */
 uint32_t ad2s1210_get_fclkin(struct ad2s1210_state *st)
 {
 	return st->fclkin;
 }
 
+/**
+ * \brief updates fclkin
+ * @param st		: struct ad2s1210_state
+ * @param fclkin	: XTAL frequency
+ * @return			: -EINVAL if fclkin < 6144000 or fclkin > 10240000
+ */
 int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 {
 	int32_t ret = 0;
@@ -131,27 +180,31 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210_state *st, uint32_t fclkin)
 		return -EINVAL;
 	}
 
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake( st->lock, portMAX_DELAY ) == pdTRUE) {
+	st->fclkin = fclkin;
 
-			st->fclkin = fclkin;
-
-			ret = ad2s1210_update_frequency_control_word(st);
-			if (ret < 0)
-				goto error_ret;
-			ret = ad2s1210_soft_reset(st);
-error_ret:
-			xSemaphoreGive(st->lock);
-		}
-	}
+	ret = ad2s1210_update_frequency_control_word(st);
+	if (ret < 0)
+		return ret;
+	ret = ad2s1210_soft_reset(st);
 	return ret;
 }
 
+/**
+ * \brief returns cached value of fexcit
+ * @param st		: struct ad2s1210_state
+ * @return 			: fexcit
+ */
 uint32_t ad2s1210_get_fexcit(struct ad2s1210_state *st)
 {
 	return st->fexcit;
 }
 
+/**
+ *
+ * @param st		: struct ad2s1210_state
+ * @param fexcit	: excitation frequency
+ * @return			: -EINVAL if fexcit < 2000 or fexcit > 20000
+ */
 int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 {
 	int32_t ret = 0;
@@ -161,20 +214,19 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210_state *st, uint32_t fexcit)
 		return -EINVAL;
 	}
 
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-			st->fexcit = fexcit;
-			ret = ad2s1210_update_frequency_control_word(st);
-			if (ret < 0)
-				goto error_ret;
-			ret = ad2s1210_soft_reset(st);
-error_ret:
-			xSemaphoreGive(st->lock);
-		}
-	}
+	st->fexcit = fexcit;
+	ret = ad2s1210_update_frequency_control_word(st);
+	if (ret < 0)
+		return ret;
+	ret = ad2s1210_soft_reset(st);
 	return ret;
 }
 
+/**
+ * \brief get control register.
+ * @param st		: struct ad2s1210_state
+ * @return			: 0 on success
+ */
 static uint8_t ad2s1210_get_control(struct ad2s1210_state *st)
 {
 	uint8_t ret = 0;
@@ -183,17 +235,20 @@ static uint8_t ad2s1210_get_control(struct ad2s1210_state *st)
 	return ret;
 }
 
-static int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
+/**
+ * \brief set control register.
+ * @param st		: struct ad2s1210_state
+ * @return			: 0 on success
+ */
+static int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t data)
 {
-	uint8_t data;
 	int32_t ret = 0;
 
-	data = udata & AD2S1210_DATA_MASK;
 	ret = ad2s1210_set_reg(st, AD2S1210_REG_CONTROL, data);
 	if (ret < 0)
 		return ret;
 
-	ret = ad2s1210_config_read(st, AD2S1210_REG_CONTROL);
+	ret = ad2s1210_get_reg(st, AD2S1210_REG_CONTROL);
 	if (ret < 0)
 		return ret;
 	if (ret & AD2S1210_MSB_MASK) {
@@ -206,11 +261,21 @@ static int32_t ad2s1210_set_control(struct ad2s1210_state *st, uint8_t udata)
 	return ret;
 }
 
+/**
+ * \brief returns cached value of resolution.
+ * @param st		: struct ad2s1210_state
+ * @return 			: resolution
+ */
 uint8_t ad2s1210_get_resolution(struct ad2s1210_state *st)
 {
 	return st->resolution;
 }
 
+/**
+ * \brief sets value of resolution on the chip.
+ * @param st		: struct ad2s1210_state
+ * @return 			: -EINVAL if res < 10 or res > 16
+ */
 int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t res)
 {
 	uint8_t data;
@@ -221,24 +286,22 @@ int32_t ad2s1210_set_resolution(struct ad2s1210_state *st, uint8_t res)
 		return -EINVAL;
 	}
 
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-
-			ret = ad2s1210_get_control(st);
-			if (ret < 0)
-				goto error_ret;
-			data = ret;
-			data &= ~AD2S1210_RESOLUTION_MASK;
-			data |= (res - 10) >> 1;
-			ret = ad2s1210_set_control(st, data);
-
-error_ret:
-			xSemaphoreGive(st->lock);
-		}
-	}
+	ret = ad2s1210_get_control(st);
+	if (ret < 0)
+		return ret;
+	data = ret;
+	data &= ~AD2S1210_RESOLUTION_MASK;
+	data |= (res - 10) >> 1;
+	ret = ad2s1210_set_control(st, data);
 	return ret;
 }
 
+/**
+ * \brief reads one register of the chip.
+ * @param st		: struct ad2s1210_state
+ * @param address	: register address to be read
+ * @return			: the value of the addressed register
+ */
 uint8_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address)
 {
 	uint8_t ret = 0;
@@ -247,6 +310,12 @@ uint8_t ad2s1210_get_reg(struct ad2s1210_state *st, uint8_t address)
 	return ret;
 }
 
+/**
+ * \brief reads one register of the chip.
+ * @param st		: struct ad2s1210_state
+ * @param address	: register address to be read
+ * @return			: the value of the addressed register
+ */
 int32_t ad2s1210_set_reg(struct ad2s1210_state *st, uint8_t address,
 		uint8_t data)
 {
@@ -281,21 +350,15 @@ int32_t ad2s1210_init(struct ad2s1210_state *st)
 
 	spi_init();
 
-	if (st->lock != NULL) {
-		if ( xSemaphoreTake(st->lock, portMAX_DELAY ) == pdTRUE) {
-			data = AD2S1210_DEF_CONTROL & ~(AD2S1210_RESOLUTION_MASK);
-			data |= (st->resolution - 10) >> 1;
-			ret = ad2s1210_set_control(st, data);
-			if (ret < 0)
-				goto error_ret;
-			ret = ad2s1210_update_frequency_control_word(st);
-			if (ret < 0)
-				goto error_ret;
-			ret = ad2s1210_soft_reset(st);
-error_ret:
-			xSemaphoreGive(st->lock);
-		}
-	}
+	data = AD2S1210_DEF_CONTROL & ~(AD2S1210_RESOLUTION_MASK);
+	data |= (st->resolution - 10) >> 1;
+	ret = ad2s1210_set_control(st, data);
+	if (ret < 0)
+		return ret;
+	ret = ad2s1210_update_frequency_control_word(st);
+	if (ret < 0)
+		return ret;
+	ret = ad2s1210_soft_reset(st);
 	return ret;
 }
 
@@ -340,7 +403,13 @@ int16_t ad2s1210_read_velocity(struct ad2s1210_state *st)
 	return vel;
 }
 
-/* read the fault register since last sample */
+
+/*  */
+/**
+ * \brief read the fault register since last sample.
+ * @param st		: struct ad2s1210_state
+ * @return
+ */
 uint8_t ad2s1210_get_fault_register(struct ad2s1210_state *st)
 {
 	uint8_t ret = 0;

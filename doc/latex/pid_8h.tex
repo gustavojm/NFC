@@ -1,0 +1,45 @@
+\hypertarget{pid_8h}{}\doxysection{inc/pid.h File Reference}
+\label{pid_8h}\index{inc/pid.h@{inc/pid.h}}
+{\ttfamily \#include \char`\"{}Free\+R\+T\+O\+S.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+Include dependency graph for pid.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=220pt]{pid_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pid_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structpid}{pid}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{pid_8h_ab373030d27800bd908d9d341306623d4}{pid\+\_\+controller\+\_\+init}} (struct \mbox{\hyperlink{structpid}{pid}} $\ast$\mbox{\hyperlink{structpid}{pid}}, float kp, int32\+\_\+t sample\+\_\+time, float ti, float td, int32\+\_\+t limit)
+\item 
+int32\+\_\+t \mbox{\hyperlink{pid_8h_ab18951785823513fcfe6e84ddd5eaed6}{pid\+\_\+controller\+\_\+calculate}} (struct \mbox{\hyperlink{structpid}{pid}} $\ast$\mbox{\hyperlink{structpid}{pid}}, int32\+\_\+t setpoint, int32\+\_\+t input)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{pid_8h_ab18951785823513fcfe6e84ddd5eaed6}\label{pid_8h_ab18951785823513fcfe6e84ddd5eaed6}} 
+\index{pid.h@{pid.h}!pid\_controller\_calculate@{pid\_controller\_calculate}}
+\index{pid\_controller\_calculate@{pid\_controller\_calculate}!pid.h@{pid.h}}
+\doxysubsubsection{\texorpdfstring{pid\_controller\_calculate()}{pid\_controller\_calculate()}}
+{\footnotesize\ttfamily int32\+\_\+t pid\+\_\+controller\+\_\+calculate (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structpid}{pid}} $\ast$}]{pid,  }\item[{int32\+\_\+t}]{setpoint,  }\item[{int32\+\_\+t}]{input }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pid_8h_ab373030d27800bd908d9d341306623d4}\label{pid_8h_ab373030d27800bd908d9d341306623d4}} 
+\index{pid.h@{pid.h}!pid\_controller\_init@{pid\_controller\_init}}
+\index{pid\_controller\_init@{pid\_controller\_init}!pid.h@{pid.h}}
+\doxysubsubsection{\texorpdfstring{pid\_controller\_init()}{pid\_controller\_init()}}
+{\footnotesize\ttfamily void pid\+\_\+controller\+\_\+init (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structpid}{pid}} $\ast$}]{pid,  }\item[{float}]{kp,  }\item[{int32\+\_\+t}]{sample\+\_\+time,  }\item[{float}]{ti,  }\item[{float}]{td,  }\item[{int32\+\_\+t}]{limit }\end{DoxyParamCaption})}
+

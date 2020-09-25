@@ -30,6 +30,12 @@ extern bool stall_detection;
 struct ad2s1210_state rdc;
 struct pid pid;
 
+/**
+ * \brief handles the Pole movement.
+ * Receives commands from pole_queue
+ *
+ * @param par
+ */
 static void pole_task(void *par)
 {
 	struct mot_pap_msg *msg_rcv;
@@ -243,7 +249,6 @@ void pole_init()
 	rdc.gpios.reset = poncho_rdc_reset;
 	rdc.gpios.sample = poncho_rdc_sample;
 	rdc.gpios.wr_fsync = poncho_rdc_pole_wr_fsync;
-	rdc.lock = xSemaphoreCreateMutex();
 	rdc.resolution = 16;
 
 	pole_tmr_init();

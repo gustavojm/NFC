@@ -1,0 +1,26 @@
+var ad2s1210_8c =
+[
+    [ "ad2s1210_clear_fault_register", "ad2s1210_8c.html#a9fda917e0ce057db891a05d479b82339", null ],
+    [ "ad2s1210_config_read", "ad2s1210_8c.html#a396dd23e14a823ca43def7bd0f4859d3", null ],
+    [ "ad2s1210_config_read_two", "ad2s1210_8c.html#afc8b927e5f8cd8679020925c411af607", null ],
+    [ "ad2s1210_config_write", "ad2s1210_8c.html#a2e34e3698dca49de249eee195ad2cc02", null ],
+    [ "ad2s1210_get_control", "ad2s1210_8c.html#aef6fc52774cb9ed50e19216175161b6c", null ],
+    [ "ad2s1210_get_fault_register", "ad2s1210_8c.html#a44d16ab78e8f27a0cb5a1cf4362991ae", null ],
+    [ "ad2s1210_get_fclkin", "ad2s1210_8c.html#a9ed1fe24469982c25ee74fe8e262baf9", null ],
+    [ "ad2s1210_get_fexcit", "ad2s1210_8c.html#a01d20c2b0dd13d4110e30f66934b5795", null ],
+    [ "ad2s1210_get_reg", "ad2s1210_8c.html#ae6e4d0fe2db174a507288c6dbe56ffeb", null ],
+    [ "ad2s1210_get_resolution", "ad2s1210_8c.html#a9e421f25bb25f67933f9fc1ad597b3ea", null ],
+    [ "ad2s1210_hard_reset", "ad2s1210_8c.html#a070aa0069c7f1044f1fcb09816bc4f03", null ],
+    [ "ad2s1210_init", "ad2s1210_8c.html#a644c22cbf62fab67d813476bfd246fbc", null ],
+    [ "ad2s1210_print_fault_register", "ad2s1210_8c.html#a14c180f971d0f584ba754f38f751ffda", null ],
+    [ "ad2s1210_read_position", "ad2s1210_8c.html#afd9cada56d01d446b7f777424f81f7e5", null ],
+    [ "ad2s1210_read_velocity", "ad2s1210_8c.html#aab71facac179d2f58ff704920a273330", null ],
+    [ "ad2s1210_set_control", "ad2s1210_8c.html#a975d612603b5a1675cadce1252c22e66", null ],
+    [ "ad2s1210_set_fclkin", "ad2s1210_8c.html#aa26a0e1dd59c78c4981197b456bf0bbf", null ],
+    [ "ad2s1210_set_fexcit", "ad2s1210_8c.html#ae108aeb396cfb582612a3fad754eca66", null ],
+    [ "ad2s1210_set_reg", "ad2s1210_8c.html#a169c09a24f1ef5b3d10848797d9f0601", null ],
+    [ "ad2s1210_set_resolution", "ad2s1210_8c.html#ad75bf6c79ad4a13687f12ad125fd370b", null ],
+    [ "ad2s1210_soft_reset", "ad2s1210_8c.html#a8d787d6b3ce6ff32dc587a86be7a5105", null ],
+    [ "ad2s1210_update_frequency_control_word", "ad2s1210_8c.html#a2c487724214b0689a60ddb7332d1c688", null ],
+    [ "ad2s1210_resolution_value", "ad2s1210_8c.html#a0503df73b103130fbacfe16af881a8b9", null ]
+];

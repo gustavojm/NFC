@@ -1,0 +1,228 @@
+\hypertarget{ad2s1210_8c}{}\doxysection{src/ad2s1210.c File Reference}
+\label{ad2s1210_8c}\index{src/ad2s1210.c@{src/ad2s1210.c}}
+{\ttfamily \#include \char`\"{}ad2s1210.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}semphr.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Free\+R\+T\+O\+S.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}task.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}spi.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debug.\+h\char`\"{}}\newline
+Include dependency graph for ad2s1210.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ad2s1210_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a2e34e3698dca49de249eee195ad2cc02}{ad2s1210\+\_\+config\+\_\+write}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st, uint8\+\_\+t data)
+\item 
+static uint8\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a396dd23e14a823ca43def7bd0f4859d3}{ad2s1210\+\_\+config\+\_\+read}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st, uint8\+\_\+t address)
+\item 
+static uint16\+\_\+t \mbox{\hyperlink{ad2s1210_8c_afc8b927e5f8cd8679020925c411af607}{ad2s1210\+\_\+config\+\_\+read\+\_\+two}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st, uint8\+\_\+t address)
+\begin{DoxyCompactList}\small\item\em read value from two consecutive registers, used to read position and velocity \end{DoxyCompactList}\item 
+static int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a2c487724214b0689a60ddb7332d1c688}{ad2s1210\+\_\+update\+\_\+frequency\+\_\+control\+\_\+word}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a8d787d6b3ce6ff32dc587a86be7a5105}{ad2s1210\+\_\+soft\+\_\+reset}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+void \mbox{\hyperlink{ad2s1210_8c_a070aa0069c7f1044f1fcb09816bc4f03}{ad2s1210\+\_\+hard\+\_\+reset}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a9ed1fe24469982c25ee74fe8e262baf9}{ad2s1210\+\_\+get\+\_\+fclkin}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_aa26a0e1dd59c78c4981197b456bf0bbf}{ad2s1210\+\_\+set\+\_\+fclkin}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st, uint32\+\_\+t fclkin)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a01d20c2b0dd13d4110e30f66934b5795}{ad2s1210\+\_\+get\+\_\+fexcit}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_ae108aeb396cfb582612a3fad754eca66}{ad2s1210\+\_\+set\+\_\+fexcit}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st, uint32\+\_\+t fexcit)
+\item 
+static uint8\+\_\+t \mbox{\hyperlink{ad2s1210_8c_aef6fc52774cb9ed50e19216175161b6c}{ad2s1210\+\_\+get\+\_\+control}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+static int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a975d612603b5a1675cadce1252c22e66}{ad2s1210\+\_\+set\+\_\+control}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st, uint8\+\_\+t data)
+\item 
+uint8\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a9e421f25bb25f67933f9fc1ad597b3ea}{ad2s1210\+\_\+get\+\_\+resolution}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_ad75bf6c79ad4a13687f12ad125fd370b}{ad2s1210\+\_\+set\+\_\+resolution}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st, uint8\+\_\+t res)
+\item 
+uint8\+\_\+t \mbox{\hyperlink{ad2s1210_8c_ae6e4d0fe2db174a507288c6dbe56ffeb}{ad2s1210\+\_\+get\+\_\+reg}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st, uint8\+\_\+t address)
+\item 
+int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a169c09a24f1ef5b3d10848797d9f0601}{ad2s1210\+\_\+set\+\_\+reg}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st, uint8\+\_\+t address, uint8\+\_\+t data)
+\item 
+int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a644c22cbf62fab67d813476bfd246fbc}{ad2s1210\+\_\+init}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+uint16\+\_\+t \mbox{\hyperlink{ad2s1210_8c_afd9cada56d01d446b7f777424f81f7e5}{ad2s1210\+\_\+read\+\_\+position}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+int16\+\_\+t \mbox{\hyperlink{ad2s1210_8c_aab71facac179d2f58ff704920a273330}{ad2s1210\+\_\+read\+\_\+velocity}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+uint8\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a44d16ab78e8f27a0cb5a1cf4362991ae}{ad2s1210\+\_\+get\+\_\+fault\+\_\+register}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\item 
+void \mbox{\hyperlink{ad2s1210_8c_a14c180f971d0f584ba754f38f751ffda}{ad2s1210\+\_\+print\+\_\+fault\+\_\+register}} (uint8\+\_\+t fr)
+\item 
+int32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a9fda917e0ce057db891a05d479b82339}{ad2s1210\+\_\+clear\+\_\+fault\+\_\+register}} (struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$st)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const uint32\+\_\+t \mbox{\hyperlink{ad2s1210_8c_a0503df73b103130fbacfe16af881a8b9}{ad2s1210\+\_\+resolution\+\_\+value}} \mbox{[}$\,$\mbox{]} = \{ 10, 12, 14, 16 \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{ad2s1210_8c_a9fda917e0ce057db891a05d479b82339}\label{ad2s1210_8c_a9fda917e0ce057db891a05d479b82339}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_clear\_fault\_register@{ad2s1210\_clear\_fault\_register}}
+\index{ad2s1210\_clear\_fault\_register@{ad2s1210\_clear\_fault\_register}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_clear\_fault\_register()}{ad2s1210\_clear\_fault\_register()}}
+{\footnotesize\ttfamily int32\+\_\+t ad2s1210\+\_\+clear\+\_\+fault\+\_\+register (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a396dd23e14a823ca43def7bd0f4859d3}\label{ad2s1210_8c_a396dd23e14a823ca43def7bd0f4859d3}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_config\_read@{ad2s1210\_config\_read}}
+\index{ad2s1210\_config\_read@{ad2s1210\_config\_read}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_config\_read()}{ad2s1210\_config\_read()}}
+{\footnotesize\ttfamily static uint8\+\_\+t ad2s1210\+\_\+config\+\_\+read (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st,  }\item[{uint8\+\_\+t}]{address }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{ad2s1210_8c_afc8b927e5f8cd8679020925c411af607}\label{ad2s1210_8c_afc8b927e5f8cd8679020925c411af607}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_config\_read\_two@{ad2s1210\_config\_read\_two}}
+\index{ad2s1210\_config\_read\_two@{ad2s1210\_config\_read\_two}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_config\_read\_two()}{ad2s1210\_config\_read\_two()}}
+{\footnotesize\ttfamily static uint16\+\_\+t ad2s1210\+\_\+config\+\_\+read\+\_\+two (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st,  }\item[{uint8\+\_\+t}]{address }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+read value from two consecutive registers, used to read position and velocity 
+
+
+\begin{DoxyParams}{Parameters}
+{\em st} & \\
+\hline
+{\em address} & address of the first register to read \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{ad2s1210_8c_a2e34e3698dca49de249eee195ad2cc02}\label{ad2s1210_8c_a2e34e3698dca49de249eee195ad2cc02}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_config\_write@{ad2s1210\_config\_write}}
+\index{ad2s1210\_config\_write@{ad2s1210\_config\_write}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_config\_write()}{ad2s1210\_config\_write()}}
+{\footnotesize\ttfamily static int32\+\_\+t ad2s1210\+\_\+config\+\_\+write (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st,  }\item[{uint8\+\_\+t}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{ad2s1210_8c_aef6fc52774cb9ed50e19216175161b6c}\label{ad2s1210_8c_aef6fc52774cb9ed50e19216175161b6c}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_get\_control@{ad2s1210\_get\_control}}
+\index{ad2s1210\_get\_control@{ad2s1210\_get\_control}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_get\_control()}{ad2s1210\_get\_control()}}
+{\footnotesize\ttfamily static uint8\+\_\+t ad2s1210\+\_\+get\+\_\+control (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{ad2s1210_8c_a44d16ab78e8f27a0cb5a1cf4362991ae}\label{ad2s1210_8c_a44d16ab78e8f27a0cb5a1cf4362991ae}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_get\_fault\_register@{ad2s1210\_get\_fault\_register}}
+\index{ad2s1210\_get\_fault\_register@{ad2s1210\_get\_fault\_register}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_get\_fault\_register()}{ad2s1210\_get\_fault\_register()}}
+{\footnotesize\ttfamily uint8\+\_\+t ad2s1210\+\_\+get\+\_\+fault\+\_\+register (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a9ed1fe24469982c25ee74fe8e262baf9}\label{ad2s1210_8c_a9ed1fe24469982c25ee74fe8e262baf9}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_get\_fclkin@{ad2s1210\_get\_fclkin}}
+\index{ad2s1210\_get\_fclkin@{ad2s1210\_get\_fclkin}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_get\_fclkin()}{ad2s1210\_get\_fclkin()}}
+{\footnotesize\ttfamily uint32\+\_\+t ad2s1210\+\_\+get\+\_\+fclkin (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a01d20c2b0dd13d4110e30f66934b5795}\label{ad2s1210_8c_a01d20c2b0dd13d4110e30f66934b5795}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_get\_fexcit@{ad2s1210\_get\_fexcit}}
+\index{ad2s1210\_get\_fexcit@{ad2s1210\_get\_fexcit}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_get\_fexcit()}{ad2s1210\_get\_fexcit()}}
+{\footnotesize\ttfamily uint32\+\_\+t ad2s1210\+\_\+get\+\_\+fexcit (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_ae6e4d0fe2db174a507288c6dbe56ffeb}\label{ad2s1210_8c_ae6e4d0fe2db174a507288c6dbe56ffeb}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_get\_reg@{ad2s1210\_get\_reg}}
+\index{ad2s1210\_get\_reg@{ad2s1210\_get\_reg}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_get\_reg()}{ad2s1210\_get\_reg()}}
+{\footnotesize\ttfamily uint8\+\_\+t ad2s1210\+\_\+get\+\_\+reg (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st,  }\item[{uint8\+\_\+t}]{address }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a9e421f25bb25f67933f9fc1ad597b3ea}\label{ad2s1210_8c_a9e421f25bb25f67933f9fc1ad597b3ea}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_get\_resolution@{ad2s1210\_get\_resolution}}
+\index{ad2s1210\_get\_resolution@{ad2s1210\_get\_resolution}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_get\_resolution()}{ad2s1210\_get\_resolution()}}
+{\footnotesize\ttfamily uint8\+\_\+t ad2s1210\+\_\+get\+\_\+resolution (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a070aa0069c7f1044f1fcb09816bc4f03}\label{ad2s1210_8c_a070aa0069c7f1044f1fcb09816bc4f03}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_hard\_reset@{ad2s1210\_hard\_reset}}
+\index{ad2s1210\_hard\_reset@{ad2s1210\_hard\_reset}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_hard\_reset()}{ad2s1210\_hard\_reset()}}
+{\footnotesize\ttfamily void ad2s1210\+\_\+hard\+\_\+reset (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a644c22cbf62fab67d813476bfd246fbc}\label{ad2s1210_8c_a644c22cbf62fab67d813476bfd246fbc}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_init@{ad2s1210\_init}}
+\index{ad2s1210\_init@{ad2s1210\_init}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_init()}{ad2s1210\_init()}}
+{\footnotesize\ttfamily int32\+\_\+t ad2s1210\+\_\+init (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a14c180f971d0f584ba754f38f751ffda}\label{ad2s1210_8c_a14c180f971d0f584ba754f38f751ffda}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_print\_fault\_register@{ad2s1210\_print\_fault\_register}}
+\index{ad2s1210\_print\_fault\_register@{ad2s1210\_print\_fault\_register}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_print\_fault\_register()}{ad2s1210\_print\_fault\_register()}}
+{\footnotesize\ttfamily void ad2s1210\+\_\+print\+\_\+fault\+\_\+register (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{fr }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_afd9cada56d01d446b7f777424f81f7e5}\label{ad2s1210_8c_afd9cada56d01d446b7f777424f81f7e5}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_read\_position@{ad2s1210\_read\_position}}
+\index{ad2s1210\_read\_position@{ad2s1210\_read\_position}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_read\_position()}{ad2s1210\_read\_position()}}
+{\footnotesize\ttfamily uint16\+\_\+t ad2s1210\+\_\+read\+\_\+position (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_aab71facac179d2f58ff704920a273330}\label{ad2s1210_8c_aab71facac179d2f58ff704920a273330}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_read\_velocity@{ad2s1210\_read\_velocity}}
+\index{ad2s1210\_read\_velocity@{ad2s1210\_read\_velocity}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_read\_velocity()}{ad2s1210\_read\_velocity()}}
+{\footnotesize\ttfamily int16\+\_\+t ad2s1210\+\_\+read\+\_\+velocity (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a975d612603b5a1675cadce1252c22e66}\label{ad2s1210_8c_a975d612603b5a1675cadce1252c22e66}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_set\_control@{ad2s1210\_set\_control}}
+\index{ad2s1210\_set\_control@{ad2s1210\_set\_control}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_set\_control()}{ad2s1210\_set\_control()}}
+{\footnotesize\ttfamily static int32\+\_\+t ad2s1210\+\_\+set\+\_\+control (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st,  }\item[{uint8\+\_\+t}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{ad2s1210_8c_aa26a0e1dd59c78c4981197b456bf0bbf}\label{ad2s1210_8c_aa26a0e1dd59c78c4981197b456bf0bbf}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_set\_fclkin@{ad2s1210\_set\_fclkin}}
+\index{ad2s1210\_set\_fclkin@{ad2s1210\_set\_fclkin}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_set\_fclkin()}{ad2s1210\_set\_fclkin()}}
+{\footnotesize\ttfamily int32\+\_\+t ad2s1210\+\_\+set\+\_\+fclkin (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st,  }\item[{uint32\+\_\+t}]{fclkin }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_ae108aeb396cfb582612a3fad754eca66}\label{ad2s1210_8c_ae108aeb396cfb582612a3fad754eca66}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_set\_fexcit@{ad2s1210\_set\_fexcit}}
+\index{ad2s1210\_set\_fexcit@{ad2s1210\_set\_fexcit}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_set\_fexcit()}{ad2s1210\_set\_fexcit()}}
+{\footnotesize\ttfamily int32\+\_\+t ad2s1210\+\_\+set\+\_\+fexcit (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st,  }\item[{uint32\+\_\+t}]{fexcit }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a169c09a24f1ef5b3d10848797d9f0601}\label{ad2s1210_8c_a169c09a24f1ef5b3d10848797d9f0601}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_set\_reg@{ad2s1210\_set\_reg}}
+\index{ad2s1210\_set\_reg@{ad2s1210\_set\_reg}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_set\_reg()}{ad2s1210\_set\_reg()}}
+{\footnotesize\ttfamily int32\+\_\+t ad2s1210\+\_\+set\+\_\+reg (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st,  }\item[{uint8\+\_\+t}]{address,  }\item[{uint8\+\_\+t}]{data }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_ad75bf6c79ad4a13687f12ad125fd370b}\label{ad2s1210_8c_ad75bf6c79ad4a13687f12ad125fd370b}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_set\_resolution@{ad2s1210\_set\_resolution}}
+\index{ad2s1210\_set\_resolution@{ad2s1210\_set\_resolution}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_set\_resolution()}{ad2s1210\_set\_resolution()}}
+{\footnotesize\ttfamily int32\+\_\+t ad2s1210\+\_\+set\+\_\+resolution (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st,  }\item[{uint8\+\_\+t}]{res }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a8d787d6b3ce6ff32dc587a86be7a5105}\label{ad2s1210_8c_a8d787d6b3ce6ff32dc587a86be7a5105}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_soft\_reset@{ad2s1210\_soft\_reset}}
+\index{ad2s1210\_soft\_reset@{ad2s1210\_soft\_reset}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_soft\_reset()}{ad2s1210\_soft\_reset()}}
+{\footnotesize\ttfamily int32\+\_\+t ad2s1210\+\_\+soft\+\_\+reset (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{ad2s1210_8c_a2c487724214b0689a60ddb7332d1c688}\label{ad2s1210_8c_a2c487724214b0689a60ddb7332d1c688}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_update\_frequency\_control\_word@{ad2s1210\_update\_frequency\_control\_word}}
+\index{ad2s1210\_update\_frequency\_control\_word@{ad2s1210\_update\_frequency\_control\_word}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_update\_frequency\_control\_word()}{ad2s1210\_update\_frequency\_control\_word()}}
+{\footnotesize\ttfamily static int32\+\_\+t ad2s1210\+\_\+update\+\_\+frequency\+\_\+control\+\_\+word (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structad2s1210__state}{ad2s1210\+\_\+state}} $\ast$}]{st }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{ad2s1210_8c_a0503df73b103130fbacfe16af881a8b9}\label{ad2s1210_8c_a0503df73b103130fbacfe16af881a8b9}} 
+\index{ad2s1210.c@{ad2s1210.c}!ad2s1210\_resolution\_value@{ad2s1210\_resolution\_value}}
+\index{ad2s1210\_resolution\_value@{ad2s1210\_resolution\_value}!ad2s1210.c@{ad2s1210.c}}
+\doxysubsubsection{\texorpdfstring{ad2s1210\_resolution\_value}{ad2s1210\_resolution\_value}}
+{\footnotesize\ttfamily const uint32\+\_\+t ad2s1210\+\_\+resolution\+\_\+value\mbox{[}$\,$\mbox{]} = \{ 10, 12, 14, 16 \}}
+

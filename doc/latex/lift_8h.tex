@@ -1,0 +1,112 @@
+\hypertarget{lift_8h}{}\doxysection{inc/lift.h File Reference}
+\label{lift_8h}\index{inc/lift.h@{inc/lift.h}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+Include dependency graph for lift.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=204pt]{lift_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lift_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structlift__msg}{lift\+\_\+msg}}
+\item 
+struct \mbox{\hyperlink{structlift__status}{lift\+\_\+status}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{lift_8h_a2df58917fcbe307829b7a537ca8031a7}{L\+I\+F\+T\+\_\+\+D\+I\+R\+E\+C\+T\+I\+O\+N\+\_\+\+C\+H\+A\+N\+G\+E\+\_\+\+D\+E\+L\+A\+Y\+\_\+\+MS}}~500
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{lift_8h_a49b19ad4389a821f0d824085c4900cc9}{lift\+\_\+direction}} \{ \mbox{\hyperlink{lift_8h_a49b19ad4389a821f0d824085c4900cc9a46e13e4d6cd3dd7cffd0dfa8e5598f8d}{L\+I\+F\+T\+\_\+\+D\+I\+R\+E\+C\+T\+I\+O\+N\+\_\+\+UP}} = 0, 
+\mbox{\hyperlink{lift_8h_a49b19ad4389a821f0d824085c4900cc9a5890b5dda00e3a873c64afe1c62eb5ee}{L\+I\+F\+T\+\_\+\+D\+I\+R\+E\+C\+T\+I\+O\+N\+\_\+\+D\+O\+WN}} = 1
+ \}
+\item 
+enum \mbox{\hyperlink{lift_8h_ad17e38135b25fa9eaba262be5fb95c09}{lift\+\_\+type}} \{ \mbox{\hyperlink{lift_8h_ad17e38135b25fa9eaba262be5fb95c09adf2ef847971ebdace5854745749c33ba}{L\+I\+F\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+UP}} = 0, 
+\mbox{\hyperlink{lift_8h_ad17e38135b25fa9eaba262be5fb95c09a30da84156c016a33b53196b23cbeac35}{L\+I\+F\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+D\+O\+WN}} = 1, 
+\mbox{\hyperlink{lift_8h_ad17e38135b25fa9eaba262be5fb95c09aa2577744969d49c38b39f941545ad465}{L\+I\+F\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+S\+T\+OP}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{lift_8h_ac38ea382906ca75ef58e47a5c0c815cc}{lift\+\_\+init}} ()
+\item 
+struct \mbox{\hyperlink{structlift__status}{lift\+\_\+status}} \mbox{\hyperlink{lift_8h_a29a74ac90c123ba3fbb1a716e4125b04}{lift\+\_\+status\+\_\+get}} (void)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{lift_8h_a2df58917fcbe307829b7a537ca8031a7}\label{lift_8h_a2df58917fcbe307829b7a537ca8031a7}} 
+\index{lift.h@{lift.h}!LIFT\_DIRECTION\_CHANGE\_DELAY\_MS@{LIFT\_DIRECTION\_CHANGE\_DELAY\_MS}}
+\index{LIFT\_DIRECTION\_CHANGE\_DELAY\_MS@{LIFT\_DIRECTION\_CHANGE\_DELAY\_MS}!lift.h@{lift.h}}
+\doxysubsubsection{\texorpdfstring{LIFT\_DIRECTION\_CHANGE\_DELAY\_MS}{LIFT\_DIRECTION\_CHANGE\_DELAY\_MS}}
+{\footnotesize\ttfamily \#define L\+I\+F\+T\+\_\+\+D\+I\+R\+E\+C\+T\+I\+O\+N\+\_\+\+C\+H\+A\+N\+G\+E\+\_\+\+D\+E\+L\+A\+Y\+\_\+\+MS~500}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{lift_8h_a49b19ad4389a821f0d824085c4900cc9}\label{lift_8h_a49b19ad4389a821f0d824085c4900cc9}} 
+\index{lift.h@{lift.h}!lift\_direction@{lift\_direction}}
+\index{lift\_direction@{lift\_direction}!lift.h@{lift.h}}
+\doxysubsubsection{\texorpdfstring{lift\_direction}{lift\_direction}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{lift_8h_a49b19ad4389a821f0d824085c4900cc9}{lift\+\_\+direction}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LIFT\_DIRECTION\_UP@{LIFT\_DIRECTION\_UP}!lift.h@{lift.h}}\index{lift.h@{lift.h}!LIFT\_DIRECTION\_UP@{LIFT\_DIRECTION\_UP}}}\mbox{\Hypertarget{lift_8h_a49b19ad4389a821f0d824085c4900cc9a46e13e4d6cd3dd7cffd0dfa8e5598f8d}\label{lift_8h_a49b19ad4389a821f0d824085c4900cc9a46e13e4d6cd3dd7cffd0dfa8e5598f8d}} 
+L\+I\+F\+T\+\_\+\+D\+I\+R\+E\+C\+T\+I\+O\+N\+\_\+\+UP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LIFT\_DIRECTION\_DOWN@{LIFT\_DIRECTION\_DOWN}!lift.h@{lift.h}}\index{lift.h@{lift.h}!LIFT\_DIRECTION\_DOWN@{LIFT\_DIRECTION\_DOWN}}}\mbox{\Hypertarget{lift_8h_a49b19ad4389a821f0d824085c4900cc9a5890b5dda00e3a873c64afe1c62eb5ee}\label{lift_8h_a49b19ad4389a821f0d824085c4900cc9a5890b5dda00e3a873c64afe1c62eb5ee}} 
+L\+I\+F\+T\+\_\+\+D\+I\+R\+E\+C\+T\+I\+O\+N\+\_\+\+D\+O\+WN&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{lift_8h_ad17e38135b25fa9eaba262be5fb95c09}\label{lift_8h_ad17e38135b25fa9eaba262be5fb95c09}} 
+\index{lift.h@{lift.h}!lift\_type@{lift\_type}}
+\index{lift\_type@{lift\_type}!lift.h@{lift.h}}
+\doxysubsubsection{\texorpdfstring{lift\_type}{lift\_type}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{lift_8h_ad17e38135b25fa9eaba262be5fb95c09}{lift\+\_\+type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LIFT\_TYPE\_UP@{LIFT\_TYPE\_UP}!lift.h@{lift.h}}\index{lift.h@{lift.h}!LIFT\_TYPE\_UP@{LIFT\_TYPE\_UP}}}\mbox{\Hypertarget{lift_8h_ad17e38135b25fa9eaba262be5fb95c09adf2ef847971ebdace5854745749c33ba}\label{lift_8h_ad17e38135b25fa9eaba262be5fb95c09adf2ef847971ebdace5854745749c33ba}} 
+L\+I\+F\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+UP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LIFT\_TYPE\_DOWN@{LIFT\_TYPE\_DOWN}!lift.h@{lift.h}}\index{lift.h@{lift.h}!LIFT\_TYPE\_DOWN@{LIFT\_TYPE\_DOWN}}}\mbox{\Hypertarget{lift_8h_ad17e38135b25fa9eaba262be5fb95c09a30da84156c016a33b53196b23cbeac35}\label{lift_8h_ad17e38135b25fa9eaba262be5fb95c09a30da84156c016a33b53196b23cbeac35}} 
+L\+I\+F\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+D\+O\+WN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LIFT\_TYPE\_STOP@{LIFT\_TYPE\_STOP}!lift.h@{lift.h}}\index{lift.h@{lift.h}!LIFT\_TYPE\_STOP@{LIFT\_TYPE\_STOP}}}\mbox{\Hypertarget{lift_8h_ad17e38135b25fa9eaba262be5fb95c09aa2577744969d49c38b39f941545ad465}\label{lift_8h_ad17e38135b25fa9eaba262be5fb95c09aa2577744969d49c38b39f941545ad465}} 
+L\+I\+F\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+S\+T\+OP&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{lift_8h_ac38ea382906ca75ef58e47a5c0c815cc}\label{lift_8h_ac38ea382906ca75ef58e47a5c0c815cc}} 
+\index{lift.h@{lift.h}!lift\_init@{lift\_init}}
+\index{lift\_init@{lift\_init}!lift.h@{lift.h}}
+\doxysubsubsection{\texorpdfstring{lift\_init()}{lift\_init()}}
+{\footnotesize\ttfamily void lift\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{lift_8h_a29a74ac90c123ba3fbb1a716e4125b04}\label{lift_8h_a29a74ac90c123ba3fbb1a716e4125b04}} 
+\index{lift.h@{lift.h}!lift\_status\_get@{lift\_status\_get}}
+\index{lift\_status\_get@{lift\_status\_get}!lift.h@{lift.h}}
+\doxysubsubsection{\texorpdfstring{lift\_status\_get()}{lift\_status\_get()}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structlift__status}{lift\+\_\+status}} lift\+\_\+status\+\_\+get (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+

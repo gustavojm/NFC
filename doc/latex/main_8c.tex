@@ -1,0 +1,68 @@
+\hypertarget{main_8c}{}\doxysection{src/main.c File Reference}
+\label{main_8c}\index{src/main.c@{src/main.c}}
+{\ttfamily \#include $<$R\+T\+Ucom\+H\+M\+I.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}board.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdio.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdint.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdbool.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Free\+R\+T\+O\+S.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}task.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}pole.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lift.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debug.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$execinfo.\+h$>$}\newline
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+Include dependency graph for main.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{main_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{main_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
+\item 
+void \mbox{\hyperlink{main_8c_afc47cbc31f0e0cd3070c66b3de54c68f}{v\+Assert\+Called}} (unsigned long ul\+Line, const char $\ast$const pc\+File\+Name)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{main_8c_a41ff73c3328a84f17007d4d352490cb5}{debug\+Level}} = \mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a1cd805eaf0bb58a90fe7e7e4cf6a3cdc}{Info}}
+\item 
+F\+I\+LE $\ast$ \mbox{\hyperlink{main_8c_ae203eb6bd688b66404eadf8674b79c9d}{debug\+File}} = N\+U\+LL
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{main_8c_a840291bc02cba5474a4cb46a9b9566fe}\label{main_8c_a840291bc02cba5474a4cb46a9b9566fe}} 
+\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{main_8c_afc47cbc31f0e0cd3070c66b3de54c68f}\label{main_8c_afc47cbc31f0e0cd3070c66b3de54c68f}} 
+\index{main.c@{main.c}!vAssertCalled@{vAssertCalled}}
+\index{vAssertCalled@{vAssertCalled}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{vAssertCalled()}{vAssertCalled()}}
+{\footnotesize\ttfamily void v\+Assert\+Called (\begin{DoxyParamCaption}\item[{unsigned long}]{ul\+Line,  }\item[{const char $\ast$const}]{pc\+File\+Name }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{main_8c_ae203eb6bd688b66404eadf8674b79c9d}\label{main_8c_ae203eb6bd688b66404eadf8674b79c9d}} 
+\index{main.c@{main.c}!debugFile@{debugFile}}
+\index{debugFile@{debugFile}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{debugFile}{debugFile}}
+{\footnotesize\ttfamily F\+I\+LE$\ast$ debug\+File = N\+U\+LL}
+
+The file where debug output is written. Defaults to {\ttfamily stderr}. {\ttfamily \mbox{\hyperlink{debug_8h_a3e968c591b9ccc5a0a3b1adfa9a6eaab}{debug\+To\+File()}}} allows output to any file. \mbox{\Hypertarget{main_8c_a41ff73c3328a84f17007d4d352490cb5}\label{main_8c_a41ff73c3328a84f17007d4d352490cb5}} 
+\index{main.c@{main.c}!debugLevel@{debugLevel}}
+\index{debugLevel@{debugLevel}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{debugLevel}{debugLevel}}
+{\footnotesize\ttfamily int debug\+Level = \mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a1cd805eaf0bb58a90fe7e7e4cf6a3cdc}{Info}}}
+
+Control how much debug output is produced. Higher values produce more output. See the use in {\ttfamily \mbox{\hyperlink{debug_8h_a01cf6caa2c3beda3cf5c778426458fbe}{l\+Debug()}}}. 

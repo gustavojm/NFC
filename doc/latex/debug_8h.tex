@@ -1,0 +1,205 @@
+\hypertarget{debug_8h}{}\doxysection{inc/debug.h File Reference}
+\label{debug_8h}\index{inc/debug.h@{inc/debug.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+Include dependency graph for debug.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=147pt]{debug_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{debug_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{debug_8h_a7d2ae674cad5299a52b0e7dceac10087}{D\+E\+B\+U\+G\+\_\+\+E\+N\+A\+B\+L\+ED}}~0
+\item 
+\#define \mbox{\hyperlink{debug_8h_a3fe03e23176f4fe277d1d3b41f3d3d06}{H\+E\+RE}}~\mbox{\hyperlink{debug_8h_a20f8a31603d3b132bf448a96fceec17d}{debug}}(\char`\"{}H\+E\+RE\char`\"{})
+\item 
+\#define \mbox{\hyperlink{debug_8h_a23a90ab385c4ac47fbd69b0587eccd40}{debugV}}(name)~\#name,(name)
+\item 
+\#define \mbox{\hyperlink{debug_8h_a5f290892f1413a09b8e485a545645a80}{v\+Debug}}(fmt,  name)~\mbox{\hyperlink{debug_8h_a20f8a31603d3b132bf448a96fceec17d}{debug}}(\char`\"{}\%s=(\char`\"{} fmt \char`\"{})\char`\"{} , \mbox{\hyperlink{debug_8h_a23a90ab385c4ac47fbd69b0587eccd40}{debugV}}(name))
+\item 
+\#define \mbox{\hyperlink{debug_8h_a20f8a31603d3b132bf448a96fceec17d}{debug}}(fmt, ...)~\mbox{\hyperlink{debug_8h_a01cf6caa2c3beda3cf5c778426458fbe}{l\+Debug}}(1, fmt, \#\#\+\_\+\+\_\+\+V\+A\+\_\+\+A\+R\+G\+S\+\_\+\+\_\+)
+\item 
+\#define \mbox{\hyperlink{debug_8h_a01cf6caa2c3beda3cf5c778426458fbe}{l\+Debug}}(level,  fmt, ...)
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04}{debug\+Levels}} \{ \mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04ac909e86054cb6ad83c22bfc2b3e6e5b8}{Debug}}, 
+\mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a1cd805eaf0bb58a90fe7e7e4cf6a3cdc}{Info}}, 
+\mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a86a4f5be1b42a6ee68eaeb357bbe065c}{Warn}}, 
+\mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a4dfd42ec49d09d8c6555c218301cc30f}{Error}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static const char $\ast$ \mbox{\hyperlink{debug_8h_ac7dfb686c0fa3d1954a092c931881bca}{level\+Text}} (enum \mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04}{debug\+Levels}} level)
+\item 
+void \mbox{\hyperlink{debug_8h_a7464c09de260e7d87f557118f76dc35c}{debug\+Init}} (int $\ast$argc, const char $\ast$argv\mbox{[}$\,$\mbox{]})
+\item 
+void \mbox{\hyperlink{debug_8h_a3e968c591b9ccc5a0a3b1adfa9a6eaab}{debug\+To\+File}} (const char $\ast$file\+Name)
+\item 
+void \mbox{\hyperlink{debug_8h_a17c8511da3be5877656140203ed1a3bc}{debug\+Close}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{debug_8h_a41ff73c3328a84f17007d4d352490cb5}{debug\+Level}}
+\item 
+F\+I\+LE $\ast$ \mbox{\hyperlink{debug_8h_ae203eb6bd688b66404eadf8674b79c9d}{debug\+File}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{debug_8h_a20f8a31603d3b132bf448a96fceec17d}\label{debug_8h_a20f8a31603d3b132bf448a96fceec17d}} 
+\index{debug.h@{debug.h}!debug@{debug}}
+\index{debug@{debug}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{debug}{debug}}
+{\footnotesize\ttfamily \#define debug(\begin{DoxyParamCaption}\item[{}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})~\mbox{\hyperlink{debug_8h_a01cf6caa2c3beda3cf5c778426458fbe}{l\+Debug}}(1, fmt, \#\#\+\_\+\+\_\+\+V\+A\+\_\+\+A\+R\+G\+S\+\_\+\+\_\+)}
+
+Simple alias for {\ttfamily \mbox{\hyperlink{debug_8h_a01cf6caa2c3beda3cf5c778426458fbe}{l\+Debug()}}} \mbox{\Hypertarget{debug_8h_a7d2ae674cad5299a52b0e7dceac10087}\label{debug_8h_a7d2ae674cad5299a52b0e7dceac10087}} 
+\index{debug.h@{debug.h}!DEBUG\_ENABLED@{DEBUG\_ENABLED}}
+\index{DEBUG\_ENABLED@{DEBUG\_ENABLED}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{DEBUG\_ENABLED}{DEBUG\_ENABLED}}
+{\footnotesize\ttfamily \#define D\+E\+B\+U\+G\+\_\+\+E\+N\+A\+B\+L\+ED~0}
+
+This macro controls whether all debugging code is optimized out of the executable, or is compiled and controlled at runtime by the {\ttfamily debug\+Level} variable. The value (0/1) depends on whether the macro {\ttfamily D\+E\+B\+UG} is defined during the compile. \mbox{\Hypertarget{debug_8h_a23a90ab385c4ac47fbd69b0587eccd40}\label{debug_8h_a23a90ab385c4ac47fbd69b0587eccd40}} 
+\index{debug.h@{debug.h}!debugV@{debugV}}
+\index{debugV@{debugV}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{debugV}{debugV}}
+{\footnotesize\ttfamily \#define debugV(\begin{DoxyParamCaption}\item[{}]{name }\end{DoxyParamCaption})~\#name,(name)}
+
+Expand a name into a string and a value 
+\begin{DoxyParams}{Parameters}
+{\em name} & name of variable \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{debug_8h_a3fe03e23176f4fe277d1d3b41f3d3d06}\label{debug_8h_a3fe03e23176f4fe277d1d3b41f3d3d06}} 
+\index{debug.h@{debug.h}!HERE@{HERE}}
+\index{HERE@{HERE}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{HERE}{HERE}}
+{\footnotesize\ttfamily \#define H\+E\+RE~\mbox{\hyperlink{debug_8h_a20f8a31603d3b132bf448a96fceec17d}{debug}}(\char`\"{}H\+E\+RE\char`\"{})}
+
+Print the file name, line number, function name and \char`\"{}\+H\+E\+R\+E\char`\"{} \mbox{\Hypertarget{debug_8h_a01cf6caa2c3beda3cf5c778426458fbe}\label{debug_8h_a01cf6caa2c3beda3cf5c778426458fbe}} 
+\index{debug.h@{debug.h}!lDebug@{lDebug}}
+\index{lDebug@{lDebug}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{lDebug}{lDebug}}
+{\footnotesize\ttfamily \#define l\+Debug(\begin{DoxyParamCaption}\item[{}]{level,  }\item[{}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{ \(\backslash\)}
+\DoxyCodeLine{       if (\mbox{\hyperlink{debug_8h_a7d2ae674cad5299a52b0e7dceac10087}{DEBUG\_ENABLED}} \&\& (\mbox{\hyperlink{debug_8h_a41ff73c3328a84f17007d4d352490cb5}{debugLevel}} <= level)) \(\backslash\)}
+\DoxyCodeLine{         fprintf((\mbox{\hyperlink{debug_8h_ae203eb6bd688b66404eadf8674b79c9d}{debugFile}} ? \mbox{\hyperlink{debug_8h_ae203eb6bd688b66404eadf8674b79c9d}{debugFile}} : stderr), \textcolor{stringliteral}{"\%s \%s[\%d] \%s() "} fmt \textcolor{stringliteral}{"\(\backslash\)n"}, \mbox{\hyperlink{debug_8h_ac7dfb686c0fa3d1954a092c931881bca}{levelText}}(level), \_\_FILE\_\_, \_\_LINE\_\_, \_\_func\_\_, \#\#\_\_VA\_ARGS\_\_); \(\backslash\)}
+\DoxyCodeLine{  \} \textcolor{keywordflow}{while}(0)}
+
+\end{DoxyCode}
+Print this message if the variable {\ttfamily debug\+Level} is greater than or equal to the parameter. 
+\begin{DoxyParams}{Parameters}
+{\em level} & the level at which this information should be printed \\
+\hline
+{\em fmt} & the formatting string ({\bfseries{M\+U\+ST}} be a literal \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{debug_8h_a5f290892f1413a09b8e485a545645a80}\label{debug_8h_a5f290892f1413a09b8e485a545645a80}} 
+\index{debug.h@{debug.h}!vDebug@{vDebug}}
+\index{vDebug@{vDebug}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{vDebug}{vDebug}}
+{\footnotesize\ttfamily \#define v\+Debug(\begin{DoxyParamCaption}\item[{}]{fmt,  }\item[{}]{name }\end{DoxyParamCaption})~\mbox{\hyperlink{debug_8h_a20f8a31603d3b132bf448a96fceec17d}{debug}}(\char`\"{}\%s=(\char`\"{} fmt \char`\"{})\char`\"{} , \mbox{\hyperlink{debug_8h_a23a90ab385c4ac47fbd69b0587eccd40}{debugV}}(name))}
+
+Output the name and value of a single variable 
+\begin{DoxyParams}{Parameters}
+{\em name} & name of the variable to print \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04}\label{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04}} 
+\index{debug.h@{debug.h}!debugLevels@{debugLevels}}
+\index{debugLevels@{debugLevels}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{debugLevels}{debugLevels}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04}{debug\+Levels}}}
+
+Initialize the variable {\ttfamily debug\+Level} depending on the value of {\ttfamily argv\mbox{[}1\mbox{]}}. Normally called from {\ttfamily main} with the program arguments. If {\ttfamily argv\mbox{[}1\mbox{]}} is or begins with {\ttfamily -\/debug}, the value of {\ttfamily debug\+Level} is set and {\ttfamily argc, argv} are modified appropriately. An entry of {\ttfamily -\/debug5} sets the level to 5. If the function is not called, the user is responsible for setting {\ttfamily debug\+Level} in other code. 
+\begin{DoxyParams}{Parameters}
+{\em argc} & the number of command line arguments \\
+\hline
+{\em argv} & the array of command line arguments. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Debug@{Debug}!debug.h@{debug.h}}\index{debug.h@{debug.h}!Debug@{Debug}}}\mbox{\Hypertarget{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04ac909e86054cb6ad83c22bfc2b3e6e5b8}\label{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04ac909e86054cb6ad83c22bfc2b3e6e5b8}} 
+Debug&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Info@{Info}!debug.h@{debug.h}}\index{debug.h@{debug.h}!Info@{Info}}}\mbox{\Hypertarget{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a1cd805eaf0bb58a90fe7e7e4cf6a3cdc}\label{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a1cd805eaf0bb58a90fe7e7e4cf6a3cdc}} 
+Info&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Warn@{Warn}!debug.h@{debug.h}}\index{debug.h@{debug.h}!Warn@{Warn}}}\mbox{\Hypertarget{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a86a4f5be1b42a6ee68eaeb357bbe065c}\label{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a86a4f5be1b42a6ee68eaeb357bbe065c}} 
+Warn&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Error@{Error}!debug.h@{debug.h}}\index{debug.h@{debug.h}!Error@{Error}}}\mbox{\Hypertarget{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a4dfd42ec49d09d8c6555c218301cc30f}\label{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04a4dfd42ec49d09d8c6555c218301cc30f}} 
+Error&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{debug_8h_a17c8511da3be5877656140203ed1a3bc}\label{debug_8h_a17c8511da3be5877656140203ed1a3bc}} 
+\index{debug.h@{debug.h}!debugClose@{debugClose}}
+\index{debugClose@{debugClose}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{debugClose()}{debugClose()}}
+{\footnotesize\ttfamily void debug\+Close (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Close the external file and reset {\ttfamily debug\+File} to {\ttfamily stderr} \mbox{\Hypertarget{debug_8h_a7464c09de260e7d87f557118f76dc35c}\label{debug_8h_a7464c09de260e7d87f557118f76dc35c}} 
+\index{debug.h@{debug.h}!debugInit@{debugInit}}
+\index{debugInit@{debugInit}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{debugInit()}{debugInit()}}
+{\footnotesize\ttfamily void debug\+Init (\begin{DoxyParamCaption}\item[{int $\ast$}]{argc,  }\item[{const char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{debug_8h_a3e968c591b9ccc5a0a3b1adfa9a6eaab}\label{debug_8h_a3e968c591b9ccc5a0a3b1adfa9a6eaab}} 
+\index{debug.h@{debug.h}!debugToFile@{debugToFile}}
+\index{debugToFile@{debugToFile}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{debugToFile()}{debugToFile()}}
+{\footnotesize\ttfamily void debug\+To\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{file\+Name }\end{DoxyParamCaption})}
+
+Send the debug output to a file 
+\begin{DoxyParams}{Parameters}
+{\em file\+Name} & name of file to write debug output to \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{debug_8h_ac7dfb686c0fa3d1954a092c931881bca}\label{debug_8h_ac7dfb686c0fa3d1954a092c931881bca}} 
+\index{debug.h@{debug.h}!levelText@{levelText}}
+\index{levelText@{levelText}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{levelText()}{levelText()}}
+{\footnotesize\ttfamily static const char$\ast$ level\+Text (\begin{DoxyParamCaption}\item[{enum \mbox{\hyperlink{debug_8h_a44cbbdcfb32a8f38245ff377ef1c7b04}{debug\+Levels}}}]{level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{debug_8h_ae203eb6bd688b66404eadf8674b79c9d}\label{debug_8h_ae203eb6bd688b66404eadf8674b79c9d}} 
+\index{debug.h@{debug.h}!debugFile@{debugFile}}
+\index{debugFile@{debugFile}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{debugFile}{debugFile}}
+{\footnotesize\ttfamily F\+I\+LE$\ast$ debug\+File}
+
+The file where debug output is written. Defaults to {\ttfamily stderr}. {\ttfamily \mbox{\hyperlink{debug_8h_a3e968c591b9ccc5a0a3b1adfa9a6eaab}{debug\+To\+File()}}} allows output to any file. \mbox{\Hypertarget{debug_8h_a41ff73c3328a84f17007d4d352490cb5}\label{debug_8h_a41ff73c3328a84f17007d4d352490cb5}} 
+\index{debug.h@{debug.h}!debugLevel@{debugLevel}}
+\index{debugLevel@{debugLevel}!debug.h@{debug.h}}
+\doxysubsubsection{\texorpdfstring{debugLevel}{debugLevel}}
+{\footnotesize\ttfamily int debug\+Level}
+
+Control how much debug output is produced. Higher values produce more output. See the use in {\ttfamily \mbox{\hyperlink{debug_8h_a01cf6caa2c3beda3cf5c778426458fbe}{l\+Debug()}}}. 

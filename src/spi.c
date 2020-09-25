@@ -17,6 +17,7 @@
 static SSP_ConfigFormat ssp_format;
 SemaphoreHandle_t spi_mutex;
 
+
 int32_t spi_sync_transfer(Chip_SSP_DATA_SETUP_T *xfers, uint32_t num_xfers,
 		void (*gpio_wr_fsync)(bool))
 {

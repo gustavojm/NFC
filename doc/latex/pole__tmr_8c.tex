@@ -1,0 +1,102 @@
+\hypertarget{pole__tmr_8c}{}\doxysection{src/pole\+\_\+tmr.c File Reference}
+\label{pole__tmr_8c}\index{src/pole\_tmr.c@{src/pole\_tmr.c}}
+{\ttfamily \#include \char`\"{}board.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Free\+R\+T\+O\+S.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}semphr.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}core\+\_\+cm4\+\_\+v5.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dout.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}errno.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}mot\+\_\+pap.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debug.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}pole.\+h\char`\"{}}\newline
+Include dependency graph for pole\+\_\+tmr.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pole__tmr_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{pole__tmr_8c_a5f89e5f7418d3a10f49b2faeab3711dd}{T\+I\+M\+E\+R0\+\_\+\+I\+R\+Q\+Handler}} (void)
+\begin{DoxyCompactList}\small\item\em Handle interrupt from 32-\/bit timer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{pole__tmr_8c_af9aace1b44b73111e15aa39f06f43456}{\+\_\+\+\_\+attribute\+\_\+\+\_\+}} ((weak))
+\item 
+int32\+\_\+t \mbox{\hyperlink{pole__tmr_8c_a12822e61cc89c0bc39035fd389022073}{pole\+\_\+tmr\+\_\+set\+\_\+freq}} (int32\+\_\+t tick\+\_\+rate\+\_\+hz)
+\item 
+void \mbox{\hyperlink{pole__tmr_8c_a92d2519d52c1c587417dd78ef53d9cba}{pole\+\_\+tmr\+\_\+start}} (void)
+\item 
+void \mbox{\hyperlink{pole__tmr_8c_a912b885949bb58050e334e83f6379bee}{pole\+\_\+tmr\+\_\+stop}} (void)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{pole__tmr_8c_aa96b035dcd8842d1c43296d68c330a1c}{pole\+\_\+tmr\+\_\+started}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{pole__tmr_8c_afd57c48cdff97c0f387e33e7c3f310a0}{stall\+\_\+detection}}
+\item 
+Semaphore\+Handle\+\_\+t \mbox{\hyperlink{pole__tmr_8c_a928076a0d73f66a7dea988dbc8dfad1d}{pole\+\_\+supervisor\+\_\+semaphore}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{pole__tmr_8c_af9aace1b44b73111e15aa39f06f43456}\label{pole__tmr_8c_af9aace1b44b73111e15aa39f06f43456}} 
+\index{pole\_tmr.c@{pole\_tmr.c}!\_\_attribute\_\_@{\_\_attribute\_\_}}
+\index{\_\_attribute\_\_@{\_\_attribute\_\_}!pole\_tmr.c@{pole\_tmr.c}}
+\doxysubsubsection{\texorpdfstring{\_\_attribute\_\_()}{\_\_attribute\_\_()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+attribute\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{(weak)}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pole__tmr_8c_a12822e61cc89c0bc39035fd389022073}\label{pole__tmr_8c_a12822e61cc89c0bc39035fd389022073}} 
+\index{pole\_tmr.c@{pole\_tmr.c}!pole\_tmr\_set\_freq@{pole\_tmr\_set\_freq}}
+\index{pole\_tmr\_set\_freq@{pole\_tmr\_set\_freq}!pole\_tmr.c@{pole\_tmr.c}}
+\doxysubsubsection{\texorpdfstring{pole\_tmr\_set\_freq()}{pole\_tmr\_set\_freq()}}
+{\footnotesize\ttfamily int32\+\_\+t pole\+\_\+tmr\+\_\+set\+\_\+freq (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{tick\+\_\+rate\+\_\+hz }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pole__tmr_8c_a92d2519d52c1c587417dd78ef53d9cba}\label{pole__tmr_8c_a92d2519d52c1c587417dd78ef53d9cba}} 
+\index{pole\_tmr.c@{pole\_tmr.c}!pole\_tmr\_start@{pole\_tmr\_start}}
+\index{pole\_tmr\_start@{pole\_tmr\_start}!pole\_tmr.c@{pole\_tmr.c}}
+\doxysubsubsection{\texorpdfstring{pole\_tmr\_start()}{pole\_tmr\_start()}}
+{\footnotesize\ttfamily void pole\+\_\+tmr\+\_\+start (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pole__tmr_8c_aa96b035dcd8842d1c43296d68c330a1c}\label{pole__tmr_8c_aa96b035dcd8842d1c43296d68c330a1c}} 
+\index{pole\_tmr.c@{pole\_tmr.c}!pole\_tmr\_started@{pole\_tmr\_started}}
+\index{pole\_tmr\_started@{pole\_tmr\_started}!pole\_tmr.c@{pole\_tmr.c}}
+\doxysubsubsection{\texorpdfstring{pole\_tmr\_started()}{pole\_tmr\_started()}}
+{\footnotesize\ttfamily uint32\+\_\+t pole\+\_\+tmr\+\_\+started (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pole__tmr_8c_a912b885949bb58050e334e83f6379bee}\label{pole__tmr_8c_a912b885949bb58050e334e83f6379bee}} 
+\index{pole\_tmr.c@{pole\_tmr.c}!pole\_tmr\_stop@{pole\_tmr\_stop}}
+\index{pole\_tmr\_stop@{pole\_tmr\_stop}!pole\_tmr.c@{pole\_tmr.c}}
+\doxysubsubsection{\texorpdfstring{pole\_tmr\_stop()}{pole\_tmr\_stop()}}
+{\footnotesize\ttfamily void pole\+\_\+tmr\+\_\+stop (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pole__tmr_8c_a5f89e5f7418d3a10f49b2faeab3711dd}\label{pole__tmr_8c_a5f89e5f7418d3a10f49b2faeab3711dd}} 
+\index{pole\_tmr.c@{pole\_tmr.c}!TIMER0\_IRQHandler@{TIMER0\_IRQHandler}}
+\index{TIMER0\_IRQHandler@{TIMER0\_IRQHandler}!pole\_tmr.c@{pole\_tmr.c}}
+\doxysubsubsection{\texorpdfstring{TIMER0\_IRQHandler()}{TIMER0\_IRQHandler()}}
+{\footnotesize\ttfamily void T\+I\+M\+E\+R0\+\_\+\+I\+R\+Q\+Handler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Handle interrupt from 32-\/bit timer. 
+
+\begin{DoxyReturn}{Returns}
+Nothing 
+\end{DoxyReturn}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{pole__tmr_8c_a928076a0d73f66a7dea988dbc8dfad1d}\label{pole__tmr_8c_a928076a0d73f66a7dea988dbc8dfad1d}} 
+\index{pole\_tmr.c@{pole\_tmr.c}!pole\_supervisor\_semaphore@{pole\_supervisor\_semaphore}}
+\index{pole\_supervisor\_semaphore@{pole\_supervisor\_semaphore}!pole\_tmr.c@{pole\_tmr.c}}
+\doxysubsubsection{\texorpdfstring{pole\_supervisor\_semaphore}{pole\_supervisor\_semaphore}}
+{\footnotesize\ttfamily Semaphore\+Handle\+\_\+t pole\+\_\+supervisor\+\_\+semaphore}
+
+\mbox{\Hypertarget{pole__tmr_8c_afd57c48cdff97c0f387e33e7c3f310a0}\label{pole__tmr_8c_afd57c48cdff97c0f387e33e7c3f310a0}} 
+\index{pole\_tmr.c@{pole\_tmr.c}!stall\_detection@{stall\_detection}}
+\index{stall\_detection@{stall\_detection}!pole\_tmr.c@{pole\_tmr.c}}
+\doxysubsubsection{\texorpdfstring{stall\_detection}{stall\_detection}}
+{\footnotesize\ttfamily bool stall\+\_\+detection}
+
