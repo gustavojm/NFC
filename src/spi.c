@@ -10,7 +10,7 @@
 #define SSP_DATA_BITS                       (SSP_BITS_8)
 
 static SSP_ConfigFormat ssp_format;
-SemaphoreHandle_t spi_mutex;
+static SemaphoreHandle_t spi_mutex;
 
 /**
  * \brief 	executes SPI transfers synchronized by WR/FSYNC.

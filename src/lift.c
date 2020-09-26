@@ -16,7 +16,7 @@
 #define LIFT_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
 QueueHandle_t lift_queue = NULL;
-SemaphoreHandle_t lift_interrupt_counting_semaphore;
+static SemaphoreHandle_t lift_interrupt_counting_semaphore;
 
 static struct lift_status status;
 
