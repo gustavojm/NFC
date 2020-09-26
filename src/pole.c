@@ -23,12 +23,11 @@ QueueHandle_t pole_queue = NULL;
 SemaphoreHandle_t pole_supervisor_semaphore;
 
 static struct mot_pap_status status;
-enum mot_pap_direction dir;
 
 extern bool stall_detection;
 
-struct ad2s1210_state rdc;
-struct pid pid;
+static struct ad2s1210_state rdc;
+static struct pid pid;
 
 /**
  * @brief 	handles the Pole movement.
@@ -42,6 +41,7 @@ static void pole_task(void *par)
 	int32_t error, threshold = 10;
 	bool already_there;
 	bool allowed, speed_ok;
+	enum mot_pap_direction dir;
 
 	ad2s1210_init(&rdc);
 
@@ -177,7 +177,7 @@ static void supervisor_task(void *par)
 	static uint16_t last_pos = 0;
 	int32_t error;
 	bool already_there;
-	enum mot_pap_direction;
+	enum mot_pap_direction dir;
 
 	while (1) {
 		xSemaphoreTake(pole_supervisor_semaphore, portMAX_DELAY);

@@ -8,7 +8,7 @@
 #include "spi.h"
 #include "debug.h"
 
-const uint32_t ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
+static const uint32_t ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
 
 /**
  * @brief 	writes 1 byte (address or data) to the chip
