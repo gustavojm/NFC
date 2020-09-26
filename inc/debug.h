@@ -69,17 +69,24 @@ static inline const char * levelText(enum debugLevels level) {
 	}
 }
 
+
 /**
  * controls how much debug output is produced. Higher values produce more
  * output. See the use in <tt>lDebug()</tt>.
  */
-extern int debugLevel;
+extern enum debugLevels debugLevel;
 
 /**
  * The file where debug output is written. Defaults to <tt>stderr</tt>.
  * <tt>debugToFile()</tt> allows output to any file.
  */
 extern FILE* debugFile;
+
+void debugSetLevel(enum debugLevels lvl);
+
+void debugToFile(const char *fileName);
+
+void debugClose(void);
 
 #ifdef DEBUG
 #define DEBUG_ENABLED 1  // debug code available at runtime

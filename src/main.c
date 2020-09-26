@@ -19,9 +19,6 @@
 #include "gui.h"
 #endif
 
-int debugLevel = Info;
-FILE* debugFile = NULL;
-
 #ifdef TEST_GUI
 void handler(int sig) {
   void *array[10];
@@ -39,6 +36,7 @@ void handler(int sig) {
 
 int main(void)
 {
+	debugSetLevel(Info);
 #ifdef TEST_GUI
     signal(SIGSEGV, handler);   // install our handler
 #endif
