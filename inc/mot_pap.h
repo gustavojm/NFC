@@ -10,8 +10,6 @@
 extern "C" {
 #endif
 
-#define MOT_PAP_CWLIMIT 						5000
-#define MOT_PAP_CCWLIMIT 						5
 #define MOT_PAP_MAX_FREQ						150000
 #define MOT_PAP_MIN_FREQ						100
 #define MOT_PAP_CLOSED_LOOP_FREQ_MULTIPLIER  	( MOT_PAP_MAX_FREQ / 100 )
@@ -55,12 +53,13 @@ struct mot_pap_status {
 	enum mot_pap_type type;
 	enum mot_pap_direction dir;
 	uint16_t offset;
-	bool reversed;
 	uint16_t posCmd;
-	uint16_t posAct;
+	int32_t  posAct;
 	uint32_t freq;
-	volatile bool cwLimit;
-	volatile bool ccwLimit;
+	uint16_t cwLimit;
+	uint16_t ccwLimit;
+	volatile bool cwLimitReached;
+	volatile bool ccwLimitReached;
 	volatile bool stalled;
 };
 
@@ -83,7 +82,6 @@ bool cwLimitReached, bool ccwLimitReached)
 
 int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos);
 
-uint16_t offset_and_orientation_correction(uint16_t pos, uint16_t offset, bool reversed);
 
 #ifdef __cplusplus
 }

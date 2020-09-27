@@ -52,20 +52,28 @@ static void pole_task(void *par)
 				status.stalled = false;	// If a new command was received with ctrlEn=1 assume we are not stalled
 
 				//obtener posición del RDC
-				status.posAct = offset_and_orientation_correction(ad2s1210_read_position(&rdc), status.offset, status.reversed);
+				status.posAct = ad2s1210_read_position(&rdc);
+				status.cwLimitReached = false;
+				status.ccwLimitReached = false;
 
-				if (status.posAct > MOT_PAP_CWLIMIT) {
-					status.cwLimit = true;
+				if (status.posAct >= (int32_t) status.cwLimit) {
+					status.cwLimitReached = true;
 				}
 
-				if (status.posAct < MOT_PAP_CCWLIMIT) {
-					status.ccwLimit = true;
+				if (status.posAct <= (int32_t) status.ccwLimit) {
+					status.ccwLimitReached = true;
 				}
+
+				lDebug(Info, "LIMITES ******************");
+				lDebug(Info, "posActual: %i ", status.posAct);
+				lDebug(Info, "cwLimitReached: %s ", status.cwLimitReached ? "TRUE" : "FALSE");
+				lDebug(Info, "ccwLimitReached: %s ", status.ccwLimitReached ? "TRUE" : "FALSE");
+				lDebug(Info, "LIMITES ******************");
 
 				switch (msg_rcv->type) {
 				case MOT_PAP_TYPE_FREE_RUNNING:
 					allowed = movement_allowed(msg_rcv->free_run_direction,
-							status.cwLimit, status.ccwLimit);
+							status.cwLimitReached, status.ccwLimitReached);
 					speed_ok = free_run_speed_ok(msg_rcv->free_run_speed);
 
 					if (allowed && speed_ok) {
@@ -100,8 +108,8 @@ static void pole_task(void *par)
 					break;
 
 				case MOT_PAP_TYPE_CLOSED_LOOP:	//PID
-					if ((msg_rcv->closed_loop_setpoint > MOT_PAP_CWLIMIT)
-							| (msg_rcv->closed_loop_setpoint < MOT_PAP_CCWLIMIT)) {
+					if ((msg_rcv->closed_loop_setpoint > status.cwLimit)
+							| (msg_rcv->closed_loop_setpoint < status.ccwLimit)) {
 						lDebug(Warn, "pole: movement out of bounds");
 					} else {
 						status.posCmd = msg_rcv->closed_loop_setpoint;
@@ -117,8 +125,8 @@ static void pole_task(void *par)
 							lDebug(Info, "pole: already there");
 						} else {
 							dir = direction_calculate(error);
-							if (movement_allowed(dir, status.cwLimit,
-									status.ccwLimit)) {
+							if (movement_allowed(dir, status.cwLimitReached,
+									status.ccwLimitReached)) {
 								if ((status.dir != msg_rcv->free_run_direction)
 										&& (status.type != MOT_PAP_TYPE_STOP)) {
 									pole_tmr_stop();
@@ -181,22 +189,22 @@ static void supervisor_task(void *par)
 	while (1) {
 		xSemaphoreTake(pole_supervisor_semaphore, portMAX_DELAY);
 
-		status.posAct = offset_and_orientation_correction(ad2s1210_read_position(&rdc), status.offset, status.reversed);
+		status.posAct = ad2s1210_read_position(&rdc);
 
-		status.cwLimit = false;
-		status.ccwLimit = false;
+		status.cwLimitReached = false;
+		status.ccwLimitReached = false;
 
 		if ((status.dir == MOT_PAP_DIRECTION_CW)
-				&& (status.posAct > MOT_PAP_CWLIMIT)) {
-			status.cwLimit = true;
+				&& (status.posAct >= (int32_t) status.cwLimit)) {
+			status.cwLimitReached = true;
 			pole_tmr_stop();
 			lDebug(Warn, "pole: limit CW reached");
 			goto cont;
 		}
 
 		if ((status.dir == MOT_PAP_DIRECTION_CCW)
-				&& (status.posAct < MOT_PAP_CCWLIMIT)) {
-			status.ccwLimit = true;
+				&& (status.posAct <= (int32_t) status.ccwLimit)) {
+			status.ccwLimitReached = true;
 			pole_tmr_stop();
 			lDebug(Warn, "pole: limit CCW reached");
 			goto cont;
@@ -253,7 +261,8 @@ void pole_init()
 	pid_controller_init(&pid, 10, 20, 20, 20, 100);
 
 	status.type = MOT_PAP_TYPE_STOP;
-	status.reversed = false;
+	status.cwLimit = 65535;
+	status.ccwLimit = 0;
 	status.offset = 0;
 
 	rdc.gpios.reset = poncho_rdc_reset;
@@ -289,15 +298,8 @@ uint16_t pole_get_position()
 	return ad2s1210_read_position(&rdc);
 }
 
-void pole_set_reversed(bool reversed)
-{
-	status.reversed = reversed;
-}
-
 void pole_set_offset(uint16_t offset)
 {
-	if (status.reversed)
-		status.offset = ~ offset;
 	status.offset = offset;
 }
 

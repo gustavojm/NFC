@@ -38,11 +38,8 @@ int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
  * @param 	offset
  * @return	the offset corrected position
  */
-uint16_t offset_and_orientation_correction(uint16_t pos, uint16_t offset, bool reversed)
+uint16_t offset_correction(uint16_t pos, uint16_t offset)
 {
-	if (reversed) {
-		pos = ~ pos;
-	}
 	int32_t corrected = pos - offset;
 	if (corrected < 0)
 		corrected = corrected + (int32_t) pow(2, 16);
