@@ -2,9 +2,8 @@
 #define AD2S1210_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
-#include "FreeRTOS.h"
-#include "semphr.h"
 #include "poncho_rdc.h"
 
 #ifdef __cplusplus

@@ -1,7 +1,7 @@
 #ifndef RELAY_H_
 #define RELAY_H_
 
-#include <stdint.h>
+#include <stdbool.h>
 
 #include "lift.h"
 

@@ -1,7 +1,8 @@
 #ifndef DOUT_H_
 #define DOUT_H_
 
-#include <stdint.h>
+#include <stdbool.h>
+
 #include "mot_pap.h"
 
 #ifdef __cplusplus

@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <errno.h>
 
 #include "FreeRTOS.h"
@@ -38,7 +39,6 @@ void TIMER0_IRQHandler(void)
 		// Generate waveform
 		dout_pole_pulse(On);
 
-
 		if (++steps == MOT_PAP_SUPERVISOR_RATE) {
 			steps = 0;
 			xHigherPriorityTaskWoken = pdFALSE;
@@ -66,7 +66,6 @@ void pole_tmr_init(void)
 	Chip_TIMER_ResetOnMatchEnable(LPC_TIMER0, 1);
 }
 
-
 /**
  * @brief	sets TIMER0 frequency
  * @param 	tick_rate_hz 	: desired frequency
@@ -89,7 +88,6 @@ int32_t pole_tmr_set_freq(int32_t tick_rate_hz)
 	Chip_TIMER_SetMatch(LPC_TIMER0, 1, (timerFreq / tick_rate_hz));
 	return 0;
 }
-
 
 /**
  * @brief 	enables timer interrupt and starts it

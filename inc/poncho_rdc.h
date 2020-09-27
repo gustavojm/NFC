@@ -1,7 +1,6 @@
 #ifndef PONCHO_RDC_H_
 #define PONCHO_RDC_H_
 
-#include <stdint.h>
 #include <stdbool.h>
 
 #ifdef __cplusplus

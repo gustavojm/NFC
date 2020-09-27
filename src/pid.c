@@ -1,11 +1,10 @@
 #include <stddef.h>
-#include <stdlib.h>
+#include <stdint.h>
 #include <math.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "pid.h"
-#include "debug.h"
 
 /**
  * @brief	constrains the out value to limit

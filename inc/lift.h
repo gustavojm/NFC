@@ -1,7 +1,6 @@
 #ifndef LIFT_H_
 #define LIFT_H_
 
-#include <stdint.h>
 #include <stdbool.h>
 
 #ifdef __cplusplus
