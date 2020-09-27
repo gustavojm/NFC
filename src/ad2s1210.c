@@ -1,10 +1,11 @@
-#include "ad2s1210.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <errno.h>
-#include "semphr.h"
+
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
+#include "ad2s1210.h"
 #include "spi.h"
 #include "debug.h"
 

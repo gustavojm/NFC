@@ -1,10 +1,11 @@
-#include "board.h"
-#include "stdio.h"
-#include "spi.h"
-#include "stdbool.h"
+#include <stdio.h>
+#include <stdbool.h>
+
 #include "FreeRTOS.h"
-#include "semphr.h"
 #include "task.h"
+#include "semphr.h"
+#include "spi.h"
+#include "board.h"
 
 #define LPC_SSP           					LPC_SSP1
 #define SSP_DATA_BITS                       (SSP_BITS_8)

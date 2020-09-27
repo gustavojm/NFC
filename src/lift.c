@@ -1,17 +1,18 @@
-#include "board.h"
-#include "din.h"
-#include "lift.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+
 #include "FreeRTOS.h"
+#include "task.h"
 #include "timers.h"
 #include "queue.h"
 #include "semphr.h"
-#include "task.h"
-#include "stdbool.h"
+#include "lift.h"
 #include "relay.h"
 #include "debug.h"
+#include "board.h"
+#include "din.h"
 
 #define LIFT_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 

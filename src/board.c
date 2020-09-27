@@ -1,7 +1,8 @@
+#include <string.h>
+#include <stdint.h>
+#include <stdio.h>
+
 #include "board.h"
-#include "string.h"
-#include "stdint.h"
-#include "stdio.h"
 
 #if defined(DEBUG_ENABLE) && !defined(DEBUG_UART)
 #error "Definir DEBUG_UART como LPC_USART{numero de UART}"

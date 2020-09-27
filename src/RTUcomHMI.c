@@ -1,15 +1,16 @@
 #include <sys/times.h>
-#include "lift.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+
 #include "FreeRTOS.h"
+#include "task.h"
 #include "timers.h"
 #include "queue.h"
 #include "semphr.h"
-#include "task.h"
-#include "stdbool.h"
 #include "pid.h"
+#include "lift.h"
 #include "pole.h"
 #include "debug.h"
 
@@ -77,7 +78,7 @@ static void RTUcomHMI_task(void *par)
 			srandom(times(&time));
 			pole_msg_snd->ctrlEn = true;
 			pole_msg_snd->type = MOT_PAP_TYPE_CLOSED_LOOP;
-			pole_msg_snd->closed_loop_setpoint = random() % ((int32_t)pow(2, 16) - 1);
+			pole_msg_snd->closed_loop_setpoint = random() % (int32_t)pow(2, 16);
 			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
 				lDebug(Info, "comm: pole command sent");

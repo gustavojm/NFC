@@ -1,8 +1,9 @@
 #ifndef MOT_PAP_H_
 #define MOT_PAP_H_
 
-#include "stdint.h"
-#include "stdbool.h"
+#include <stdint.h>
+#include <stdbool.h>
+
 #include "pid.h"
 
 #ifdef __cplusplus
@@ -54,6 +55,7 @@ struct mot_pap_status {
 	enum mot_pap_type type;
 	enum mot_pap_direction dir;
 	uint16_t offset;
+	bool reversed;
 	uint16_t posCmd;
 	uint16_t posAct;
 	uint32_t freq;
@@ -81,7 +83,7 @@ bool cwLimitReached, bool ccwLimitReached)
 
 int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos);
 
-uint16_t offset_correction(uint16_t pos, uint16_t offset);
+uint16_t offset_and_orientation_correction(uint16_t pos, uint16_t offset, bool reversed);
 
 #ifdef __cplusplus
 }

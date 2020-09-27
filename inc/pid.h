@@ -1,8 +1,9 @@
 #ifndef PID_H_
 #define PID_H_
 
-#include "FreeRTOS.h"
 #include <stdint.h>
+
+#include "FreeRTOS.h"
 
 #ifdef __cplusplus
 extern "C" {

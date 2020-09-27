@@ -1,7 +1,8 @@
 #ifndef AD2S1210_H_
 #define AD2S1210_H_
 
-#include "stdint.h"
+#include <stdint.h>
+
 #include "FreeRTOS.h"
 #include "semphr.h"
 #include "poncho_rdc.h"

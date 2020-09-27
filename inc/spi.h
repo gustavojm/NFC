@@ -1,8 +1,9 @@
 #ifndef SPI_H_
 #define SPI_H_
 
+#include <stdint.h>
+
 #include "board.h"
-#include "stdint.h"
 
 #ifdef __cplusplus
 extern "C" {

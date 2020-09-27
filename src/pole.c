@@ -1,19 +1,20 @@
-#include "pole_tmr.h"
-#include "pole.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
-#include "stdbool.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <math.h>
+#include <stdbool.h>
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-#include "stdint.h"
+#include "pole.h"
 #include "ad2s1210.h"
 #include "pid.h"
 #include "dout.h"
 #include "relay.h"
 #include "debug.h"
+#include "pole_tmr.h"
 
 #define POLE_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 #define POLE_SUPERVISOR_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
@@ -53,7 +54,7 @@ static void pole_task(void *par)
 				status.stalled = false;	// If a new command was received with ctrlEn=1 assume we are not stalled
 
 				//obtener posición del RDC
-				status.posAct = offset_correction(ad2s1210_read_position(&rdc), status.offset);
+				status.posAct = offset_and_orientation_correction(ad2s1210_read_position(&rdc), status.offset, status.reversed);
 
 				if (status.posAct > MOT_PAP_CWLIMIT) {
 					status.cwLimit = true;
@@ -182,7 +183,7 @@ static void supervisor_task(void *par)
 	while (1) {
 		xSemaphoreTake(pole_supervisor_semaphore, portMAX_DELAY);
 
-		status.posAct = offset_correction(ad2s1210_read_position(&rdc), status.offset);
+		status.posAct = offset_and_orientation_correction(ad2s1210_read_position(&rdc), status.offset, status.reversed);
 
 		status.cwLimit = false;
 		status.ccwLimit = false;
@@ -254,6 +255,7 @@ void pole_init()
 	pid_controller_init(&pid, 10, 20, 20, 20, 100);
 
 	status.type = MOT_PAP_TYPE_STOP;
+	status.reversed = false;
 	status.offset = 0;
 
 	rdc.gpios.reset = poncho_rdc_reset;
@@ -289,10 +291,18 @@ uint16_t pole_get_position()
 	return ad2s1210_read_position(&rdc);
 }
 
+void pole_set_reversed(bool reversed)
+{
+	status.reversed = reversed;
+}
+
 void pole_set_offset(uint16_t offset)
 {
+	if (status.reversed)
+		status.offset = ~ offset;
 	status.offset = offset;
 }
+
 
 /**
  * @brief	returns status of the pole task.

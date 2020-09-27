@@ -1,19 +1,20 @@
-#include "RTUcomHMI.h"
-#include "board.h"
-#include "stdio.h"
-#include "stdint.h"
-#include "stdbool.h"
-#include "stdint.h"
+#include <execinfo.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "pole.h"
 #include "lift.h"
 #include "debug.h"
 
-#include <execinfo.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "RTUcomHMI.h"
+#include "board.h"
 
 #ifdef TEST_GUI
 #include "gui.h"

@@ -1,14 +1,14 @@
-#include "board.h"
+#include <stdio.h>
+#include <errno.h>
+
 #include "FreeRTOS.h"
 #include "semphr.h"
-#include <stdio.h>
+#include "board.h"
 #include "core_cm4_v5.h"
 #include "dout.h"
-#include "errno.h"
 #include "mot_pap.h"
 #include "debug.h"
 #include "pole.h"
-
 
 extern bool stall_detection;
 extern SemaphoreHandle_t pole_supervisor_semaphore;

@@ -2,6 +2,7 @@
 #define RELAY_H_
 
 #include <stdint.h>
+
 #include "lift.h"
 
 #ifdef __cplusplus

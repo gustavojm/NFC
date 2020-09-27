@@ -2,7 +2,8 @@
 #define POLE_TMR_H_
 
 #include <stdint.h>
-#include <board.h>
+
+#include "board.h"
 
 #ifdef __cplusplus
 extern "C" {
