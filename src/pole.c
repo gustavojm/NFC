@@ -53,7 +53,7 @@ static void pole_task(void *par)
 				status.stalled = false;	// If a new command was received with ctrlEn=1 assume we are not stalled
 
 				//obtener posición del RDC
-				status.posAct = ad2s1210_read_position(&rdc);
+				status.posAct = offset_correction(ad2s1210_read_position(&rdc), status.offset);
 
 				if (status.posAct > MOT_PAP_CWLIMIT) {
 					status.cwLimit = true;
@@ -182,7 +182,7 @@ static void supervisor_task(void *par)
 	while (1) {
 		xSemaphoreTake(pole_supervisor_semaphore, portMAX_DELAY);
 
-		status.posAct = ad2s1210_read_position(&rdc);
+		status.posAct = offset_correction(ad2s1210_read_position(&rdc), status.offset);
 
 		status.cwLimit = false;
 		status.ccwLimit = false;
@@ -254,6 +254,7 @@ void pole_init()
 	pid_controller_init(&pid, 10, 20, 20, 20, 100);
 
 	status.type = MOT_PAP_TYPE_STOP;
+	status.offset = 0;
 
 	rdc.gpios.reset = poncho_rdc_reset;
 	rdc.gpios.sample = poncho_rdc_sample;
@@ -276,6 +277,21 @@ void pole_init()
 	POLE_TASK_PRIORITY, NULL);
 
 	lDebug(Info, "pole: task created");
+}
+
+/**
+ * @brief	gets pole RDC position
+ * @return	RDC position
+ * @note 	uncorrected position (does not take offset into account)
+ */
+uint16_t pole_get_position()
+{
+	return ad2s1210_read_position(&rdc);
+}
+
+void pole_set_offset(uint16_t offset)
+{
+	status.offset = offset;
 }
 
 /**

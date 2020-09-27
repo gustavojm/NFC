@@ -1,7 +1,8 @@
-#include "mot_pap.h"
-#include "pid.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "math.h"
+#include "mot_pap.h"
+#include "pid.h"
 #include "debug.h"
 
 /**
@@ -27,4 +28,18 @@ int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
 		return MOT_PAP_MIN_FREQ;
 
 	return freq;
+}
+
+/**
+ * @brief	corrects possible offsets of RDC alignment.
+ * @param 	pos
+ * @param 	offset
+ * @return	the offset corrected position
+ */
+uint16_t offset_correction(uint16_t pos, uint16_t offset)
+{
+	int32_t corrected = pos - offset;
+	if (corrected < 0)
+		corrected = corrected + (int32_t) pow(2, 16);
+	return (uint16_t) corrected;
 }

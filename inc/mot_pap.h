@@ -53,6 +53,7 @@ struct mot_pap_msg {
 struct mot_pap_status {
 	enum mot_pap_type type;
 	enum mot_pap_direction dir;
+	uint16_t offset;
 	uint16_t posCmd;
 	uint16_t posAct;
 	uint32_t freq;
@@ -79,6 +80,8 @@ bool cwLimitReached, bool ccwLimitReached)
 }
 
 int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos);
+
+uint16_t offset_correction(uint16_t pos, uint16_t offset);
 
 #ifdef __cplusplus
 }
