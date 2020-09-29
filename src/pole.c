@@ -64,12 +64,6 @@ static void pole_task(void *par)
 					status.ccwLimitReached = true;
 				}
 
-				lDebug(Info, "LIMITES ******************");
-				lDebug(Info, "posActual: %i ", status.posAct);
-				lDebug(Info, "cwLimitReached: %s ", status.cwLimitReached ? "TRUE" : "FALSE");
-				lDebug(Info, "ccwLimitReached: %s ", status.ccwLimitReached ? "TRUE" : "FALSE");
-				lDebug(Info, "LIMITES ******************");
-
 				switch (msg_rcv->type) {
 				case MOT_PAP_TYPE_FREE_RUNNING:
 					allowed = movement_allowed(msg_rcv->free_run_direction,
@@ -137,7 +131,6 @@ static void pole_task(void *par)
 								status.type = MOT_PAP_TYPE_CLOSED_LOOP;
 								status.dir = dir;
 								dout_pole_dir(status.dir);
-								//vTaskDelay(pdMS_TO_TICKS(0.08));	//80us required by parker compumotor
 								status.freq = freq_calculate(&pid,
 										status.posCmd, status.posAct);
 								pole_tmr_set_freq(status.freq);
@@ -263,7 +256,6 @@ void pole_init()
 	status.type = MOT_PAP_TYPE_STOP;
 	status.cwLimit = 65535;
 	status.ccwLimit = 0;
-	status.offset = 0;
 
 	rdc.gpios.reset = poncho_rdc_reset;
 	rdc.gpios.sample = poncho_rdc_sample;
@@ -291,18 +283,11 @@ void pole_init()
 /**
  * @brief	gets pole RDC position
  * @return	RDC position
- * @note 	uncorrected position (does not take offset into account)
  */
-uint16_t pole_get_position()
+uint16_t pole_get_RDC_position()
 {
 	return ad2s1210_read_position(&rdc);
 }
-
-void pole_set_offset(uint16_t offset)
-{
-	status.offset = offset;
-}
-
 
 /**
  * @brief	returns status of the pole task.

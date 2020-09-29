@@ -14,11 +14,9 @@ void pole_init();
 
 struct mot_pap_status pole_get_status(void);
 
-uint16_t pole_get_position();
+uint16_t pole_get_RDC_position();
 
 void pole_set_reversed(bool reversed);
-
-void pole_set_offset(uint16_t offset);
 
 #ifdef __cplusplus
 }

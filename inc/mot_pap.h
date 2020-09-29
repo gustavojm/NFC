@@ -52,7 +52,6 @@ struct mot_pap_msg {
 struct mot_pap_status {
 	enum mot_pap_type type;
 	enum mot_pap_direction dir;
-	uint16_t offset;
 	uint16_t posCmd;
 	int32_t  posAct;
 	uint32_t freq;
