@@ -290,6 +290,26 @@ uint16_t pole_get_RDC_position()
 }
 
 /**
+ * @brief	sets pole CW limit
+ * @param 	pos		: RDC position where the limit is reached
+ * @return	nothing
+ */
+void pole_set_cwLimit(uint16_t pos)
+{
+	status.cwLimit = pos;
+}
+
+/**
+ * @brief	sets pole CCW limit
+ * @param 	pos		: RDC position where the limit is reached
+ * @return	nothing
+ */
+void pole_set_ccwLimit(uint16_t pos)
+{
+	status.ccwLimit = pos;
+}
+
+/**
  * @brief	returns status of the pole task.
  * @return 	copy of status structure of the task
  */
