@@ -53,7 +53,7 @@ struct mot_pap_status {
 	enum mot_pap_type type;
 	enum mot_pap_direction dir;
 	uint16_t posCmd;
-	int32_t  posAct;
+	uint16_t  posAct;
 	uint32_t freq;
 	uint16_t cwLimit;
 	uint16_t ccwLimit;
@@ -67,7 +67,7 @@ inline enum mot_pap_direction direction_calculate(int32_t error)
 	return error > 0 ? MOT_PAP_DIRECTION_CW : MOT_PAP_DIRECTION_CCW;
 }
 
-inline bool free_run_speed_ok(int32_t speed)
+inline bool free_run_speed_ok(uint32_t speed)
 {
 	return ((speed > 0) && (speed <= MOT_PAP_MAX_SPEED_FREE_RUN));
 }

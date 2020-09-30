@@ -16,10 +16,10 @@
  */
 static double abs_limit(const double out, const int32_t limit)
 {
-	if (out > limit)
-		return limit;
-	if (out < -limit)
-		return -limit;
+	if (out > (double) limit)
+		return (double) limit;
+	if (out < (double) -limit)
+		return (double) -limit;
 	return out;
 }
 
@@ -32,8 +32,8 @@ static double abs_limit(const double out, const int32_t limit)
  * @param 	td			: derivative time
  * @param 	limit		: output limiter value
  */
-void pid_controller_init(struct pid *pid, float kp, int32_t sample_time,
-		float ti, float td, int32_t limit)
+void pid_controller_init(struct pid *pid, double kp, int32_t sample_time,
+		double ti, double td, int32_t limit)
 {
 	pid->kp = kp;
 	pid->ki = kp * sample_time / ti;

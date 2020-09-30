@@ -72,7 +72,7 @@ void pole_tmr_init(void)
  * @return	0 on success
  * @return	-EINVAL if tick_rate_hz > 300000
  */
-int32_t pole_tmr_set_freq(int32_t tick_rate_hz)
+int32_t pole_tmr_set_freq(uint32_t tick_rate_hz)
 {
 	uint32_t timerFreq;
 

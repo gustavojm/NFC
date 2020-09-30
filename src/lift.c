@@ -27,7 +27,7 @@ static void lift_up()
 {
 	if (!status.upLimit) {
 		relay_lift_dir(LIFT_DIRECTION_UP);
-		relay_lift_pwr(1);
+		relay_lift_pwr(true);
 	} else {
 		lDebug(Warn, "lift: limit switch reached, cannot go up");
 	}
@@ -41,7 +41,7 @@ static void lift_down()
 {
 	if (!status.downLimit) {
 		relay_lift_dir(LIFT_DIRECTION_DOWN);
-		relay_lift_pwr(1);
+		relay_lift_pwr(true);
 	} else {
 		lDebug(Warn, "lift: limit switch reached, cannot go down");
 	}
@@ -53,7 +53,7 @@ static void lift_down()
  */
 static void lift_stop()
 {
-	relay_lift_pwr(0);
+	relay_lift_pwr(false);
 }
 
 /**
@@ -66,7 +66,7 @@ static void lift_task(void *par)
 {
 	struct lift_msg *msg_rcv;
 
-	while (1) {
+	while (true) {
 
 		if (xQueueReceive(lift_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
 			lDebug(Info, "lift: command received");
@@ -120,7 +120,7 @@ static void lift_task(void *par)
 static void lift_limit_switches_handler_task(void *par)
 {
 	/* As per most tasks, this task is implemented within an infinite loop. */
-	while (1) {
+	while (true) {
 		/* Use the semaphore to wait for the event.  The semaphore was created
 		 before the scheduler was started so before this task ran for the first
 		 time.  The task blocks indefinitely meaning this function call will only

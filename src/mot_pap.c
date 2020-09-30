@@ -17,11 +17,11 @@
 int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
 {
 	int32_t cout;
-	uint32_t freq;
+	int32_t freq;
 
-	cout = pid_controller_calculate(pid, setpoint, pos);
+	cout = pid_controller_calculate(pid, (int32_t) setpoint, (int32_t) pos);
 	lDebug(Info, "----COUT---- %i", cout);
-	freq = abs(cout) * MOT_PAP_CLOSED_LOOP_FREQ_MULTIPLIER;
+	freq = (int32_t) abs((int) cout) * MOT_PAP_CLOSED_LOOP_FREQ_MULTIPLIER;
 	lDebug(Info, "----FREQ---- %u", freq);
 	if (freq > MOT_PAP_MAX_FREQ)
 		return MOT_PAP_MAX_FREQ;

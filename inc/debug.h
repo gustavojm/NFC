@@ -50,23 +50,25 @@ enum debugLevels {
 };
 
 static inline const char * levelText(enum debugLevels level) {
+	const char *ret;
 	switch (level) {
 		case Debug:
-			return "Debug";
+			ret = "Debug";
 			break;
 		case Info:
-			return "Info";
+			ret = "Info";
 			break;
 		case Warn:
-			return "Warn";
+			ret = "Warn";
 			break;
 		case Error:
-			return "Error";
+			ret = "Error";
 			break;
 		default:
-			return "";
+			ret = "";
 			break;
 	}
+	return ret;
 }
 
 

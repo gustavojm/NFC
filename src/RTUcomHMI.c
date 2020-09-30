@@ -18,7 +18,7 @@
 extern QueueHandle_t lift_queue;
 extern QueueHandle_t pole_queue;
 
-bool stall_detection = 1;
+bool stall_detection = true;
 
 static void RTUcomHMI_task(void *par)
 {
@@ -26,13 +26,18 @@ static void RTUcomHMI_task(void *par)
 	struct lift_msg *lift_msg_snd;
 	struct mot_pap_msg *pole_msg_snd;
 
-	while (1) {
+	while (true) {
 
 		//Observar que cada mensaje enviado genera una nueva alocación de memoria.
 		//La tarea de destino es la que se encarga de liberar la memoria una vez procesado el mensaje
 
 		// Generar un mensaje para lift con la dirección invertida en cada llamada
-		type = !type;
+		if (type == LIFT_TYPE_UP) {
+			type = LIFT_TYPE_DOWN;
+		} else {
+			type = LIFT_TYPE_UP;
+		}
+
 		lift_msg_snd = (struct lift_msg*) malloc(sizeof(struct lift_msg));
 
 		if (lift_msg_snd != NULL) {
