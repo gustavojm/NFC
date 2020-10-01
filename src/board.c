@@ -49,13 +49,6 @@ static void Board_GPIO_Init()
 	}
 }
 
-static void Board_I2C_Init()
-{
-	Chip_I2C_Init(I2C0);
-	Chip_SCU_I2C0PinConfig(BOARD_I2C_MODE);
-	Chip_I2C_SetClockRate(I2C0, BOARD_I2C_SPEED);
-}
-
 void Board_SSP_Init(LPC_SSP_T *pSSP)
 {
 	if (pSSP == LPC_SSP1) {
@@ -70,15 +63,6 @@ void Board_SSP_Init(LPC_SSP_T *pSSP)
 	} else {
 		return;
 	}
-}
-
-static void Board_ADC_Init()
-{
-	ADC_CLOCK_SETUP_T cs;
-
-	Chip_ADC_Init(LPC_ADC0, &cs);
-	Chip_ADC_SetSampleRate(LPC_ADC0, &cs, BOARD_ADC_SAMPLE_RATE);
-	Chip_ADC_SetResolution(LPC_ADC0, &cs, BOARD_ADC_RESOLUTION);
 }
 
 /**
@@ -170,11 +154,7 @@ void Board_Init(void)
 //   Chip_GPIO_Init (LPC_GPIO_PORT);
 
 	Board_GPIO_Init();
-	//Board_ADC_Init();
-	//Board_I2C_Init();
 }
-
-static ADC_CHANNEL_T curADCChannel = 0xFF;
 
 int32_t __stdio_getchar()
 {
