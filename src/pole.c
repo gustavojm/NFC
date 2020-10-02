@@ -28,6 +28,8 @@ extern bool stall_detection;
 static struct ad2s1210_state rdc;
 static struct pid pid;
 
+// Comentario nuevo al códigoOD
+
 /**
  * @brief 	handles the Pole movement.
  * @param 	par		: unused
