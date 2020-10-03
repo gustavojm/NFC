@@ -81,7 +81,7 @@ inline bool free_run_speed_ok(uint32_t speed)
 }
 
 /**
- * @ brief 	checks if a movement in the desired direction is possible
+ * @brief 	checks if a movement in the desired direction is possible
  * @param 	dir			    : the desired direction of movement
  * @param 	cwLimitReached  : true if the CW limit has been reached
  * @param 	ccwLimitReached : true if the CCW limit has been reached

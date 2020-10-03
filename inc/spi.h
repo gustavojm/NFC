@@ -15,7 +15,7 @@ int32_t spi_sync_transfer(Chip_SSP_DATA_SETUP_T *xfers, uint32_t num_xfers,
 		void (*gpio_wr_fsync)(bool));
 
 /**
- * \brief 	SPI synchronous write
+ * @brief 	SPI synchronous write
  * @param 	buf		: data buffer
  * @param 	len		: data buffer size
  * @return	0 on success
@@ -35,7 +35,7 @@ static inline int spi_write(void *buf, size_t len)
 }
 
 /**
- * \brief 	SPI synchronous read
+ * @brief 	SPI synchronous read
  * @param 	buf		: data buffer
  * @param 	len		: data buffer size
  * @return 	0 on success
