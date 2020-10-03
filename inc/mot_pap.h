@@ -22,15 +22,12 @@ extern "C" {
 #define MOT_PAP_POS_THRESHOLD 					1
 #define MOT_PAP_STALL_THRESHOLD 				1
 
-
 enum mot_pap_direction {
 	MOT_PAP_DIRECTION_CW, MOT_PAP_DIRECTION_CCW,
 };
 
 enum mot_pap_type {
-	MOT_PAP_TYPE_FREE_RUNNING,
-	MOT_PAP_TYPE_CLOSED_LOOP,
-	MOT_PAP_TYPE_STOP
+	MOT_PAP_TYPE_FREE_RUNNING, MOT_PAP_TYPE_CLOSED_LOOP, MOT_PAP_TYPE_STOP
 };
 
 /**
@@ -53,7 +50,7 @@ struct mot_pap_status {
 	enum mot_pap_type type;
 	enum mot_pap_direction dir;
 	uint16_t posCmd;
-	uint16_t  posAct;
+	uint16_t posAct;
 	uint32_t freq;
 	uint16_t cwLimit;
 	uint16_t ccwLimit;
@@ -62,16 +59,35 @@ struct mot_pap_status {
 	volatile bool stalled;
 };
 
+/**
+ * @brief	returns the direction of movement depending if the error is positive or negative
+ * @param 	error : the current position error in closed loop positioning
+ * @return	MOT_PAP_DIRECTION_CW if error is positive
+ * @return	MOT_PAP_DIRECTION_CCW if error is negative
+ */
 inline enum mot_pap_direction direction_calculate(int32_t error)
 {
 	return error > 0 ? MOT_PAP_DIRECTION_CW : MOT_PAP_DIRECTION_CCW;
 }
 
+/**
+ * @brief 	checks if the required FREE RUN speed is in the allowed range
+ * @param 	speed : the requested speed
+ * @return	true if speed is in the allowed range
+ */
 inline bool free_run_speed_ok(uint32_t speed)
 {
 	return ((speed > 0) && (speed <= MOT_PAP_MAX_SPEED_FREE_RUN));
 }
 
+/**
+ * @ brief 	checks if a movement in the desired direction is possible
+ * @param 	dir			    : the desired direction of movement
+ * @param 	cwLimitReached  : true if the CW limit has been reached
+ * @param 	ccwLimitReached : true if the CCW limit has been reached
+ * @return  true if the direction of movement is not in the same
+ * 			direction of the limit that has already been reached
+ */
 static inline bool movement_allowed(enum mot_pap_direction dir,
 bool cwLimitReached, bool ccwLimitReached)
 {
@@ -80,7 +96,6 @@ bool cwLimitReached, bool ccwLimitReached)
 }
 
 int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos);
-
 
 #ifdef __cplusplus
 }
