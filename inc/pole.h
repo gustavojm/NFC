@@ -12,7 +12,7 @@ extern "C" {
 
 void pole_init();
 
-struct mot_pap_status pole_get_status(void);
+struct mot_pap pole_get_status(void);
 
 uint16_t pole_get_RDC_position();
 

@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "FreeRTOS.h"
+#include "semphr.h"
 #include "pid.h"
 
 #ifdef __cplusplus
@@ -43,10 +45,11 @@ struct mot_pap_msg {
 };
 
 /**
- * @struct 	mot_pap_status
+ * @struct 	mot_pap
  * @brief	POLE or ARM task status.
  */
-struct mot_pap_status {
+struct mot_pap {
+	char *name;
 	enum mot_pap_type type;
 	enum mot_pap_direction dir;
 	uint16_t posCmd;
@@ -57,6 +60,9 @@ struct mot_pap_status {
 	volatile bool cwLimitReached;
 	volatile bool ccwLimitReached;
 	volatile bool stalled;
+	struct ad2s1210_state *rdc;
+	struct pid *pid;
+	SemaphoreHandle_t supervisor_semaphore;
 };
 
 /**
@@ -75,7 +81,7 @@ inline enum mot_pap_direction direction_calculate(int32_t error)
  * @param 	speed : the requested speed
  * @return	true if speed is in the allowed range
  */
-inline bool free_run_speed_ok(uint32_t speed)
+inline bool mot_pap_free_run_speed_ok(uint32_t speed)
 {
 	return ((speed > 0) && (speed <= MOT_PAP_MAX_SPEED_FREE_RUN));
 }
@@ -88,14 +94,25 @@ inline bool free_run_speed_ok(uint32_t speed)
  * @return  true if the direction of movement is not in the same
  * 			direction of the limit that has already been reached
  */
-static inline bool movement_allowed(enum mot_pap_direction dir,
+static inline bool mot_pap_movement_allowed(enum mot_pap_direction dir,
 bool cwLimitReached, bool ccwLimitReached)
 {
 	return ((dir == MOT_PAP_DIRECTION_CW && !cwLimitReached)
 			|| (dir == MOT_PAP_DIRECTION_CCW && !ccwLimitReached));
 }
 
-int32_t freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos);
+int32_t mot_pap_freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos);
+
+void mot_pap_init_limits(struct mot_pap *me);
+
+void mot_pap_supervise(struct mot_pap *me);
+
+void mot_pap_move_free_run(struct mot_pap *me,
+		enum mot_pap_direction direction, uint32_t speed);
+
+void mot_pap_move_closed_loop(struct mot_pap *status, uint16_t setpoint);
+
+void mot_pap_stop(struct mot_pap *me);
 
 #ifdef __cplusplus
 }
