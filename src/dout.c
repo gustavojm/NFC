@@ -39,16 +39,12 @@ void dout_arm_dir(enum mot_pap_direction dir)
 }
 
 /**
- * @brief	sets GPIO corresponding to DOUT5 where ARM_PULSE is connected
- * @param 	state	: boolean value for the output
+ * @brief	toggles GPIO corresponding to DOUT5 where ARM_PULSE is connected
+ * @return 	nothing
  */
-void dout_arm_pulse(bool state)
+void dout_arm_pulse(void)
 {
-	if (state) {
-		Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 5, 13);
-	} else {
-		Chip_GPIO_SetPinOutLow(LPC_GPIO_PORT, 5, 13);
-	}
+	Chip_GPIO_SetPinToggle(LPC_GPIO_PORT, 5, 13);
 }
 
 /**
@@ -56,6 +52,7 @@ void dout_arm_pulse(bool state)
  * @param 	dir		: direction of movement. Should be:
  * 					  MOT_PAP_DIRECTION_CW
  * 					  MOT_PAP_DIRECTION_CCW
+ * @return 	nothing
  */
 void dout_pole_dir(enum mot_pap_direction dir)
 {
@@ -67,14 +64,10 @@ void dout_pole_dir(enum mot_pap_direction dir)
 }
 
 /**
- * @brief	sets GPIO corresponding to DOUT7 where POLE_PULSE is connected
- * @param 	state	: boolean value for the output
+ * @brief	toggles GPIO corresponding to DOUT7 where POLE_PULSE is connected
+ * @return 	nothing
  */
-void dout_pole_pulse(bool state)
+void dout_pole_pulse(void)
 {
-	if (state) {
-		Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 0, 8);
-	} else {
-		Chip_GPIO_SetPinOutLow(LPC_GPIO_PORT, 0, 8);
-	}
+	Chip_GPIO_SetPinToggle(LPC_GPIO_PORT, 0, 8);
 }

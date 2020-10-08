@@ -15,9 +15,10 @@
 #define LIFT_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
 QueueHandle_t lift_queue = NULL;
+
 static SemaphoreHandle_t lift_interrupt_counting_semaphore;
 
-static struct lift_status status;
+static struct lift lift;
 
 /**
  * @brief 	commands lift to go up if upLimit is not active.
@@ -25,7 +26,7 @@ static struct lift_status status;
  */
 static void lift_up()
 {
-	if (!status.upLimit) {
+	if (!lift.upLimit) {
 		relay_lift_dir(LIFT_DIRECTION_UP);
 		relay_lift_pwr(true);
 	} else {
@@ -39,7 +40,7 @@ static void lift_up()
  */
 static void lift_down()
 {
-	if (!status.downLimit) {
+	if (!lift.downLimit) {
 		relay_lift_dir(LIFT_DIRECTION_DOWN);
 		relay_lift_pwr(true);
 	} else {
@@ -71,39 +72,35 @@ static void lift_task(void *par)
 		if (xQueueReceive(lift_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
 			lDebug(Info, "lift: command received");
 
-			if (msg_rcv->ctrlEn) {
-				status.upLimit = din_zs1_lift_state();
-				status.downLimit = din_zs2_lift_state();
+			lift.upLimit = din_zs1_lift_state();
+			lift.downLimit = din_zs2_lift_state();
 
-				switch (msg_rcv->type) {
-				case LIFT_TYPE_UP:
-					if (status.type == LIFT_TYPE_DOWN) {
-						lift_stop();
-						vTaskDelay(
-								pdMS_TO_TICKS(LIFT_DIRECTION_CHANGE_DELAY_MS));
-					}
-					status.type = LIFT_TYPE_UP;
-					lift_up();
-					lDebug(Info, "lift: UP");
-					break;
-				case LIFT_TYPE_DOWN:
-					if (status.type == LIFT_TYPE_UP) {
-						lift_stop();
-						vTaskDelay(
-								pdMS_TO_TICKS(LIFT_DIRECTION_CHANGE_DELAY_MS));
-					}
-					status.type = LIFT_TYPE_DOWN;
-					lift_down();
-					lDebug(Info, "lift: DOWN");
-					break;
-				default:
-					status.type = LIFT_TYPE_STOP;
+			switch (msg_rcv->type) {
+			case LIFT_TYPE_UP:
+				if (lift.type == LIFT_TYPE_DOWN) {
 					lift_stop();
-					lDebug(Info, "lift: STOP");
-					break;
+					vTaskDelay(
+							pdMS_TO_TICKS(LIFT_DIRECTION_CHANGE_DELAY_MS));
 				}
-			} else {
-				lDebug(Warn, "lift: command received with control disabled");
+				lift.type = LIFT_TYPE_UP;
+				lift_up();
+				lDebug(Info, "lift: UP");
+				break;
+			case LIFT_TYPE_DOWN:
+				if (lift.type == LIFT_TYPE_UP) {
+					lift_stop();
+					vTaskDelay(
+							pdMS_TO_TICKS(LIFT_DIRECTION_CHANGE_DELAY_MS));
+				}
+				lift.type = LIFT_TYPE_DOWN;
+				lift_down();
+				lDebug(Info, "lift: DOWN");
+				break;
+			default:
+				lift.type = LIFT_TYPE_STOP;
+				lift_stop();
+				lDebug(Info, "lift: STOP");
+				break;
 			}
 
 			free(msg_rcv);
@@ -133,11 +130,11 @@ static void lift_limit_switches_handler_task(void *par)
 
 		//Determinar cual de los límites se accionó
 
-		if (status.upLimit) {
+		if (lift.upLimit) {
 			lDebug(Info, "lift: upper limit reached");
 		}
 
-		if (status.downLimit) {
+		if (lift.downLimit) {
 			lDebug(Info, "lift: lower limit reached");
 		}
 	}
@@ -149,7 +146,7 @@ static void lift_limit_switches_handler_task(void *par)
 void GPIO0_IRQHandler(void)
 {
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(0));
-	status.upLimit = true;
+	lift.upLimit = true;
 	BaseType_t xHigherPriorityTaskWoken;
 	xHigherPriorityTaskWoken = pdFALSE;
 	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
@@ -163,7 +160,7 @@ void GPIO0_IRQHandler(void)
 void GPIO1_IRQHandler(void)
 {
 	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(1));
-	status.downLimit = true;
+	lift.downLimit = true;
 	BaseType_t xHigherPriorityTaskWoken;
 	xHigherPriorityTaskWoken = pdFALSE;
 	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
@@ -179,9 +176,9 @@ void lift_init()
 {
 	lift_queue = xQueueCreate(5, sizeof(struct lift_msg*));
 
-	status.type = LIFT_TYPE_STOP;
-	status.upLimit = false;
-	status.downLimit = false;
+	lift.type = LIFT_TYPE_STOP;
+	lift.upLimit = false;
+	lift.downLimit = false;
 
 	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales que generan interrupción por flanco ascendente;
 	//Install the handler for the software interrupt.
@@ -205,7 +202,7 @@ void lift_init()
  * @brief	returns status of the lift task.
  * @return 	copy of status structure of the task
  */
-struct lift_status lift_status_get(void)
+struct lift lift_status_get(void)
 {
-	return status;
+	return lift;
 }

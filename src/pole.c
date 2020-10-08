@@ -8,11 +8,11 @@
 #include "semphr.h"
 #include "pole.h"
 #include "ad2s1210.h"
+#include "board.h"
 #include "pid.h"
 #include "dout.h"
-#include "relay.h"
 #include "debug.h"
-#include "pole_tmr.h"
+#include "tmr.h"
 
 #define POLE_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 #define POLE_SUPERVISOR_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
@@ -22,7 +22,7 @@ QueueHandle_t pole_queue = NULL;
 SemaphoreHandle_t pole_supervisor_semaphore;
 
 static struct mot_pap pole;
-static struct ad2s1210_state rdc;
+static struct ad2s1210 rdc;
 static struct pid pid;
 
 /**
@@ -48,12 +48,11 @@ static void pole_task(void *par)
 
 				break;
 
-			case MOT_PAP_TYPE_CLOSED_LOOP:	//PID
-				mot_pap_move_closed_loop(&pole,
-						msg_rcv->closed_loop_setpoint);
+			case MOT_PAP_TYPE_CLOSED_LOOP:
+				mot_pap_move_closed_loop(&pole, msg_rcv->closed_loop_setpoint);
 				break;
 
-			default:			//STOP
+			default:
 				mot_pap_stop(&pole);
 				break;
 			}
@@ -84,27 +83,38 @@ void pole_init()
 {
 	pole_queue = xQueueCreate(5, sizeof(struct mot_pap_msg*));
 
-	pid_controller_init(&pid, 10, 20, 20, 20, 100);
-
-	pole.name = "Pole";
+	pole.name = "pole";
 	pole.type = MOT_PAP_TYPE_STOP;
 	pole.cwLimit = 65535;
 	pole.ccwLimit = 0;
+	pole.last_dir = MOT_PAP_DIRECTION_CW;
+	pole.half_pulses = 0;
+
+	rdc.gpios.reset = &poncho_rdc_reset;
+	rdc.gpios.sample = &poncho_rdc_sample;
+	rdc.gpios.wr_fsync = &poncho_rdc_pole_wr_fsync;
+	rdc.resolution = 16;
+	ad2s1210_init(&rdc);
 
 	pole.rdc = &rdc;
-	rdc.gpios.reset = poncho_rdc_reset;
-	rdc.gpios.sample = poncho_rdc_sample;
-	rdc.gpios.wr_fsync = poncho_rdc_pole_wr_fsync;
-	rdc.resolution = 16;
 
-	ad2s1210_init(&rdc);
+	pid_controller_init(&pid, 10, 20, 20, 20, 100);
 
 	pole.pid = &pid;
 
-	pole_tmr_init();
+	pole.gpios.direction = &dout_pole_dir;
+	pole.gpios.pulse = &dout_pole_pulse;
+
+	pole.tmr.started = false;
+	pole.tmr.lpc_timer = LPC_TIMER0;
+	pole.tmr.rgu_timer_rst = RGU_TIMER0_RST;
+	pole.tmr.clk_mx_timer = CLK_MX_TIMER0;
+	pole.tmr.timer_IRQn = TIMER0_IRQn;
+
+	tmr_init(&pole.tmr);
 
 	pole_supervisor_semaphore = xSemaphoreCreateBinary();
-	pole.supervisor_semaphore = &pole_supervisor_semaphore;
+	pole.supervisor_semaphore = pole_supervisor_semaphore;
 
 	if (pole_supervisor_semaphore != NULL) {
 		// Create the 'handler' task, which is the task to which interrupt processing is deferred
@@ -118,6 +128,18 @@ void pole_init()
 	POLE_TASK_PRIORITY, NULL);
 
 	lDebug(Info, "pole: task created");
+}
+
+/**
+ * @brief	handle interrupt from 32-bit timer to generate pulses for the stepper motor drivers
+ * @return	nothing
+ * @note 	calls the supervisor task every x number of generated steps
+ */
+void TIMER0_IRQHandler(void)
+{
+	if (tmr_match_pending(&(pole.tmr))) {
+		mot_pap_isr(&pole);
+	}
 }
 
 /**

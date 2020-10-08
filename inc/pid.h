@@ -22,10 +22,10 @@ struct pid {
 	TickType_t last_time_in_ticks;
 };
 
-void pid_controller_init(struct pid *pid, double kp, int32_t sample_time,
+void pid_controller_init(struct pid *me, double kp, int32_t sample_time,
 		double ti, double td, int32_t limit);
 
-int32_t pid_controller_calculate(struct pid *pid, int32_t setpoint, int32_t input);
+int32_t pid_controller_calculate(struct pid *me, int32_t setpoint, int32_t input);
 
 #ifdef __cplusplus
 }

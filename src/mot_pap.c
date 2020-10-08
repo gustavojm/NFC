@@ -3,23 +3,28 @@
 #include <stdbool.h>
 #include <math.h>
 
+#include "board.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "mot_pap.h"
 #include "pid.h"
 #include "ad2s1210.h"
 #include "debug.h"
-#include "pole_tmr.h"
+#include "tmr.h"
 #include "relay.h"
-#include "dout.h"
 
 extern bool stall_detection;
 
+/**
+ * @brief	checks if software limits are reached
+ * @param 	me			: struct mot_pap pointer
+ * @return 	nothing
+ * @note	also sets stalled to false for this instance
+ */
 void mot_pap_init_limits(struct mot_pap *me)
 {
 	me->stalled = false; // If a new command was received, assume we are not stalled
 
-	//obtener posición del RDC
 	me->posAct = ad2s1210_read_position(me->rdc);
 	me->cwLimitReached = false;
 	me->ccwLimitReached = false;
@@ -33,6 +38,48 @@ void mot_pap_init_limits(struct mot_pap *me)
 	}
 }
 
+/**
+ * @brief	returns the direction of movement depending if the error is positive or negative
+ * @param 	error : the current position error in closed loop positioning
+ * @return	MOT_PAP_DIRECTION_CW if error is positive
+ * @return	MOT_PAP_DIRECTION_CCW if error is negative
+ */
+enum mot_pap_direction mot_pap_direction_calculate(int32_t error)
+{
+	return error > 0 ? MOT_PAP_DIRECTION_CW : MOT_PAP_DIRECTION_CCW;
+}
+
+/**
+ * @brief 	checks if the required FREE RUN speed is in the allowed range
+ * @param 	speed : the requested speed
+ * @return	true if speed is in the allowed range
+ */
+bool mot_pap_free_run_speed_ok(uint32_t speed)
+{
+	return ((speed > 0) && (speed <= MOT_PAP_MAX_SPEED_FREE_RUN));
+}
+
+/**
+ * @brief 	checks if a movement in the desired direction is possible
+ * @param 	dir			    : the desired direction of movement
+ * @param 	cwLimitReached  : true if the CW limit has been reached
+ * @param 	ccwLimitReached : true if the CCW limit has been reached
+ * @return  true if the direction of movement is not in the same
+ * 			direction of the limit that has already been reached
+ */
+bool mot_pap_movement_allowed(enum mot_pap_direction dir,
+bool cwLimitReached, bool ccwLimitReached)
+{
+	return ((dir == MOT_PAP_DIRECTION_CW && !cwLimitReached)
+			|| (dir == MOT_PAP_DIRECTION_CCW && !ccwLimitReached));
+}
+
+/**
+ * @brief 	supervise motor movement for limits, stall, position reached in closed loop
+ * @param 	me			: struct mot_pap pointer
+ * @return  nothing
+ * @note	to be called by the deferred interrupt task handler
+ */
 void mot_pap_supervise(struct mot_pap *me)
 {
 	static uint16_t last_pos = 0;
@@ -48,7 +95,7 @@ void mot_pap_supervise(struct mot_pap *me)
 	if ((me->dir == MOT_PAP_DIRECTION_CW)
 			&& (me->posAct >= (int32_t) me->cwLimit)) {
 		me->cwLimitReached = true;
-		pole_tmr_stop();
+		tmr_stop(&(me->tmr));
 		lDebug(Warn, "%s: limit CW reached", me->name);
 		goto cont;
 	}
@@ -56,7 +103,7 @@ void mot_pap_supervise(struct mot_pap *me)
 	if ((me->dir == MOT_PAP_DIRECTION_CCW)
 			&& (me->posAct <= (int32_t) me->ccwLimit)) {
 		me->ccwLimitReached = true;
-		pole_tmr_stop();
+		tmr_stop(&(me->tmr));
 		lDebug(Warn, "%s: limit CCW reached", me->name);
 		goto cont;
 	}
@@ -66,7 +113,7 @@ void mot_pap_supervise(struct mot_pap *me)
 				last_pos);
 		if (abs((int) (me->posAct - last_pos)) < MOT_PAP_STALL_THRESHOLD) {
 			me->stalled = true;
-			pole_tmr_stop();
+			tmr_stop(&(me->tmr));
 			relay_main_pwr(0);
 			lDebug(Warn, "%s: stalled", me->name);
 			goto cont;
@@ -79,27 +126,34 @@ void mot_pap_supervise(struct mot_pap *me)
 
 		if (already_there) {
 			me->type = MOT_PAP_TYPE_STOP;
-			pole_tmr_stop();
+			tmr_stop(&(me->tmr));
 			lDebug(Info, "%s: position reached", me->name);
 		} else {
-			dir = direction_calculate(error);
+			dir = mot_pap_direction_calculate(error);
 			if (me->dir != dir) {
-				pole_tmr_stop();
+				tmr_stop(&(me->tmr));
 				vTaskDelay(pdMS_TO_TICKS(MOT_PAP_DIRECTION_CHANGE_DELAY_MS));
 				me->dir = dir;
-				dout_pole_dir(me->dir);
-				pole_tmr_start();
+				me->gpios.direction(me->dir);
+				tmr_start(&(me->tmr));
 			}
 			me->freq = mot_pap_freq_calculate(me->pid, me->posCmd, me->posAct);
-			pole_tmr_set_freq(me->freq);
+			tmr_set_freq(&(me->tmr), me->freq);
 		}
 	}
 cont:
 	last_pos = me->posAct;
 }
 
-void mot_pap_move_free_run(struct mot_pap *me,
-		enum mot_pap_direction direction, uint32_t speed)
+/**
+ * @brief	if allowed, starts a free run movement
+ * @param 	me			: struct mot_pap pointer
+ * @param 	direction	: either MOT_PAP_DIRECTION_CW or MOT_PAP_DIRECTION_CCW
+ * @param 	speed		: integer from 0 to 8
+ * @return 	nothing
+ */
+void mot_pap_move_free_run(struct mot_pap *me, enum mot_pap_direction direction,
+		uint32_t speed)
 {
 	bool allowed, speed_ok;
 
@@ -109,67 +163,72 @@ void mot_pap_move_free_run(struct mot_pap *me,
 
 	if (allowed && speed_ok) {
 		if ((me->dir != direction) && (me->type != MOT_PAP_TYPE_STOP)) {
-			pole_tmr_stop();
+			tmr_stop(&(me->tmr));
 			vTaskDelay(pdMS_TO_TICKS(MOT_PAP_DIRECTION_CHANGE_DELAY_MS));
 		}
 		me->type = MOT_PAP_TYPE_FREE_RUNNING;
 		me->dir = direction;
-		dout_pole_dir(me->dir);
+		me->gpios.direction(me->dir);
 		me->freq = speed * MOT_PAP_FREE_RUN_FREQ_MULTIPLIER;
-		pole_tmr_set_freq(me->freq);
-		pole_tmr_start();
-		lDebug(Info, "%s: FREE RUN, speed: %u, direction: %s",me->name, me->freq,
-				me->dir == MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
+		tmr_set_freq(&(me->tmr), me->freq);
+		tmr_start(&(me->tmr));
+		lDebug(Info, "%s: FREE RUN, speed: %u, direction: %s", me->name,
+				me->freq, me->dir == MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
 	} else {
 		if (!allowed)
 			lDebug(Warn, "%s: movement out of bounds %s", me->name,
 					direction == MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
 		if (!speed_ok)
-			lDebug(Warn, "%s: chosen speed out of bounds %u", me->name ,speed);
+			lDebug(Warn, "%s: chosen speed out of bounds %u", me->name, speed);
 	}
 }
 
+/**
+ * @brief	if allowed, starts a closed loop movement
+ * @param 	me			: struct mot_pap pointer
+ * @param 	setpoint	: the resolver value to reach
+ * @return 	nothing
+ */
 void mot_pap_move_closed_loop(struct mot_pap *me, uint16_t setpoint)
 {
 	int32_t error, threshold = 10;
 	bool already_there;
 	enum mot_pap_direction dir;
 
-	if ((setpoint > me->cwLimit)
-			| (setpoint < me->ccwLimit)) {
+	if ((setpoint > me->cwLimit) | (setpoint < me->ccwLimit)) {
 		lDebug(Warn, "%s: movement out of bounds", me->name);
 	} else {
 		me->posCmd = setpoint;
-		lDebug(Info, "%s: CLOSED_LOOP posCmd: %u posAct: %u", me->name, me->posCmd,
-				me->posAct);
+		lDebug(Info, "%s: CLOSED_LOOP posCmd: %u posAct: %u", me->name,
+				me->posCmd, me->posAct);
 
 		//calcular error de posición
 		error = me->posCmd - me->posAct;
 		already_there = (abs(error) < threshold);
 
 		if (already_there) {
-			pole_tmr_stop();
+			tmr_stop(&(me->tmr));
 			lDebug(Info, "%s: already there", me->name);
 		} else {
-			dir = direction_calculate(error);
+			dir = mot_pap_direction_calculate(error);
 			if (mot_pap_movement_allowed(dir, me->cwLimitReached,
 					me->ccwLimitReached)) {
 				if ((me->dir != dir) && (me->type != MOT_PAP_TYPE_STOP)) {
-					pole_tmr_stop();
+					tmr_stop(&(me->tmr));
 					vTaskDelay(
 							pdMS_TO_TICKS(MOT_PAP_DIRECTION_CHANGE_DELAY_MS));
 				}
 				me->type = MOT_PAP_TYPE_CLOSED_LOOP;
 				me->dir = dir;
-				dout_pole_dir(me->dir);
+				me->gpios.direction(me->dir);
 				me->freq = mot_pap_freq_calculate(me->pid, me->posCmd,
 						me->posAct);
-				pole_tmr_set_freq(me->freq);
-				lDebug(Info, "%s: CLOSED LOOP, speed: %u, direction: %s", me->name,
-						me->freq,
+				tmr_set_freq(&(me->tmr), me->freq);
+				lDebug(Info, "%s: CLOSED LOOP, speed: %u, direction: %s",
+						me->name, me->freq,
 						me->dir == MOT_PAP_DIRECTION_CW ? "CW" : "CCW");
-				if (!pole_tmr_started()) {
-					pole_tmr_start();
+				if (!tmr_started(&(me->tmr))) {
+					tmr_start(&(me->tmr));
 				}
 			} else {
 				lDebug(Warn, "%s: movement out of bounds %s", me->name,
@@ -179,11 +238,40 @@ void mot_pap_move_closed_loop(struct mot_pap *me, uint16_t setpoint)
 	}
 }
 
-
-void mot_pap_stop(struct mot_pap *me) {
+/**
+ * @brief	if there is a movement in process, stops it
+ * @param 	me	: struct mot_pap pointer
+ * @return 	nothing
+ */
+void mot_pap_stop(struct mot_pap *me)
+{
 	me->type = MOT_PAP_TYPE_STOP;
-	pole_tmr_stop();
+	tmr_stop(&(me->tmr));
 	lDebug(Info, "%s: STOP", me->name);
+}
+
+/**
+ * @brief 	function called by the timer ISR to generate the output pulses
+ * @param 	me : struct mot_pap pointer
+ */
+void mot_pap_isr(struct mot_pap *me)
+{
+	BaseType_t xHigherPriorityTaskWoken;
+
+	if (me->dir != me->last_dir) {
+		me->half_pulses = 0;
+		me->last_dir = me->dir;
+	}
+
+	me->gpios.pulse();
+
+	if (++(me->half_pulses) == MOT_PAP_SUPERVISOR_RATE) {
+		me->half_pulses = 0;
+		xHigherPriorityTaskWoken = pdFALSE;
+		xSemaphoreGiveFromISR(me->supervisor_semaphore,
+				&xHigherPriorityTaskWoken);
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	}
 }
 
 /**
@@ -210,3 +298,4 @@ int32_t mot_pap_freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
 
 	return freq;
 }
+

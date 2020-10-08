@@ -29,15 +29,14 @@ enum lift_type {
  * @brief	messages to lift_task.
  */
 struct lift_msg {
-	bool ctrlEn;
 	enum lift_type type;
 };
 
 /**
- * @struct 	lift_status
+ * @struct 	lift
  * @brief	lift task status.
  */
-struct lift_status {
+struct lift {
 	enum lift_type type;
 	volatile bool upLimit;
 	volatile bool downLimit;
@@ -45,7 +44,7 @@ struct lift_status {
 
 void lift_init();
 
-struct lift_status lift_status_get(void);
+struct lift lift_status_get(void);
 
 #ifdef __cplusplus
 }

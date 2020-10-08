@@ -10,6 +10,9 @@
 extern "C" {
 #endif
 
+// Declaration needed because TEST_GUI calls this IRQ handler as a standard function
+void TIMER0_IRQHandler(void);
+
 void pole_init();
 
 struct mot_pap pole_get_status(void);
