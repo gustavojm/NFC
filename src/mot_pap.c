@@ -25,7 +25,7 @@ void mot_pap_init_limits(struct mot_pap *me)
 {
 	me->stalled = false; // If a new command was received, assume we are not stalled
 
-	me->posAct = ad2s1210_read_position(me->rdc);
+	me->posAct = mot_pap_offset_correction(ad2s1210_read_position(me->rdc), me->offset, me->rdc->resolution);
 	me->cwLimitReached = false;
 	me->ccwLimitReached = false;
 
@@ -87,7 +87,7 @@ void mot_pap_supervise(struct mot_pap *me)
 	bool already_there;
 	enum mot_pap_direction dir;
 
-	me->posAct = ad2s1210_read_position(me->rdc);
+	me->posAct = mot_pap_offset_correction(ad2s1210_read_position(me->rdc), me->offset, me->rdc->resolution);
 
 	me->cwLimitReached = false;
 	me->ccwLimitReached = false;
@@ -297,5 +297,19 @@ int32_t mot_pap_freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
 		return MOT_PAP_MIN_FREQ;
 
 	return freq;
+}
+
+/**
+ * @brief	corrects possible offsets of RDC alignment.
+ * @param 	pos
+ * @param 	offset
+ * @return	the offset corrected position
+ */
+uint16_t mot_pap_offset_correction(uint16_t pos, uint16_t offset, uint8_t resolution)
+{
+	int32_t corrected = pos - offset;
+	if (corrected < 0)
+		corrected = corrected + (int32_t) pow(2, resolution);
+	return (uint16_t) corrected;
 }
 

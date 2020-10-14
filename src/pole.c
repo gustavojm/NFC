@@ -88,6 +88,7 @@ void pole_init()
 	pole.ccwLimit = 0;
 	pole.last_dir = MOT_PAP_DIRECTION_CW;
 	pole.half_pulses = 0;
+	pole.offset = 0;
 
 	rdc.gpios.reset = &poncho_rdc_reset;
 	rdc.gpios.sample = &poncho_rdc_sample;
@@ -150,6 +151,12 @@ uint16_t pole_get_RDC_position()
 	return ad2s1210_read_position(pole.rdc);
 }
 
+
+void pole_set_offset(uint16_t offset)
+{
+	pole.offset = offset;
+}
+
 /**
  * @brief	sets pole CW limit
  * @param 	pos		: RDC position where the limit is reached
@@ -157,7 +164,6 @@ uint16_t pole_get_RDC_position()
  */
 void pole_set_cwLimit(uint16_t pos)
 {
-
 	pole.cwLimit = pos;
 }
 
