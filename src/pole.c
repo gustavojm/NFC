@@ -45,7 +45,6 @@ static void pole_task(void *par)
 			case MOT_PAP_TYPE_FREE_RUNNING:
 				mot_pap_move_free_run(&pole, msg_rcv->free_run_direction,
 						msg_rcv->free_run_speed);
-
 				break;
 
 			case MOT_PAP_TYPE_CLOSED_LOOP:
