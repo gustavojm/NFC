@@ -301,8 +301,8 @@ int32_t mot_pap_freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
 
 /**
  * @brief	corrects possible offsets of RDC alignment.
- * @param 	pos
- * @param 	offset
+ * @param 	pos		: current RDC position
+ * @param 	offset	: RDC value for 0 degrees
  * @return	the offset corrected position
  */
 uint16_t mot_pap_offset_correction(uint16_t pos, uint16_t offset, uint8_t resolution)

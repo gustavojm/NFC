@@ -152,6 +152,11 @@ uint16_t pole_get_RDC_position()
 }
 
 
+/**
+ * @brief	sets pole offset
+ * @param 	offset		: RDC position for 0 degrees
+ * @return	nothing
+ */
 void pole_set_offset(uint16_t offset)
 {
 	pole.offset = offset;
