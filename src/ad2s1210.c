@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <errno.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
 #include "ad2s1210.h"
+#include "board.h"
 #include "spi.h"
 #include "debug.h"
 
@@ -120,7 +120,7 @@ static int32_t ad2s1210_update_frequency_control_word(struct ad2s1210 *me)
 	fcw = (uint8_t) (me->fexcit * (1 << 15) / me->fclkin);
 	if (fcw < AD2S1210_MIN_FCW || fcw > AD2S1210_MAX_FCW) {
 		lDebug(Error, "ad2s1210: FCW out of range");
-		return -ERANGE;
+		return -1;
 	}
 
 	ret = ad2s1210_set_reg(me, AD2S1210_REG_EXCIT_FREQ, fcw);
@@ -170,7 +170,7 @@ uint32_t ad2s1210_get_fclkin(struct ad2s1210 *me)
  * @param 	me		: pointer to struct ad2s1210
  * @param 	fclkin	: XTAL frequency
  * @return 	0 on success
- * @return	-EINVAL if fclkin < 6144000 or fclkin > 10240000
+ * @return	-1 if fclkin < 6144000 or fclkin > 10240000
  */
 int32_t ad2s1210_set_fclkin(struct ad2s1210 *me, uint32_t fclkin)
 {
@@ -178,7 +178,7 @@ int32_t ad2s1210_set_fclkin(struct ad2s1210 *me, uint32_t fclkin)
 
 	if (fclkin < AD2S1210_MIN_CLKIN || fclkin > AD2S1210_MAX_CLKIN) {
 		lDebug(Error, "ad2s1210: fclkin out of range");
-		return -EINVAL;
+		return -1;
 	}
 
 	me->fclkin = fclkin;
@@ -205,7 +205,7 @@ uint32_t ad2s1210_get_fexcit(struct ad2s1210 *me)
  * @param 	me		: pointer to struct ad2s1210
  * @param 	fexcit	: excitation frequency
  * @return 	0 on success
- * @return	-EINVAL if fexcit < 2000 or fexcit > 20000
+ * @return	-1 if fexcit < 2000 or fexcit > 20000
  */
 int32_t ad2s1210_set_fexcit(struct ad2s1210 *me, uint32_t fexcit)
 {
@@ -213,7 +213,7 @@ int32_t ad2s1210_set_fexcit(struct ad2s1210 *me, uint32_t fexcit)
 
 	if (fexcit < AD2S1210_MIN_EXCIT || fexcit > AD2S1210_MAX_EXCIT) {
 		lDebug(Error, "ad2s1210: excitation frequency out of range");
-		return -EINVAL;
+		return -1;
 	}
 
 	me->fexcit = fexcit;
@@ -255,7 +255,7 @@ static int32_t ad2s1210_set_control(struct ad2s1210 *me, uint8_t data)
 	if (ret < 0)
 		return ret;
 	if (ret & AD2S1210_MSB_MASK) {
-		ret = -EIO;
+		ret = -1;
 		lDebug(Error, "ad2s1210: write control register fail");
 		return ret;
 	}
@@ -288,7 +288,7 @@ int32_t ad2s1210_set_resolution(struct ad2s1210 *me, uint8_t res)
 
 	if (res < 10 || res > 16) {
 		lDebug(Error, "ad2s1210: resolution out of range");
-		return -EINVAL;
+		return -1;
 	}
 
 	ret = ad2s1210_get_control(me);
@@ -348,17 +348,17 @@ int32_t ad2s1210_init(struct ad2s1210 *me)
 
 	if (me->resolution < 10 || me->resolution > 16) {
 		lDebug(Error, "ad2s1210: resolution out of range");
-		return -EINVAL;
+		return -1;
 	}
 
 	if (me->fclkin < AD2S1210_MIN_CLKIN || me->fclkin > AD2S1210_MAX_CLKIN) {
 		lDebug(Error, "ad2s1210: fclkin out of range");
-		return -EINVAL;
+		return -1;
 	}
 
 	if (me->fexcit < AD2S1210_MIN_EXCIT || me->fexcit > AD2S1210_MAX_EXCIT) {
 		lDebug(Error, "ad2s1210: excitation frequency out of range");
-		return -EINVAL;
+		return -1;
 	}
 
 	spi_init();
@@ -475,13 +475,13 @@ void ad2s1210_clear_fault_register(struct ad2s1210 *me)
 {
 	me->gpios.sample(0);
 	/* delay (2 * tck + 20) nano seconds */
-	udelay(1);
+//	udelay(1);
 	me->gpios.sample(1);
 
 	ad2s1210_config_read(me, AD2S1210_REG_FAULT);
 
 	me->gpios.sample(0);
-	udelay(1);
+//	udelay(1);
 	me->gpios.sample(1);
 }
 

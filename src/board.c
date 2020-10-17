@@ -3,6 +3,11 @@
 #include <stdio.h>
 
 #include "board.h"
+#include "board_api.h"
+
+
+#include "string.h"
+#include "retarget.h"
 
 #if defined(DEBUG_ENABLE) && !defined(DEBUG_UART)
 #error "Definir DEBUG_UART como LPC_USART{numero de UART}"
@@ -70,65 +75,38 @@ void Board_SSP_Init(LPC_SSP_T *pSSP)
  */
 void Board_Debug_Init(void)
 {
-#if defined(DEBUG_UART)
-	Board_UART_Init(DEBUG_UART);
+	/* UART2 directly wired to FT2232 IC; P7_1: U2_TXD, P7_2: U2_RXD */
+	Chip_SCU_PinMuxSet(7, 1, (SCU_MODE_INACT | SCU_MODE_FUNC6));
+	Chip_SCU_PinMuxSet(7, 2, (SCU_MODE_INACT | SCU_MODE_INBUFF_EN | SCU_MODE_FUNC6));
 
-	Chip_UART_Init(DEBUG_UART);
-	Chip_UART_SetBaudFDR(DEBUG_UART, 115200);
-	Chip_UART_ConfigData(DEBUG_UART,
-	UART_LCR_WLEN8 | UART_LCR_SBS_1BIT | UART_LCR_PARITY_DIS);
-
-	/* Enable UART Transmit */
-	Chip_UART_TXEnable(DEBUG_UART);
-#endif
+   Chip_UART_Init(DEBUG_UART);
+   Chip_UART_SetBaudFDR(DEBUG_UART, DEBUG_UART_BAUD_RATE);
+   Chip_UART_ConfigData(DEBUG_UART, DEBUG_UART_CONFIG);
+   Chip_UART_TXEnable(DEBUG_UART);
 }
 
-/**
- * @brief sends a character on the UART
- */
+
 void Board_UARTPutChar(char ch)
 {
-#if defined(DEBUG_UART)
-	/* Wait for space in FIFO */
-	while ((Chip_UART_ReadLineStatus(DEBUG_UART) & UART_LSR_THRE) == 0) {
-	}
-	Chip_UART_SendByte(DEBUG_UART, (uint8_t) ch);
-#endif
+   while ( !(Chip_UART_ReadLineStatus(DEBUG_UART) & UART_LSR_THRE));
+   Chip_UART_SendByte(DEBUG_UART, (uint8_t) ch);
 }
 
-/**
- * @brief	gets a character from the UART.
- * @return	EOF if no character is ready
- */
-int32_t Board_UARTGetChar(void)
+
+int Board_UARTGetChar(void)
 {
-#if defined(DEBUG_UART)
-	if (Chip_UART_ReadLineStatus(DEBUG_UART) & UART_LSR_RDR) {
-		return (int) Chip_UART_ReadByte(DEBUG_UART);
-	}
-#endif
-	return EOF;
+   if (Chip_UART_ReadLineStatus(DEBUG_UART) & UART_LSR_RDR) {
+      return (int) Chip_UART_ReadByte(DEBUG_UART);
+   }
+   return EOF;
 }
 
-void Board_UART_Init(LPC_USART_T *pUART)
-{
-	Chip_SCU_PinMuxSet(0x6, 4, (SCU_MODE_INACT | SCU_MODE_FUNC2)); /* P6,4 : UART0_TXD */
-	Chip_SCU_PinMuxSet(0x2, 1,
-			(SCU_MODE_INACT | SCU_MODE_INBUFF_EN | SCU_MODE_ZIF_DIS
-					| SCU_MODE_FUNC1));/* P2.1 : UART0_RXD */
-}
 
-/**
- * @brief	outputs a string on the debug UART
- * @param 	str	: pointer to the string to output
- */
 void Board_UARTPutSTR(const char *str)
 {
-#if defined(DEBUG_UART)
-	while (*str != '\0') {
-		Board_UARTPutChar(*str++);
-	}
-#endif
+   while (*str != '\0') {
+      Board_UARTPutChar(*str++);
+   }
 }
 
 /**
@@ -150,7 +128,7 @@ void Board_ENET_GetMacADDR(uint8_t *mcaddr)
  */
 void Board_Init(void)
 {
-//   DEBUGINIT();
+   DEBUGINIT();
 //   Chip_GPIO_Init (LPC_GPIO_PORT);
 
 	Board_GPIO_Init();

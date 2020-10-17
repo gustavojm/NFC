@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <math.h>
 
 #include "board.h"
 #include "FreeRTOS.h"
@@ -270,6 +269,7 @@ void mot_pap_isr(struct mot_pap *me)
 		xHigherPriorityTaskWoken = pdFALSE;
 		xSemaphoreGiveFromISR(me->supervisor_semaphore,
 				&xHigherPriorityTaskWoken);
+
 		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 	}
 }
@@ -309,7 +309,7 @@ uint16_t mot_pap_offset_correction(uint16_t pos, uint16_t offset, uint8_t resolu
 {
 	int32_t corrected = pos - offset;
 	if (corrected < 0)
-		corrected = corrected + (int32_t) pow(2, resolution);
+		corrected = corrected + (int32_t) (1  << resolution);
 	return (uint16_t) corrected;
 }
 

@@ -1,7 +1,5 @@
-#include <sys/times.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <math.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -76,10 +74,8 @@ static void RTUcomHMI_task(void *par)
 		pole_msg_snd = (struct mot_pap_msg*) malloc(
 				sizeof(struct mot_pap_msg));
 		if (pole_msg_snd) {
-			struct tms time;
-			srandom(times(&time));
 			pole_msg_snd->type = MOT_PAP_TYPE_CLOSED_LOOP;
-			pole_msg_snd->closed_loop_setpoint = random() % (int32_t)pow(2, 16);
+			pole_msg_snd->closed_loop_setpoint = 5555;
 			if (xQueueSend(pole_queue, &pole_msg_snd,
 					(TickType_t) 10) == pdPASS) {
 				lDebug(Info, "comm: pole command sent");
@@ -111,8 +107,9 @@ static void RTUcomHMI_task(void *par)
 
 void comm_init()
 {
-	xTaskCreate(RTUcomHMI_task, "RTUcomHMI", configMINIMAL_STACK_SIZE, NULL,
-	COMM_TASK_PRIORITY, NULL);
+	xTaskCreate(RTUcomHMI_task, "RTUcomHMI", 512, NULL,
+	6, NULL);
+	lDebug(Info, "comm: task created");
 }
 
 void task_status_get_all()

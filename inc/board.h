@@ -2,6 +2,7 @@
 #define BOARD_H_
 
 #include "chip.h"
+#include "board_api.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,6 +24,27 @@ extern "C" {
 #define DEBUG_UART_IRQ              USART2_IRQn
 #define DEBUG_UART_IRQHANDLER       UART2_IRQHandler
 
+
+// Debug UART defaults: 115200, 8N1.
+#ifndef DEBUG_UART_BAUD_RATE
+    #define DEBUG_UART_BAUD_RATE    115200
+#endif
+
+#ifndef DEBUG_UART_DATA_BITS
+    #define DEBUG_UART_DATA_BITS    UART_LCR_WLEN8
+#endif
+
+#ifndef DEBUG_UART_PARITY
+    #define DEBUG_UART_PARITY       UART_LCR_PARITY_DIS
+#endif
+
+#ifndef DEBUG_UART_STOP_BITS
+    #define DEBUG_UART_STOP_BITS    UART_LCR_SBS_1BIT
+#endif
+
+#define DEBUG_UART_CONFIG           (DEBUG_UART_DATA_BITS | DEBUG_UART_PARITY \
+                                    | DEBUG_UART_STOP_BITS)
+
 #define US_CYCLES    OscRateIn/1000000    /* 1 uS */
 
 inline void udelay(int32_t us)
@@ -34,26 +56,6 @@ inline void udelay(int32_t us)
 		}
 	}
 }
-
-// Debug UART defaults: 115200, 8N1.
-#ifndef DEBUG_UART_BAUD_RATE
-#define DEBUG_UART_BAUD_RATE    115200
-#endif
-
-#ifndef DEBUG_UART_DATA_BITS
-#define DEBUG_UART_DATA_BITS    UART_LCR_WLEN8
-#endif
-
-#ifndef DEBUG_UART_PARITY
-#define DEBUG_UART_PARITY       UART_LCR_PARITY_DIS
-#endif
-
-#ifndef DEBUG_UART_STOP_BITS
-#define DEBUG_UART_STOP_BITS    UART_LCR_SBS_1BIT
-#endif
-
-#define DEBUG_UART_CONFIG           (DEBUG_UART_DATA_BITS | DEBUG_UART_PARITY \
-                                    | DEBUG_UART_STOP_BITS)
 
 // I2C defaults to Standard/Fast mode, 100 Khz
 #ifndef BOARD_I2C_MODE

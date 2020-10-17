@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdbool.h>
-#include <errno.h>
 
 #include "FreeRTOS.h"
 #include "semphr.h"
@@ -32,7 +31,7 @@ void tmr_init(struct tmr *me)
  * @param 	me				: pointer to tmr structure
  * @param 	tick_rate_hz 	: desired frequency
  * @return	0 on success
- * @return	-EINVAL if tick_rate_hz > 300000
+ * @return	-1 if tick_rate_hz > 300000
  */
 int32_t tmr_set_freq(struct tmr *me, uint32_t tick_rate_hz)
 {
@@ -40,7 +39,7 @@ int32_t tmr_set_freq(struct tmr *me, uint32_t tick_rate_hz)
 
 	if ((tick_rate_hz < 0) || (tick_rate_hz > MOT_PAP_COMPUMOTOR_MAX_FREQ)) {
 		lDebug(Error, "pole: invalid freq");
-		return -EINVAL;
+		return -1;
 	}
 
 	/* Get timer 0 peripheral clock rate */
@@ -59,6 +58,7 @@ int32_t tmr_set_freq(struct tmr *me, uint32_t tick_rate_hz)
 void tmr_start(struct tmr *me)
 {
 	Chip_TIMER_Enable(LPC_TIMER0);
+	NVIC_SetPriority(me->timer_IRQn, 6);
 	NVIC_EnableIRQ(me->timer_IRQn);
 	NVIC_ClearPendingIRQ(me->timer_IRQn);
 	me->started = true;

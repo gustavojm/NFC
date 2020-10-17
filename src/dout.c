@@ -69,5 +69,5 @@ void dout_pole_dir(enum mot_pap_direction dir)
  */
 void dout_pole_pulse(void)
 {
-	Chip_GPIO_SetPinToggle(LPC_GPIO_PORT, 0, 8);
+	Chip_GPIO_SetPinToggle(LPC_GPIO_PORT, 1, 8);
 }
