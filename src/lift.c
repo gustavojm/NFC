@@ -103,7 +103,7 @@ static void lift_task(void *par)
 				break;
 			}
 
-			free(msg_rcv);
+			vPortFree(msg_rcv);
 		}
 	}
 }

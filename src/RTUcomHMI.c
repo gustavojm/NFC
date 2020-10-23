@@ -36,7 +36,7 @@ static void RTUcomHMI_task(void *par)
 			type = LIFT_TYPE_UP;
 		}
 
-		lift_msg_snd = (struct lift_msg*) malloc(sizeof(struct lift_msg));
+		lift_msg_snd = (struct lift_msg*) pvPortMalloc(sizeof(struct lift_msg));
 
 		if (lift_msg_snd != NULL) {
 			lift_msg_snd->type = type;
@@ -52,7 +52,7 @@ static void RTUcomHMI_task(void *par)
 		}
 
 		// Generar un mensaje para pole con movimiento FREERUN en sentido CW y velocidad 5
-		pole_msg_snd = (struct mot_pap_msg*) malloc(
+		pole_msg_snd = (struct mot_pap_msg*) pvPortMalloc(
 				sizeof(struct mot_pap_msg));
 		if (pole_msg_snd) {
 			pole_msg_snd->type = MOT_PAP_TYPE_FREE_RUNNING;
@@ -71,7 +71,7 @@ static void RTUcomHMI_task(void *par)
 
 		// Generar un mensaje para pole con movimiento closed loop y set point aleatorio
 
-		pole_msg_snd = (struct mot_pap_msg*) malloc(
+		pole_msg_snd = (struct mot_pap_msg*) pvPortMalloc(
 				sizeof(struct mot_pap_msg));
 		if (pole_msg_snd) {
 			pole_msg_snd->type = MOT_PAP_TYPE_CLOSED_LOOP;
@@ -88,7 +88,7 @@ static void RTUcomHMI_task(void *par)
 		}
 
 		// Generar un mensaje de detención para pole
-		pole_msg_snd = (struct mot_pap_msg*) malloc(
+		pole_msg_snd = (struct mot_pap_msg*) pvPortMalloc(
 				sizeof(struct mot_pap_msg));
 		if (pole_msg_snd) {
 			pole_msg_snd->type = MOT_PAP_TYPE_STOP;

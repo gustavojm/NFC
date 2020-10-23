@@ -44,6 +44,7 @@ void din_init()
 
 	/* Enable interrupt in the NVIC */
 	NVIC_ClearPendingIRQ(PIN_INT0_IRQn);
+	NVIC_SetPriority(PIN_INT0_IRQn, 6);
 	NVIC_EnableIRQ(PIN_INT0_IRQn);
 
 	// Configure ZS1_LIFT to generate interrupts on falling edge
@@ -66,6 +67,7 @@ void din_init()
 
 	/* Enable interrupt in the NVIC */
 	NVIC_ClearPendingIRQ(PIN_INT1_IRQn);
+	NVIC_SetPriority(PIN_INT1_IRQn, 6);
 	NVIC_EnableIRQ(PIN_INT1_IRQn);
 
 }
