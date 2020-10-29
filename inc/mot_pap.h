@@ -78,9 +78,6 @@ struct mot_pap {
 	uint16_t offset;
 };
 
-int32_t mot_pap_freq_calculate(struct pid *pid, uint32_t setpoint,
-		uint32_t pos);
-
 void mot_pap_init_limits(struct mot_pap *me);
 
 void mot_pap_supervise(struct mot_pap *me);
@@ -93,8 +90,6 @@ void mot_pap_move_closed_loop(struct mot_pap *status, uint16_t setpoint);
 void mot_pap_stop(struct mot_pap *me);
 
 void mot_pap_isr(struct mot_pap *me);
-
-uint16_t mot_pap_offset_correction(uint16_t pos, uint16_t offset, uint8_t resolution);
 
 #ifdef __cplusplus
 }

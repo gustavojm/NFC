@@ -18,6 +18,45 @@ extern bool stall_detection;
 static const uint32_t mot_pap_free_run_freqs[] = { 0, 25, 25, 25, 50, 75, 75, 100, 125 };
 
 /**
+ * @brief	corrects possible offsets of RDC alignment.
+ * @param 	pos		: current RDC position
+ * @param 	offset	: RDC value for 0 degrees
+ * @return	the offset corrected position
+ */
+uint16_t mot_pap_offset_correction(uint16_t pos, uint16_t offset, uint8_t resolution)
+{
+	int32_t corrected = pos - offset;
+	if (corrected < 0)
+		corrected = corrected + (int32_t) (1  << resolution);
+	return (uint16_t) corrected;
+}
+
+/**
+ * @brief 	calculates the frequency to drive the stepper motors based on a PID algorithm.
+ * @param 	pid		 : pointer to pid structure
+ * @param 	setpoint : desired resolver value to reach
+ * @param 	pos		 : current resolver value
+ * @return	the calculated frequency or the limited value to MAX and MIN frequency.
+ */
+int32_t mot_pap_freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
+{
+	int32_t cout;
+	int32_t freq;
+
+	cout = pid_controller_calculate(pid, (int32_t) setpoint, (int32_t) pos);
+	lDebug(Info, "----COUT---- %i", cout);
+	freq = (int32_t) abs((int) cout) * MOT_PAP_CLOSED_LOOP_FREQ_MULTIPLIER;
+	lDebug(Info, "----FREQ---- %u", freq);
+	if (freq > MOT_PAP_MAX_FREQ)
+		return MOT_PAP_MAX_FREQ;
+
+	if (freq < MOT_PAP_MIN_FREQ)
+		return MOT_PAP_MIN_FREQ;
+
+	return freq;
+}
+
+/**
  * @brief	checks if software limits are reached
  * @param 	me			: struct mot_pap pointer
  * @return 	nothing
@@ -277,42 +316,4 @@ void mot_pap_isr(struct mot_pap *me)
 	}
 }
 
-/**
- * @brief 	calculates the frequency to drive the stepper motors based on a PID algorithm.
- * @param 	pid		 : pointer to pid structure
- * @param 	setpoint : desired resolver value to reach
- * @param 	pos		 : current resolver value
- * @return	the calculated frequency or the limited value to MAX and MIN frequency.
- */
-int32_t mot_pap_freq_calculate(struct pid *pid, uint32_t setpoint, uint32_t pos)
-{
-	int32_t cout;
-	int32_t freq;
-
-	cout = pid_controller_calculate(pid, (int32_t) setpoint, (int32_t) pos);
-	lDebug(Info, "----COUT---- %i", cout);
-	freq = (int32_t) abs((int) cout) * MOT_PAP_CLOSED_LOOP_FREQ_MULTIPLIER;
-	lDebug(Info, "----FREQ---- %u", freq);
-	if (freq > MOT_PAP_MAX_FREQ)
-		return MOT_PAP_MAX_FREQ;
-
-	if (freq < MOT_PAP_MIN_FREQ)
-		return MOT_PAP_MIN_FREQ;
-
-	return freq;
-}
-
-/**
- * @brief	corrects possible offsets of RDC alignment.
- * @param 	pos		: current RDC position
- * @param 	offset	: RDC value for 0 degrees
- * @return	the offset corrected position
- */
-uint16_t mot_pap_offset_correction(uint16_t pos, uint16_t offset, uint8_t resolution)
-{
-	int32_t corrected = pos - offset;
-	if (corrected < 0)
-		corrected = corrected + (int32_t) (1  << resolution);
-	return (uint16_t) corrected;
-}
 
