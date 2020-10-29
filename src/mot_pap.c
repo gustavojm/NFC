@@ -14,6 +14,9 @@
 
 extern bool stall_detection;
 
+// Freqs expressed in Khz
+static const uint32_t mot_pap_free_run_freqs[] = { 0, 25, 25, 25, 50, 75, 75, 100, 125 };
+
 /**
  * @brief	checks if software limits are reached
  * @param 	me			: struct mot_pap pointer
@@ -168,7 +171,7 @@ void mot_pap_move_free_run(struct mot_pap *me, enum mot_pap_direction direction,
 		me->type = MOT_PAP_TYPE_FREE_RUNNING;
 		me->dir = direction;
 		me->gpios.direction(me->dir);
-		me->freq = speed * MOT_PAP_FREE_RUN_FREQ_MULTIPLIER;
+		me->freq = mot_pap_free_run_freqs[speed] * 1000;
 		tmr_set_freq(&(me->tmr), me->freq);
 		tmr_start(&(me->tmr));
 		lDebug(Info, "%s: FREE RUN, speed: %u, direction: %s", me->name,

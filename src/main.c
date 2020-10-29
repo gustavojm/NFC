@@ -9,7 +9,6 @@
 #include "task.h"
 #include "pole.h"
 #include "lift.h"
-#include "blink.h"
 #include "debug.h"
 #include "board.h"
 
@@ -54,7 +53,6 @@ int main(void)
     signal(SIGSEGV, handler);   // install our handler
 #endif
 
-    blink_init();
     pole_init();
 //	arm_init();
 	lift_init();

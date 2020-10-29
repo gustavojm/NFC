@@ -10,52 +10,12 @@
 #include "relay.h"
 #include "debug.h"
 #include "board.h"
-#include "din.h"
 
 #define LIFT_TASK_PRIORITY ( configMAX_PRIORITIES - 2 )
 
 QueueHandle_t lift_queue = NULL;
 
-static SemaphoreHandle_t lift_interrupt_counting_semaphore;
-
 static struct lift lift;
-
-/**
- * @brief 	commands lift to go up if upLimit is not active.
- * @return	nothing
- */
-static void lift_up()
-{
-	if (!lift.upLimit) {
-		relay_lift_dir(LIFT_DIRECTION_UP);
-		relay_lift_pwr(true);
-	} else {
-		lDebug(Warn, "lift: limit switch reached, cannot go up");
-	}
-}
-
-/**
- * @brief 	commands lift to go down if downLimit is not active.
- * @return	nothing
- */
-static void lift_down()
-{
-	if (!lift.downLimit) {
-		relay_lift_dir(LIFT_DIRECTION_DOWN);
-		relay_lift_pwr(true);
-	} else {
-		lDebug(Warn, "lift: limit switch reached, cannot go down");
-	}
-}
-
-/**
- * @brief 	commands lift stop
- * @return	nothing
- */
-static void lift_stop()
-{
-	relay_lift_pwr(false);
-}
 
 /**
  * @brief 	handles the Lift movement.
@@ -72,33 +32,32 @@ static void lift_task(void *par)
 		if (xQueueReceive(lift_queue, &msg_rcv, portMAX_DELAY) == pdPASS) {
 			lDebug(Info, "lift: command received");
 
-			lift.upLimit = din_zs1_lift_state();
-			lift.downLimit = din_zs2_lift_state();
-
 			switch (msg_rcv->type) {
 			case LIFT_TYPE_UP:
 				if (lift.type == LIFT_TYPE_DOWN) {
-					lift_stop();
+					relay_lift_pwr(false);
 					vTaskDelay(
 							pdMS_TO_TICKS(LIFT_DIRECTION_CHANGE_DELAY_MS));
 				}
 				lift.type = LIFT_TYPE_UP;
-				lift_up();
+				relay_lift_dir(LIFT_DIRECTION_UP);
+				relay_lift_pwr(true);
 				lDebug(Info, "lift: UP");
 				break;
 			case LIFT_TYPE_DOWN:
 				if (lift.type == LIFT_TYPE_UP) {
-					lift_stop();
+					relay_lift_pwr(false);
 					vTaskDelay(
 							pdMS_TO_TICKS(LIFT_DIRECTION_CHANGE_DELAY_MS));
 				}
 				lift.type = LIFT_TYPE_DOWN;
-				lift_down();
+				relay_lift_dir(LIFT_DIRECTION_DOWN);
+				relay_lift_pwr(true);
 				lDebug(Info, "lift: DOWN");
 				break;
 			default:
 				lift.type = LIFT_TYPE_STOP;
-				lift_stop();
+				relay_lift_pwr(false);
 				lDebug(Info, "lift: STOP");
 				break;
 			}
@@ -106,66 +65,6 @@ static void lift_task(void *par)
 			vPortFree(msg_rcv);
 		}
 	}
-}
-
-/**
- * @brief 	ZS1_LIFT and ZS2_LIFT interrupt handlers defer execution to this task.
- * @param 	par	: unused
- * @return	never
- * @note	stops lift movement and prints which limit was reached
- */
-static void lift_limit_switches_handler_task(void *par)
-{
-	/* As per most tasks, this task is implemented within an infinite loop. */
-	while (true) {
-		/* Use the semaphore to wait for the event.  The semaphore was created
-		 before the scheduler was started so before this task ran for the first
-		 time.  The task blocks indefinitely meaning this function call will only
-		 return once the semaphore has been successfully obtained - so there is
-		 no need to check the returned value. */
-		xSemaphoreTake(lift_interrupt_counting_semaphore, portMAX_DELAY);
-
-		// Detener LIFT
-		lift_stop();
-
-		//Determinar cual de los límites se accionó
-
-		if (lift.upLimit) {
-			lDebug(Info, "lift: upper limit reached");
-		}
-
-		if (lift.downLimit) {
-			lDebug(Info, "lift: lower limit reached");
-		}
-	}
-}
-
-/**
- * @brief	IRQHandler for ZS1_LIFT.
- */
-void GPIO0_IRQHandler(void)
-{
-	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(0));
-	lift.upLimit = true;
-	BaseType_t xHigherPriorityTaskWoken;
-	xHigherPriorityTaskWoken = pdFALSE;
-	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
-			&xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
-
-/**
- * @brief	IRQHandler for ZS2_LIFT.
- */
-void GPIO1_IRQHandler(void)
-{
-	Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH(1));
-	lift.downLimit = true;
-	BaseType_t xHigherPriorityTaskWoken;
-	xHigherPriorityTaskWoken = pdFALSE;
-	xSemaphoreGiveFromISR(lift_interrupt_counting_semaphore,
-			&xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 /**
@@ -179,19 +78,6 @@ void lift_init()
 	lift.type = LIFT_TYPE_STOP;
 	lift.upLimit = false;
 	lift.downLimit = false;
-
-	//Configurar GPIO LIMIT SWITCH DE LIFT como entradas digitales que generan interrupción por flanco ascendente;
-	//Install the handler for the software interrupt.
-	din_init();
-
-	lift_interrupt_counting_semaphore = xSemaphoreCreateCounting(10, 0);
-
-	if (lift_interrupt_counting_semaphore != NULL) {
-		// Create the 'handler' task, which is the task to which interrupt processing is deferred
-		xTaskCreate(lift_limit_switches_handler_task, "LSHandler",
-		configMINIMAL_STACK_SIZE, NULL, 3, NULL);
-		lDebug(Info, "lift: limit switches task created");
-	}
 
 	xTaskCreate(lift_task, "Lift", configMINIMAL_STACK_SIZE, NULL,
 	LIFT_TASK_PRIORITY, NULL);

@@ -9,6 +9,8 @@
 #include "debug.h"
 #include "pole.h"
 
+#define TMR_INTERRUPT_PRIORITY 		( configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1 )
+
 /**
  * @brief	enables timer 0 clock and resets it
  * @return	nothing
@@ -58,7 +60,7 @@ int32_t tmr_set_freq(struct tmr *me, uint32_t tick_rate_hz)
 void tmr_start(struct tmr *me)
 {
 	Chip_TIMER_Enable(LPC_TIMER0);
-	NVIC_SetPriority(me->timer_IRQn, 6);
+	NVIC_SetPriority(me->timer_IRQn, TMR_INTERRUPT_PRIORITY);
 	NVIC_EnableIRQ(me->timer_IRQn);
 	NVIC_ClearPendingIRQ(me->timer_IRQn);
 	me->started = true;
