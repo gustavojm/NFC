@@ -79,6 +79,10 @@ void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed char *pcTaskName
 
     name = pcTaskName;
     pxT  = pxTask;
+
+    (void)name;
+    (void)pxT;
+
     while(1);
 }
 #endif
@@ -132,6 +136,15 @@ volatile uint32_t psr;/* Program status register. */
     lr = pulFaultStackAddress[ 5 ];
     pc = pulFaultStackAddress[ 6 ];
     psr = pulFaultStackAddress[ 7 ];
+
+    (void) r0;
+    (void) r1;
+    (void) r2;
+    (void) r3;
+    (void) r12;
+    (void) lr;
+    (void) pc;
+    (void) psr;
 
     /* When the following line is hit, the variables contain the register values. */
     for( ;; );
