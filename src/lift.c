@@ -73,6 +73,7 @@ static void lift_task(void *par)
  */
 void lift_init()
 {
+	relay_init();
 	lift_queue = xQueueCreate(5, sizeof(struct lift_msg*));
 
 	lift.type = LIFT_TYPE_STOP;

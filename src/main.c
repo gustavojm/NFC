@@ -11,9 +11,10 @@
 #include "lift.h"
 #include "debug.h"
 #include "board.h"
-
+#include "dout.h"
+#include "relay.h"
+#include "poncho_rdc.h"
 #include "RTUcomHMI.h"
-#include "board.h"
 
 #ifdef TEST_GUI
 #include <execinfo.h>
@@ -45,10 +46,14 @@ int main(void)
 
 	SystemCoreClockUpdate();
 	Board_SystemInit();
-	Board_Init();
-
 
 	debugSetLevel(Info);
+
+	Board_Init();
+	dout_init();
+	relay_init();
+	poncho_rdc_init();
+
 #ifdef TEST_GUI
     signal(SIGSEGV, handler);   // install our handler
 #endif

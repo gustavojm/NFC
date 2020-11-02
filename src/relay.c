@@ -25,15 +25,13 @@ void relay_init()
 }
 
 /**
- * @brief	sets GPIO corresponding to DOUT2 where LIFT_DIR relay is connected
- * @param 	dir		: direction of movement. Should be:
- * 					  LIFT_DIRECTION_UP
- * 					  LIFT_DIRECTION_DOWN
+ * @brief	sets GPIO corresponding to DOUT1 where MAIN_PWR relay is connected
+ * @param 	state	: boolean value for the output
  * @return	nothing
  */
-void relay_lift_dir(enum lift_direction dir)
+void relay_main_pwr(bool state)
 {
-	if (dir == LIFT_DIRECTION_UP) {
+	if (state) {
 		Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 2, 4);
 	} else {
 		Chip_GPIO_SetPinOutLow(LPC_GPIO_PORT, 2, 4);
@@ -54,14 +52,17 @@ void relay_lift_pwr(bool state)
 	}
 }
 
+
 /**
- * @brief	sets GPIO corresponding to DOUT1 where MAIN_PWR relay is connected
- * @param 	state	: boolean value for the output
+ * @brief	sets GPIO corresponding to DOUT2 where LIFT_DIR relay is connected
+ * @param 	dir		: direction of movement. Should be:
+ * 					  LIFT_DIRECTION_UP
+ * 					  LIFT_DIRECTION_DOWN
  * @return	nothing
  */
-void relay_main_pwr(bool state)
+void relay_lift_dir(enum lift_direction dir)
 {
-	if (state) {
+	if (dir == LIFT_DIRECTION_UP) {
 		Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 2, 6);
 	} else {
 		Chip_GPIO_SetPinOutLow(LPC_GPIO_PORT, 2, 6);
