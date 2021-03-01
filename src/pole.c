@@ -98,7 +98,20 @@ void pole_init()
 
 	pole.rdc = &rdc;
 
-	pid_controller_init(&pid, 10, 20, 20, 20, 100);
+	/* @formatter:off */
+	pid_controller_init(
+			&pid,
+			10, 			// kp	Proportional gain
+			0.0, 			// ki	Integral gain
+			100,  			// kd	Derivative gain
+			1.5,			// kb	Back calculation (anti-windup) gain
+			100, 			// sample time
+			10,				// min_limit
+			100,			// max_limit
+			100,			// number of setpoint increments to reach the desired setpoint
+			65535			// input_span
+			);
+	/* @formatter:on */
 
 	pole.pid = &pid;
 
@@ -118,8 +131,7 @@ void pole_init()
 
 	if (pole_supervisor_semaphore != NULL) {
 		// Create the 'handler' task, which is the task to which interrupt processing is deferred
-		xTaskCreate(supervisor_task, "PoleSupervisor",
-		2048,
+		xTaskCreate(supervisor_task, "PoleSupervisor", 2048,
 		NULL, 10, NULL);
 		lDebug(Info, "pole: supervisor task created");
 	}
@@ -150,7 +162,6 @@ uint16_t pole_get_RDC_position()
 {
 	return ad2s1210_read_position(pole.rdc);
 }
-
 
 /**
  * @brief	sets pole offset
