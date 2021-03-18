@@ -3,6 +3,6 @@
 .settings
 obj/
 FreeRTOS-Sim
-/Default/
-/Debug/
+Default/
+Debug/
 docs/
