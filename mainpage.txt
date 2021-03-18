@@ -1,0 +1,5 @@
+@mainpage Information
+Documentation of RTU software for New Fixture Controller.
+@section disclaimer Disclaimer
+Use this information at your own risk.
+GSPC will **NOT** be liable for anything.

@@ -1,0 +1,11 @@
+<map id="inc/debug.h" name="inc/debug.h">
+<area shape="rect" id="node1" title="Define a simple debugging interface to use in C programs." alt="" coords="404,5,493,32"/>
+<area shape="rect" id="node2" href="$ad2s1210_8c.html" title=" " alt="" coords="5,80,116,107"/>
+<area shape="rect" id="node3" href="$debug_8c.html" title=" " alt="" coords="141,80,231,107"/>
+<area shape="rect" id="node4" href="$lift_8c.html" title=" " alt="" coords="255,80,325,107"/>
+<area shape="rect" id="node5" href="$main_8c.html" title=" " alt="" coords="349,80,431,107"/>
+<area shape="rect" id="node6" href="$mot__pap_8c.html" title=" " alt="" coords="455,80,560,107"/>
+<area shape="rect" id="node7" href="$pole_8c.html" title=" " alt="" coords="584,80,663,107"/>
+<area shape="rect" id="node8" href="$RTUcomHMI_8c.html" title=" " alt="" coords="687,80,821,107"/>
+<area shape="rect" id="node9" href="$tmr_8c.html" title=" " alt="" coords="845,80,919,107"/>
+</map>

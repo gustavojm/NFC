@@ -1,0 +1,13 @@
+<map id="inc/pid.h" name="inc/pid.h">
+<area shape="rect" id="node1" title=" " alt="" coords="402,5,473,32"/>
+<area shape="rect" id="node2" href="$mot__pap_8h.html" title=" " alt="" coords="218,80,322,107"/>
+<area shape="rect" id="node4" href="$pole_8c.html" title=" " alt="" coords="12,229,90,256"/>
+<area shape="rect" id="node8" href="$RTUcomHMI_8c.html" title=" " alt="" coords="424,229,558,256"/>
+<area shape="rect" id="node10" href="$mot__pap_8c.html" title=" " alt="" coords="385,155,490,181"/>
+<area shape="rect" id="node11" href="$pid_8c.html" title=" " alt="" coords="566,80,638,107"/>
+<area shape="rect" id="node3" href="$dout_8h.html" title=" " alt="" coords="24,155,102,181"/>
+<area shape="rect" id="node5" href="$tmr_8c.html" title=" " alt="" coords="115,229,190,256"/>
+<area shape="rect" id="node6" href="$pole_8h.html" title=" " alt="" coords="282,155,361,181"/>
+<area shape="rect" id="node9" href="$dout_8c.html" title=" " alt="" coords="178,155,258,181"/>
+<area shape="rect" id="node7" href="$main_8c.html" title=" " alt="" coords="280,229,363,256"/>
+</map>

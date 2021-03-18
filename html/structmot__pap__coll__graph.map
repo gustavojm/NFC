@@ -1,0 +1,8 @@
+<map id="mot_pap" name="mot_pap">
+<area shape="rect" id="node1" title="POLE or ARM structure." alt="" coords="189,476,354,759"/>
+<area shape="rect" id="node2" href="$structad2s1210.html" title="RDC device instance specific state." alt="" coords="16,233,111,355"/>
+<area shape="rect" id="node3" href="$structad2s1210__gpios.html" title="pointers to functions to handle GPIO lines of AD2S121." alt="" coords="5,5,121,112"/>
+<area shape="rect" id="node4" href="$structtmr.html" title=" " alt="" coords="135,226,247,362"/>
+<area shape="rect" id="node5" href="$structpid.html" title="PID instance structure." alt="" coords="271,175,431,413"/>
+<area shape="rect" id="node6" href="$structmot__pap__gpios.html" title="pointers to functions to handle GPIO lines of this stepper motor." alt="" coords="456,248,567,340"/>
+</map>
