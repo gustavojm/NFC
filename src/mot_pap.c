@@ -19,8 +19,9 @@ static const uint32_t mot_pap_free_run_freqs[] = { 0, 25, 25, 25, 50, 75, 75, 10
 
 /**
  * @brief	corrects possible offsets of RDC alignment.
- * @param 	pos		: current RDC position
- * @param 	offset	: RDC value for 0 degrees
+ * @param 	pos			: current RDC position
+ * @param 	offset		: RDC value for 0 degrees
+ * @param 	resolution	: resolution bits for RDC readings
  * @return	the offset corrected position
  */
 uint16_t mot_pap_offset_correction(uint16_t pos, uint16_t offset, uint8_t resolution)
